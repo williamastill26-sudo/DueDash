@@ -5,93 +5,228 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DueDash</title>
 <style>
-  body { margin: 0; font-family: Helvetica, Arial, sans-serif; background: #1e293b; color: #e2e8f0; }
-  header { background: #6366f1; color: white; text-align: center; padding: 16px; }
-  header h1 { margin: 0; font-size: 32px; }
-  header p { margin: 4px 0 0; font-style: italic; }
-  main { max-width: 500px; margin: 0 auto; padding: 20px; }
-  label { display: block; margin-bottom: 4px; }
-  input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 10px; border: none; border-radius: 8px; margin-bottom: 12px; }
-  button { background: #6366f1; color: white; font-size: 16px; padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; }
-  #add { width: 100%; }
-  ul { list-style: none; padding: 0; margin-top: 20px; }
-  li { background: #0f172a; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  li.done .name { text-decoration: line-through; opacity: 0.5; }
-  .due { font-size: 13px; opacity: 0.7; }
-  .actions { display: flex; gap: 6px; }
-  .actions button { padding: 6px 10px; font-size: 14px; }
+*{box-sizing:border-box}
+body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#1e293b;color:#e2e8f0}
+.hidden{display:none!important}
+button{background:#6366f1;color:#fff;font-size:15px;padding:9px 13px;border:0;border-radius:8px;cursor:pointer}
+button.alt{background:#334155}
+button.red{background:#dc2626}
+input{width:100%;font-size:16px;padding:10px;border:0;border-radius:8px;margin-bottom:10px;font-family:inherit}
+.link{background:none;color:#a5b4fc;text-decoration:underline}
+#auth{max-width:420px;margin:0 auto;padding:20px}
+#shell{display:flex;min-height:100vh}
+nav{width:210px;background:#0f172a;padding:16px;display:flex;flex-direction:column;gap:8px}
+nav h1{margin:0 0 8px;color:#a5b4fc}
+nav button{background:none;text-align:left;color:#e2e8f0}
+nav button.on{background:#6366f1}
+main{flex:1;padding:20px;max-width:720px}
+.card{background:#0f172a;border-radius:10px;padding:14px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.big{font-size:22px;text-align:center;padding:40px 16px;cursor:pointer}
+.award{opacity:.4}
+.award.got{opacity:1;border:1px solid #fbbf24}
+.done .nm{text-decoration:line-through;opacity:.5}
+.err{color:#fca5a5;min-height:20px;margin-bottom:8px}
+.sub{font-size:13px;opacity:.7}
+@media(max-width:700px){#shell{flex-direction:column}nav{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}nav h1{width:100%}}
 </style>
 </head>
 <body>
-<header>
+<div id="auth" class="hidden">
   <h1>DueDash</h1>
-  <p>Never miss a due date</p>
-</header>
-<main>
-  <label for="task">Task</label>
-  <input id="task" type="text" placeholder="Math worksheet"> 
-  <label for="due">Due date</label>
-  <input id="due" type="date">
-  <button id="add">Add Task</button>
-  <ul id="list"></ul>
-</main>
+  <h2 id="at">Log in</h2>
+  <input id="em" type="email" placeholder="Email" autocomplete="email">
+  <input id="pw" type="password" placeholder="Password (6+ characters)" autocomplete="current-password">
+  <div class="err" id="er"></div>
+  <button id="ab" style="width:100%">Log in</button>
+  <button id="sw" class="link" style="width:100%">New here? Create an account</button>
+</div>
+<div id="shell" class="hidden"><nav id="nav"></nav><main id="main"></main></div>
 
-<script>
-  const KEY = "duedash-tasks";
-  let tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,getDocs,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  function save() {
-    localStorage.setItem(KEY, JSON.stringify(tasks));
+const firebaseConfig={
+  apiKey:"AIzaSyAOBeCaNPNp_hr_0o0r5p6faW9XfkG1W3k",
+  authDomain:"duedash-9e120.firebaseapp.com",
+  projectId:"duedash-9e120",
+  storageBucket:"duedash-9e120.firebasestorage.app",
+  messagingSenderId:"893428485494",
+  appId:"1:893428485494:web:fd1ecccf31c8c9763cfe57"
+};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const day=(o=0)=>new Date(Date.now()-o*864e5).toISOString().slice(0,10);
+let user,P,view="planner",decks=[],pub=[],draft=null,study=null;
+
+const AWARDS=[
+ ["First Steps","Earn 10 points",p=>p.points>=10],
+ ["Point Collector","Earn 100 points",p=>p.points>=100],
+ ["Deck Builder","Make your first deck",p=>p.decksMade>=1],
+ ["Sharing Is Caring","Publish a deck",p=>p.published>=1],
+ ["Quick Learner","Study 25 cards",p=>p.cardsStudied>=25],
+ ["Task Crusher","Finish 5 tasks",p=>p.tasksDone>=5],
+ ["On Fire","Reach a 3 day streak",p=>p.streak>=3]
+];
+
+/* ---------- login ---------- */
+let signingUp=false;
+const errMsg=e=>({
+ "auth/invalid-email":"That email doesn't look right.",
+ "auth/missing-password":"Please enter a password.",
+ "auth/weak-password":"Password needs at least 6 characters.",
+ "auth/email-already-in-use":"That email already has an account. Try logging in.",
+ "auth/invalid-credential":"Wrong email or password.",
+ "auth/too-many-requests":"Too many tries. Wait a minute.",
+ "auth/unauthorized-domain":"Add this website under Authorized domains in Firebase."
+}[e.code]||"Something went wrong.")+" ("+e.code+")";
+$("sw").onclick=()=>{
+ signingUp=!signingUp;
+ $("at").textContent=signingUp?"Create account":"Log in";
+ $("ab").textContent=signingUp?"Sign up":"Log in";
+ $("sw").textContent=signingUp?"Already have an account? Log in":"New here? Create an account";
+ $("er").textContent="";
+};
+$("ab").onclick=async()=>{
+ $("er").textContent="";
+ try{
+  const f=signingUp?createUserWithEmailAndPassword:signInWithEmailAndPassword;
+  await f(auth,$("em").value.trim(),$("pw").value);
+ }catch(e){$("er").textContent=errMsg(e)}
+};
+
+onAuthStateChanged(auth,async u=>{
+ user=u;
+ if(!u){$("shell").classList.add("hidden");$("auth").classList.remove("hidden");$("pw").value="";return}
+ try{
+  const ref=doc(db,"users",u.uid);
+  const s=await getDoc(ref);
+  P={username:"Student"+Math.floor(1000+Math.random()*9000),points:0,streak:0,lastDay:"",tasksDone:0,cardsStudied:0,decksMade:0,published:0,tasks:[],...(s.exists()?s.data():{})};
+  if(!s.exists())await setDoc(ref,P);
+ }catch(e){alert("Database error: "+(e.code||e.message)+". Check your Firestore rules.");return}
+ $("auth").classList.add("hidden");$("shell").classList.remove("hidden");
+ go("planner");
+});
+
+/* ---------- data helpers ---------- */
+const save=f=>{Object.assign(P,f);return updateDoc(doc(db,"users",user.uid),f)};
+const earn=(n,extra={})=>{
+ const t=day();let s=P.streak;
+ if(P.lastDay!==t)s=P.lastDay===day(1)?s+1:1;
+ return save({points:P.points+n,streak:s,lastDay:t,...extra});
+};
+const getDeck=id=>decks.find(d=>d.id===id)||pub.find(d=>d.id===id);
+
+async function go(v){
+ view=v;
+ try{
+  if(v==="decks")decks=(await getDocs(query(collection(db,"decks"),where("ownerId","==",user.uid)))).docs.map(d=>({id:d.id,...d.data()}));
+  if(v==="explore")pub=(await getDocs(query(collection(db,"decks"),where("isPublic","==",true),limit(50)))).docs.map(d=>({id:d.id,...d.data()}));
+ }catch(e){alert("Database error: "+(e.code||e.message))}
+ render();
+}
+
+/* ---------- views ---------- */
+const vPlanner=()=>`<h2>Planner</h2>
+<input id="tk" placeholder="Task, like Math worksheet" maxlength="100">
+<input id="td" type="date">
+<button data-act="addtask">Add Task</button><br><br>`+
+P.tasks.map((t,i)=>`<div class="card row ${t.done?"done":""}"><div><div class="nm">${esc(t.name)}</div><div class="sub">${t.due?"Due: "+esc(t.due):""}</div></div><div>${t.done?"":`<button data-act="done" data-i="${i}">Done +5</button> `}<button class="alt" data-act="deltask" data-i="${i}">Delete</button></div></div>`).join("");
+
+const vDecks=()=>`<h2>My Decks</h2><button data-act="new">+ New deck</button><br><br>`+
+(decks.length?decks.map(d=>`<div class="card row"><div><b>${esc(d.title)}</b><div class="sub">${d.cards.length} cards · ${d.isPublic?"Public":"Private"}</div></div><div><button data-act="study" data-id="${d.id}">Study</button> <button class="alt" data-act="edit" data-id="${d.id}">Edit</button> <button class="red" data-act="deldeck" data-id="${d.id}">Delete</button></div></div>`).join(""):'<p class="sub">No decks yet. Make your first one!</p>');
+
+const vEdit=()=>`<h2>${draft.id?"Edit":"New"} deck</h2>
+<input id="dt" placeholder="Deck title" maxlength="60" value="${esc(draft.title)}">`+
+draft.cards.map((c,i)=>`<div class="card"><input data-f="front" data-i="${i}" placeholder="Front (question)" maxlength="200" value="${esc(c.front)}"><input data-f="back" data-i="${i}" placeholder="Back (answer)" maxlength="200" value="${esc(c.back)}"><button class="alt" data-act="delcard" data-i="${i}">Remove card</button></div>`).join("")+
+`<button class="alt" data-act="addcard">+ Add card</button><br><br>
+<label><input type="checkbox" id="dp" style="width:auto" ${draft.isPublic?"checked":""}> Make public so other people can find it</label>
+<p class="sub">Only share kind, safe stuff. Never put personal info in a public deck.</p>
+<button data-act="savedeck">Save deck</button> <button class="alt" data-go="decks">Cancel</button>`;
+
+const vStudy=()=>{
+ const c=study.cards[study.i];
+ if(!c)return`<h2>Deck complete!</h2><p>You got ${study.got} of ${study.cards.length}. Bonus +10 points!</p><button data-go="${study.from}">Back</button>`;
+ return`<h2>${esc(study.title)}</h2><p class="sub">Card ${study.i+1} of ${study.cards.length}</p>
+<div class="card big" data-act="flip">${esc(study.flip?c.back:c.front)}<div class="sub">${study.flip?"Answer":"Tap to flip"}</div></div>`+
+(study.flip?`<button data-act="got">Got it +1</button> <button class="alt" data-act="again">Again</button>`:"");
+};
+
+const vExplore=()=>`<h2>Explore</h2><p class="sub">Decks other people made public.</p>`+
+(pub.length?pub.map(d=>`<div class="card row"><div><b>${esc(d.title)}</b><div class="sub">by ${esc(d.ownerName)} · ${d.cards.length} cards</div></div><div><button data-act="study" data-id="${d.id}">Study</button> <button class="alt" data-act="copy" data-id="${d.id}">Save copy</button> <button class="alt" data-act="report" data-id="${d.id}">Report</button></div></div>`).join(""):'<p class="sub">No public decks yet. Be the first to share one!</p>');
+
+const vAccount=()=>`<h2>Account</h2>
+<div class="card"><div class="sub">Username (shown on public decks, don't use your real name)</div><input id="un" maxlength="20" value="${esc(P.username)}"><button data-act="name">Save username</button></div>
+<div class="card row"><div>⭐ ${P.points}<div class="sub">points</div></div><div>🔥 ${P.streak}<div class="sub">day streak</div></div><div>📚 ${P.cardsStudied}<div class="sub">cards studied</div></div><div>✅ ${P.tasksDone}<div class="sub">tasks done</div></div></div>
+<h3>Awards</h3>`+
+AWARDS.map(([n,d,f])=>`<div class="card award ${f(P)?"got":""}"><b>${f(P)?"🏆 ":"🔒 "}${n}</b><div class="sub">${d}</div></div>`).join("");
+
+function render(){
+ const on=k=>view===k||(k==="decks"&&(view==="edit"||(view==="study"&&study&&study.from==="decks")))||(k==="explore"&&view==="study"&&study&&study.from==="explore")?"on":"";
+ $("nav").innerHTML="<h1>DueDash</h1>"+
+ [["planner","Planner"],["decks","My Decks"],["explore","Explore"],["account","Account"]].map(([k,l])=>`<button data-go="${k}" class="${on(k)}">${l}</button>`).join("")+
+ `<div class="sub">⭐ ${P.points} pts · 🔥 ${P.streak}</div><button class="alt" data-act="out">Log out</button>`;
+ $("main").innerHTML=({planner:vPlanner,decks:vDecks,edit:vEdit,study:vStudy,explore:vExplore,account:vAccount})[view]();
+}
+
+/* ---------- clicks ---------- */
+document.addEventListener("click",async e=>{
+ const b=e.target.closest("[data-go],[data-act]");
+ if(!b||!P)return;
+ if(b.dataset.go)return go(b.dataset.go);
+ const a=b.dataset.act,i=+b.dataset.i,id=b.dataset.id;
+ try{
+  if(a==="out")return signOut(auth);
+  if(a==="addtask"){
+   const name=$("tk").value.trim();if(!name)return;
+   await save({tasks:[...P.tasks,{name,due:$("td").value,done:false}]});render();
   }
-
-  function render() {
-    const list = document.getElementById("list");
-    list.innerHTML = "";
-    tasks.forEach((t, i) => {
-      const li = document.createElement("li");
-      if (t.done) li.className = "done";
-
-      const info = document.createElement("div");
-      const name = document.createElement("div");
-      name.className = "name";
-      name.textContent = t.name;
-      info.appendChild(name);
-      if (t.due) {
-        const due = document.createElement("div");
-        due.className = "due";
-        due.textContent = "Due: " + t.due;
-        info.appendChild(due);
-      }
-
-      const actions = document.createElement("div");
-      actions.className = "actions";
-      const doneBtn = document.createElement("button");
-      doneBtn.textContent = "Done";
-      doneBtn.onclick = () => { tasks[i].done = true; save(); render(); };
-      const delBtn = document.createElement("button");
-      delBtn.textContent = "Delete";
-      delBtn.onclick = () => { tasks.splice(i, 1); save(); render(); };
-      actions.appendChild(doneBtn);
-      actions.appendChild(delBtn);
-
-      li.appendChild(info);
-      li.appendChild(actions);
-      list.appendChild(li);
-    });
+  if(a==="done"){await earn(5,{tasks:P.tasks.map((x,j)=>j===i?{...x,done:true}:x),tasksDone:P.tasksDone+1});render()}
+  if(a==="deltask"){await save({tasks:P.tasks.filter((_,j)=>j!==i)});render()}
+  if(a==="new"){draft={title:"",cards:[{front:"",back:""}],isPublic:false};view="edit";render()}
+  if(a==="edit"){const d=getDeck(id);draft={id:d.id,title:d.title,cards:d.cards.map(c=>({...c})),isPublic:d.isPublic,wasPublic:d.isPublic};view="edit";render()}
+  if(a==="addcard"){if(draft.cards.length<100)draft.cards.push({front:"",back:""});render()}
+  if(a==="delcard"){draft.cards.splice(i,1);render()}
+  if(a==="savedeck"){
+   const cards=draft.cards.filter(c=>c.front.trim()&&c.back.trim());
+   if(!draft.title.trim()||!cards.length){alert("Add a title and at least one full card.");return}
+   const data={ownerId:user.uid,ownerName:P.username,title:draft.title.trim(),cards,isPublic:draft.isPublic,updated:Date.now()};
+   if(draft.id)await updateDoc(doc(db,"decks",draft.id),data);
+   else{await addDoc(collection(db,"decks"),data);await save({decksMade:P.decksMade+1})}
+   if(data.isPublic&&!draft.wasPublic)await save({published:P.published+1});
+   go("decks");
   }
+  if(a==="deldeck"&&confirm("Delete this deck?")){await deleteDoc(doc(db,"decks",id));go("decks")}
+  if(a==="study"){const d=getDeck(id);study={title:d.title,cards:[...d.cards],i:0,flip:false,got:0,from:view};view="study";render()}
+  if(a==="flip"){study.flip=!study.flip;render()}
+  if(a==="got"||a==="again"){
+   const n=a==="got"?1:0;study.got+=n;study.i++;study.flip=false;
+   await earn(n+(study.i>=study.cards.length?10:0),{cardsStudied:P.cardsStudied+1});render();
+  }
+  if(a==="copy"){
+   const d=getDeck(id);
+   await addDoc(collection(db,"decks"),{ownerId:user.uid,ownerName:P.username,title:d.title+" (copy)",cards:d.cards,isPublic:false,updated:Date.now()});
+   await save({decksMade:P.decksMade+1});alert("Saved to My Decks!");
+  }
+  if(a==="report"){await addDoc(collection(db,"reports"),{deckId:id,reporterId:user.uid,createdAt:Date.now()});alert("Thanks, this deck was reported.")}
+  if(a==="name"){const n=$("un").value.trim();if(!n)return;await save({username:n});alert("Username saved!");render()}
+ }catch(err){alert("Something went wrong: "+(err.code||err.message))}
+});
 
-  document.getElementById("add").onclick = () => {
-    const name = document.getElementById("task").value.trim();
-    const due = document.getElementById("due").value;
-    if (!name) return;
-    tasks.push({ name: name, due: due, done: false });
-    save();
-    render();
-    document.getElementById("task").value = "";
-    document.getElementById("due").value = "";
-  };
-
-  render();
+document.addEventListener("input",e=>{
+ const t=e.target;
+ if(!draft||view!=="edit")return;
+ if(t.dataset.f)draft.cards[+t.dataset.i][t.dataset.f]=t.value;
+ else if(t.id==="dt")draft.title=t.value;
+ else if(t.id==="dp")draft.isPublic=t.checked;
+});
 </script>
 </body>
 </html>
+

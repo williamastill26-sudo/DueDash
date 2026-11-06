@@ -45,8 +45,9 @@ main{flex:1;padding:20px;max-width:720px}
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAnalytics} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,getDocs,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,getDocs,limit,orderBy} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyAOBeCaNPNp_hr_0o0r5p6faW9XfkG1W3k",
@@ -54,16 +55,18 @@ const firebaseConfig={
   projectId:"duedash-9e120",
   storageBucket:"duedash-9e120.firebasestorage.app",
   messagingSenderId:"893428485494",
-  appId:"1:893428485494:web:fd1ecccf31c8c9763cfe57"
+  appId:"1:893428485494:web:fd1ecccf31c8c9763cfe57",
+  measurementId:"G-MWPNS59FFT"
 };
 const app=initializeApp(firebaseConfig);
+try{getAnalytics(app)}catch(e){}
 const auth=getAuth(app);
 const db=getFirestore(app);
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const day=(o=0)=>new Date(Date.now()-o*864e5).toISOString().slice(0,10);
-let user,P,view="planner",decks=[],pub=[],draft=null,study=null;
+let user,P,view="planner",decks=[],pub=[],board=[],draft=null,study=null;
 
 const AWARDS=[
  ["First Steps","Earn 10 points",p=>p.points>=10],
@@ -109,13 +112,15 @@ onAuthStateChanged(auth,async u=>{
   const s=await getDoc(ref);
   P={username:"Student"+Math.floor(1000+Math.random()*9000),points:0,streak:0,lastDay:"",tasksDone:0,cardsStudied:0,decksMade:0,published:0,tasks:[],...(s.exists()?s.data():{})};
   if(!s.exists())await setDoc(ref,P);
+  await sync();
  }catch(e){alert("Database error: "+(e.code||e.message)+". Check your Firestore rules.");return}
  $("auth").classList.add("hidden");$("shell").classList.remove("hidden");
  go("planner");
 });
 
 /* ---------- data helpers ---------- */
-const save=f=>{Object.assign(P,f);return updateDoc(doc(db,"users",user.uid),f)};
+const sync=()=>setDoc(doc(db,"leaderboard",user.uid),{username:P.username,points:P.points});
+const save=async f=>{Object.assign(P,f);await updateDoc(doc(db,"users",user.uid),f);if("points" in f||"username" in f)await sync()};
 const earn=(n,extra={})=>{
  const t=day();let s=P.streak;
  if(P.lastDay!==t)s=P.lastDay===day(1)?s+1:1;
@@ -128,6 +133,7 @@ async function go(v){
  try{
   if(v==="decks")decks=(await getDocs(query(collection(db,"decks"),where("ownerId","==",user.uid)))).docs.map(d=>({id:d.id,...d.data()}));
   if(v==="explore")pub=(await getDocs(query(collection(db,"decks"),where("isPublic","==",true),limit(50)))).docs.map(d=>({id:d.id,...d.data()}));
+  if(v==="leaders")board=(await getDocs(query(collection(db,"leaderboard"),orderBy("points","desc"),limit(20)))).docs.map(d=>({id:d.id,...d.data()}));
  }catch(e){alert("Database error: "+(e.code||e.message))}
  render();
 }
@@ -161,8 +167,11 @@ const vStudy=()=>{
 const vExplore=()=>`<h2>Explore</h2><p class="sub">Decks other people made public.</p>`+
 (pub.length?pub.map(d=>`<div class="card row"><div><b>${esc(d.title)}</b><div class="sub">by ${esc(d.ownerName)} · ${d.cards.length} cards</div></div><div><button data-act="study" data-id="${d.id}">Study</button> <button class="alt" data-act="copy" data-id="${d.id}">Save copy</button> <button class="alt" data-act="report" data-id="${d.id}">Report</button></div></div>`).join(""):'<p class="sub">No public decks yet. Be the first to share one!</p>');
 
+const vLeaders=()=>`<h2>Leaderboard</h2><p class="sub">Top 20 by points.</p>`+
+(board.length?board.map((p,i)=>`<div class="card row ${p.id===user.uid?"award got":""}"><div><b>${["🥇","🥈","🥉"][i]||"#"+(i+1)} ${esc(p.username)}</b>${p.id===user.uid?" (you)":""}</div><div>⭐ ${p.points}</div></div>`).join(""):'<p class="sub">No one on the board yet.</p>');
+
 const vAccount=()=>`<h2>Account</h2>
-<div class="card"><div class="sub">Username (shown on public decks, don't use your real name)</div><input id="un" maxlength="20" value="${esc(P.username)}"><button data-act="name">Save username</button></div>
+<div class="card"><div class="sub">Username (shown on public decks and the leaderboard, don't use your real name)</div><input id="un" maxlength="20" value="${esc(P.username)}"><button data-act="name">Save username</button></div>
 <div class="card row"><div>⭐ ${P.points}<div class="sub">points</div></div><div>🔥 ${P.streak}<div class="sub">day streak</div></div><div>📚 ${P.cardsStudied}<div class="sub">cards studied</div></div><div>✅ ${P.tasksDone}<div class="sub">tasks done</div></div></div>
 <h3>Awards</h3>`+
 AWARDS.map(([n,d,f])=>`<div class="card award ${f(P)?"got":""}"><b>${f(P)?"🏆 ":"🔒 "}${n}</b><div class="sub">${d}</div></div>`).join("");
@@ -170,9 +179,9 @@ AWARDS.map(([n,d,f])=>`<div class="card award ${f(P)?"got":""}"><b>${f(P)?"🏆 
 function render(){
  const on=k=>view===k||(k==="decks"&&(view==="edit"||(view==="study"&&study&&study.from==="decks")))||(k==="explore"&&view==="study"&&study&&study.from==="explore")?"on":"";
  $("nav").innerHTML="<h1>DueDash</h1>"+
- [["planner","Planner"],["decks","My Decks"],["explore","Explore"],["account","Account"]].map(([k,l])=>`<button data-go="${k}" class="${on(k)}">${l}</button>`).join("")+
+ [["planner","Planner"],["decks","My Decks"],["explore","Explore"],["leaders","Leaderboard"],["account","Account"]].map(([k,l])=>`<button data-go="${k}" class="${on(k)}">${l}</button>`).join("")+
  `<div class="sub">⭐ ${P.points} pts · 🔥 ${P.streak}</div><button class="alt" data-act="out">Log out</button>`;
- $("main").innerHTML=({planner:vPlanner,decks:vDecks,edit:vEdit,study:vStudy,explore:vExplore,account:vAccount})[view]();
+ $("main").innerHTML=({planner:vPlanner,decks:vDecks,edit:vEdit,study:vStudy,explore:vExplore,account:vAccount,leaders:vLeaders})[view]();
 }
 
 /* ---------- clicks ---------- */
@@ -229,4 +238,3 @@ document.addEventListener("input",e=>{
 </script>
 </body>
 </html>
-

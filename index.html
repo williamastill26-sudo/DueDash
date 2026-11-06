@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DueDash</title>
+<style>
+  body { margin: 0; font-family: Helvetica, Arial, sans-serif; background: #1e293b; color: #e2e8f0; }
+  header { background: #6366f1; color: white; text-align: center; padding: 16px; }
+  header h1 { margin: 0; font-size: 32px; }
+  header p { margin: 4px 0 0; font-style: italic; }
+  main { max-width: 500px; margin: 0 auto; padding: 20px; }
+  label { display: block; margin-bottom: 4px; }
+  input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 10px; border: none; border-radius: 8px; margin-bottom: 12px; }
+  button { background: #6366f1; color: white; font-size: 16px; padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; }
+  #add { width: 100%; }
+  ul { list-style: none; padding: 0; margin-top: 20px; }
+  li { background: #0f172a; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  li.done .name { text-decoration: line-through; opacity: 0.5; }
+  .due { font-size: 13px; opacity: 0.7; }
+  .actions { display: flex; gap: 6px; }
+  .actions button { padding: 6px 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DueDash</h1>
+  <p>Never miss a due date</p>
+</header>
+<main>
+  <label for="task">Task</label>
+  <input id="task" type="text" placeholder="Math worksheet"> 
+  <label for="due">Due date</label>
+  <input id="due" type="date">
+  <button id="add">Add Task</button>
+  <ul id="list"></ul>
+</main>
+
+<script>
+  const KEY = "duedash-tasks";
+  let tasks = JSON.parse(localStorage.getItem(KEY) || "[]");
+
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(tasks));
+  }
+
+  function render() {
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+    tasks.forEach((t, i) => {
+      const li = document.createElement("li");
+      if (t.done) li.className = "done";
+
+      const info = document.createElement("div");
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = t.name;
+      info.appendChild(name);
+      if (t.due) {
+        const due = document.createElement("div");
+        due.className = "due";
+        due.textContent = "Due: " + t.due;
+        info.appendChild(due);
+      }
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      const doneBtn = document.createElement("button");
+      doneBtn.textContent = "Done";
+      doneBtn.onclick = () => { tasks[i].done = true; save(); render(); };
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.onclick = () => { tasks.splice(i, 1); save(); render(); };
+      actions.appendChild(doneBtn);
+      actions.appendChild(delBtn);
+
+      li.appendChild(info);
+      li.appendChild(actions);
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("add").onclick = () => {
+    const name = document.getElementById("task").value.trim();
+    const due = document.getElementById("due").value;
+    if (!name) return;
+    tasks.push({ name: name, due: due, done: false });
+    save();
+    render();
+    document.getElementById("task").value = "";
+    document.getElementById("due").value = "";
+  };
+
+  render();
+</script>
+</body>
+</html>

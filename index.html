@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DueDash</title>
+<link rel="icon" href="logo.png">
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#1e293b;color:#e2e8f0}
@@ -14,26 +15,29 @@ button.red{background:#dc2626}
 input{width:100%;font-size:16px;padding:10px;border:0;border-radius:8px;margin-bottom:10px;font-family:inherit}
 .link{background:none;color:#a5b4fc;text-decoration:underline}
 #auth{max-width:420px;margin:0 auto;padding:20px}
+#auth img{display:block;width:100%;max-width:220px;margin:0 auto 10px;border-radius:12px}
 #shell{display:flex;min-height:100vh}
 nav{width:210px;background:#0f172a;padding:16px;display:flex;flex-direction:column;gap:8px}
-nav h1{margin:0 0 8px;color:#a5b4fc}
+nav img{width:100%;max-width:150px;margin-bottom:8px;border-radius:10px}
 nav button{background:none;text-align:left;color:#e2e8f0}
 nav button.on{background:#6366f1}
-main{flex:1;padding:20px;max-width:720px}
+main{flex:1;padding:20px;max-width:900px}
 .card{background:#0f172a;border-radius:10px;padding:14px;margin-bottom:10px}
 .row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.two{display:flex;gap:16px;flex-wrap:wrap}
+.two>div{flex:1;min-width:260px}
 .big{font-size:22px;text-align:center;padding:40px 16px;cursor:pointer}
 .award{opacity:.4}
 .award.got{opacity:1;border:1px solid #fbbf24}
 .done .nm{text-decoration:line-through;opacity:.5}
 .err{color:#fca5a5;min-height:20px;margin-bottom:8px}
 .sub{font-size:13px;opacity:.7}
-@media(max-width:700px){#shell{flex-direction:column}nav{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}nav h1{width:100%}}
+@media(max-width:700px){#shell{flex-direction:column}nav{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center}nav img{width:100%;max-width:110px}}
 </style>
 </head>
 <body>
 <div id="auth" class="hidden">
-  <h1>DueDash</h1>
+  <img src="logo.png" alt="DueDash">
   <h2 id="at">Log in</h2>
   <input id="em" type="email" placeholder="Email" autocomplete="email">
   <input id="pw" type="password" placeholder="Password (6+ characters)" autocomplete="current-password">
@@ -66,7 +70,7 @@ const db=getFirestore(app);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const day=(o=0)=>new Date(Date.now()-o*864e5).toISOString().slice(0,10);
-let user,P,view="planner",decks=[],pub=[],board=[],draft=null,study=null;
+let user,P,view="planner",decks=[],pub=[],board=[],streaks=[],draft=null,study=null;
 
 const AWARDS=[
  ["First Steps","Earn 10 points",p=>p.points>=10],
@@ -119,7 +123,8 @@ onAuthStateChanged(auth,async u=>{
 });
 
 /* ---------- data helpers ---------- */
-const sync=()=>setDoc(doc(db,"leaderboard",user.uid),{username:P.username,points:P.points});
+const liveStreak=p=>(p.lastDay===day()||p.lastDay===day(1))?p.streak:0;
+const sync=()=>setDoc(doc(db,"leaderboard",user.uid),{username:P.username,points:P.points,streak:liveStreak(P)});
 const save=async f=>{Object.assign(P,f);await updateDoc(doc(db,"users",user.uid),f);if("points" in f||"username" in f)await sync()};
 const earn=(n,extra={})=>{
  const t=day();let s=P.streak;
@@ -133,7 +138,10 @@ async function go(v){
  try{
   if(v==="decks")decks=(await getDocs(query(collection(db,"decks"),where("ownerId","==",user.uid)))).docs.map(d=>({id:d.id,...d.data()}));
   if(v==="explore")pub=(await getDocs(query(collection(db,"decks"),where("isPublic","==",true),limit(50)))).docs.map(d=>({id:d.id,...d.data()}));
-  if(v==="leaders")board=(await getDocs(query(collection(db,"leaderboard"),orderBy("points","desc"),limit(20)))).docs.map(d=>({id:d.id,...d.data()}));
+  if(v==="leaders"){
+   board=(await getDocs(query(collection(db,"leaderboard"),orderBy("points","desc"),limit(20)))).docs.map(d=>({id:d.id,...d.data()}));
+   streaks=(await getDocs(query(collection(db,"leaderboard"),orderBy("streak","desc"),limit(20)))).docs.map(d=>({id:d.id,...d.data()}));
+  }
  }catch(e){alert("Database error: "+(e.code||e.message))}
  render();
 }
@@ -167,18 +175,26 @@ const vStudy=()=>{
 const vExplore=()=>`<h2>Explore</h2><p class="sub">Decks other people made public.</p>`+
 (pub.length?pub.map(d=>`<div class="card row"><div><b>${esc(d.title)}</b><div class="sub">by ${esc(d.ownerName)} · ${d.cards.length} cards</div></div><div><button data-act="study" data-id="${d.id}">Study</button> <button class="alt" data-act="copy" data-id="${d.id}">Save copy</button> <button class="alt" data-act="report" data-id="${d.id}">Report</button></div></div>`).join(""):'<p class="sub">No public decks yet. Be the first to share one!</p>');
 
-const vLeaders=()=>`<h2>Leaderboard</h2><p class="sub">Top 20 by points.</p>`+
-(board.length?board.map((p,i)=>`<div class="card row ${p.id===user.uid?"award got":""}"><div><b>${["🥇","🥈","🥉"][i]||"#"+(i+1)} ${esc(p.username)}</b>${p.id===user.uid?" (you)":""}</div><div>⭐ ${p.points}</div></div>`).join(""):'<p class="sub">No one on the board yet.</p>');
+const vLeaders=()=>{
+ const sl=streaks.filter(p=>p.streak>0);
+ const medal=i=>["🥇","🥈","🥉"][i]||"#"+(i+1);
+ const rowHtml=(p,i,val)=>`<div class="card row ${p.id===user.uid?"award got":""}"><div><b>${medal(i)} ${esc(p.username)}</b>${p.id===user.uid?" (you)":""}</div><div>${val}</div></div>`;
+ return`<h2>Leaderboards</h2><div class="two"><div><h3>⭐ Points</h3>`+
+ (board.length?board.map((p,i)=>rowHtml(p,i,"⭐ "+p.points)).join(""):'<p class="sub">No one on the board yet.</p>')+
+ `</div><div><h3>🔥 Streaks</h3>`+
+ (sl.length?sl.map((p,i)=>rowHtml(p,i,"🔥 "+p.streak+" day"+(p.streak===1?"":"s"))).join(""):'<p class="sub">No streaks yet. Earn points to start yours!</p>')+
+ `</div></div>`;
+};
 
 const vAccount=()=>`<h2>Account</h2>
-<div class="card"><div class="sub">Username (shown on public decks and the leaderboard, don't use your real name)</div><input id="un" maxlength="20" value="${esc(P.username)}"><button data-act="name">Save username</button></div>
+<div class="card"><div class="sub">Username (shown on public decks and the leaderboards, don't use your real name)</div><input id="un" maxlength="20" value="${esc(P.username)}"><button data-act="name">Save username</button></div>
 <div class="card row"><div>⭐ ${P.points}<div class="sub">points</div></div><div>🔥 ${P.streak}<div class="sub">day streak</div></div><div>📚 ${P.cardsStudied}<div class="sub">cards studied</div></div><div>✅ ${P.tasksDone}<div class="sub">tasks done</div></div></div>
 <h3>Awards</h3>`+
 AWARDS.map(([n,d,f])=>`<div class="card award ${f(P)?"got":""}"><b>${f(P)?"🏆 ":"🔒 "}${n}</b><div class="sub">${d}</div></div>`).join("");
 
 function render(){
  const on=k=>view===k||(k==="decks"&&(view==="edit"||(view==="study"&&study&&study.from==="decks")))||(k==="explore"&&view==="study"&&study&&study.from==="explore")?"on":"";
- $("nav").innerHTML="<h1>DueDash</h1>"+
+ $("nav").innerHTML='<img src="logo.png" alt="DueDash">'+
  [["planner","Planner"],["decks","My Decks"],["explore","Explore"],["leaders","Leaderboard"],["account","Account"]].map(([k,l])=>`<button data-go="${k}" class="${on(k)}">${l}</button>`).join("")+
  `<div class="sub">⭐ ${P.points} pts · 🔥 ${P.streak}</div><button class="alt" data-act="out">Log out</button>`;
  $("main").innerHTML=({planner:vPlanner,decks:vDecks,edit:vEdit,study:vStudy,explore:vExplore,account:vAccount,leaders:vLeaders})[view]();

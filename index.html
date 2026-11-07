@@ -37,7 +37,7 @@ select{font-size:15px;padding:9px 10px;max-width:100%}
 .opt.right .tick{color:#4ade80;font-weight:700}
 .tf{display:flex;gap:8px;align-items:center;margin-bottom:8px;cursor:pointer}
 .tf input[type=radio]{margin:0}
-.pair{display:flex;gap:8px}
+.pair{display:flex;gap:8px;align-items:flex-start}
 
 #auth{width:calc(100% - 32px);max-width:400px;margin:7vh auto;padding:28px;background:rgba(10,14,35,.72);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
 #auth img{display:block;width:100%;max-width:200px;margin:0 auto 14px;border-radius:16px}
@@ -50,6 +50,7 @@ nav button{background:none;box-shadow:none;text-align:left;color:var(--text);pad
 nav button:hover{background:rgba(255,255,255,.07);transform:none;filter:none}
 nav button.on{background:linear-gradient(135deg,var(--p1),var(--p2));box-shadow:0 6px 18px rgba(99,102,241,.35);font-weight:600}
 nav button.alt{justify-content:center;background:rgba(255,255,255,.08)}
+.badge{background:#ef4444;color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:1px 7px;margin-left:auto}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:auto 0 8px}
 .chip{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600}
 main{flex:1;min-width:0;padding:28px clamp(16px,4vw,40px);max-width:980px}
@@ -74,6 +75,9 @@ main{flex:1;min-width:0;padding:28px clamp(16px,4vw,40px);max-width:980px}
 .stat b{display:block;font-size:26px}
 .stat span{font-size:12.5px;color:var(--mute)}
 
+.pfp{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;background:rgba(139,92,246,.22);border:2px solid var(--p1);flex:none}
+.pfp.sm{width:40px;height:40px;font-size:22px;border-width:1px}
+
 .big{min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;text-align:center;cursor:pointer;border-radius:18px;background:linear-gradient(145deg,rgba(139,92,246,.2),rgba(99,102,241,.08));border:1px solid rgba(139,92,246,.4);gap:8px}
 .choice{display:block;width:100%;text-align:left;margin-bottom:8px;padding:13px 15px;font-size:16px}
 
@@ -95,14 +99,22 @@ button.pk.on{background:linear-gradient(135deg,var(--p1),var(--p2));border-color
 .prev svg{width:150px;height:auto}
 .btns{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
 
-.scene{position:relative;min-height:340px;border-radius:18px;overflow:hidden;border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center;gap:18px;padding:56px 12px 14px;flex-wrap:wrap;margin-bottom:12px}
+.scene{position:relative;min-height:400px;border-radius:18px;overflow:hidden;border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center;gap:18px;padding:120px 12px 14px;flex-wrap:wrap;margin-bottom:12px}
 .deco{position:absolute;top:10px;font-size:44px;opacity:.55;pointer-events:none}
 .who{position:relative;text-align:center;width:120px}
 .who svg{width:110px;height:auto;display:block;margin:0 auto}
 .who .wn{font-weight:700;font-size:13px;background:rgba(0,0,0,.5);border-radius:999px;padding:2px 9px;display:inline-block;margin-top:4px;color:#fff}
 .who .st{font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
 .who .wp{position:absolute;right:0;bottom:44px;font-size:26px}
-.bub{position:absolute;top:-34px;left:50%;transform:translateX(-50%);background:#fff;color:#222;border-radius:12px;padding:4px 9px;font-size:12px;font-weight:600;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.bub{position:absolute;bottom:100%;margin-bottom:-4px;left:50%;transform:translateX(-50%);z-index:2;background:#fff;color:#222;border-radius:12px;padding:5px 10px;font-size:12.5px;font-weight:600;width:max-content;max-width:160px;text-align:center;overflow-wrap:anywhere;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+
+#chatlog{height:190px;overflow-y:auto;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.msg{font-size:13.5px;margin:3px 0;overflow-wrap:anywhere}
+.msg b{color:#a5b4fc}
+.msg.me b{color:#4ade80}
+.chatrow{display:flex;gap:8px;margin-top:8px}
+.chatrow input{margin:0}
+.chatrow button{white-space:nowrap}
 
 /* study calendar */
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:10px}
@@ -136,6 +148,7 @@ button.pk.on{background:linear-gradient(135deg,var(--p1),var(--p2));border-color
  nav{position:static;height:auto;width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--line);padding:12px}
  nav img{max-width:56px;margin:0 8px 0 0}
  nav button{padding:8px 10px;font-size:13px}
+ .badge{margin-left:4px}
  .chips{margin:6px 0 0;width:100%}
  .cal{grid-template-columns:1fr}
  .cal-w,.cal-e{display:none}
@@ -164,7 +177,7 @@ button.pk.on{background:linear-gradient(135deg,var(--p1),var(--p2));border-color
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAnalytics} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,getDocs,limit,orderBy,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,getDocs,limit,orderBy,onSnapshot,writeBatch} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyAOBeCaNPNp_hr_0o0r5p6faW9XfkG1W3k",
@@ -189,10 +202,13 @@ const shuffle=a=>{a=[...a];for(let k=a.length-1;k>0;k--){const j=Math.floor(Math
 const ix=(arr,i)=>arr[Math.abs(Math.trunc(+i||0))%arr.length];
 let user,P,view="planner",lastView="",decks=[],pub=[],quizzes=[],pubQ=[],board=[],streaks=[],draft=null,qdraft=null,study=null,qz=null,q="";
 let room=null,members=[],unsub=null,hb=0,rt=0,tickN=0,rs={status:"studying",emote:"",emoteAt:0,focusEnd:0};
+let chat=[],chatSeen={},chatFirst=true,unsubC=null,lastSend=0;
+let notifs=[],nsub=null,nFirst=true,friends=[],fsq="",fres=null,prof=null,remBusy=false;
 
 /* ---------- pet, goal, achievements ---------- */
 const GOAL=20;
 const PETS=["🐱","🐶","🦊","🐰","🐼","🐲"];
+const EMOJIS=["😀","😎","🤓","🥳","😺","🐶","🦊","🐼","🐯","🦁","🐸","🐵","🦄","🐲","🐧","🐨","🦉","🐙","🦋","🐢","🌟","🔥","⚡","🌈","🍀","🌸","🍕","🍩","⚽","🏀","🎮","🎧","🎨","🚀","🛸","👾","🤖","👻","🎃","🧠"];
 const lvl=p=>1+Math.floor(Math.sqrt((p.points||0)/10));
 const bestStreak=p=>Math.max(p.bestStreak||0,p.streak||0);
 const A=(icon,name,desc,goal,val)=>({icon,name,desc,goal,val});
@@ -356,33 +372,65 @@ $("ab").onclick=async()=>{
  }catch(e){$("er").textContent=errMsg(e)}
 };
 
+/* ---------- unique usernames ---------- */
+const NAME_RE=/^[A-Za-z0-9_]{3,20}$/;
+const genName=()=>"Student"+Math.floor(1000+Math.random()*9000);
+async function ensureUsername(){
+ const old=P.username;
+ let name=old;
+ for(let t=0;t<12;t++){
+  if(NAME_RE.test(name)){
+   const ref=doc(db,"usernames",name.toLowerCase());
+   const r=await getDoc(ref);
+   if(r.exists()){
+    if(r.data().uid===user.uid){if(name!==old)await save({username:name});return}
+   }else{
+    try{
+     await setDoc(ref,{uid:user.uid,username:name});
+     if(name!==old){await save({username:name});toast("Your username is now "+name+" because the old one was taken or not allowed.")}
+     return;
+    }catch(e){}
+   }
+  }
+  name=genName();
+ }
+}
+
 onAuthStateChanged(auth,async u=>{
  user=u;
  if(!u){
   clearInterval(hb);clearInterval(rt);if(unsub){try{unsub()}catch(e){}unsub=null}
-  room=null;members=[];musicStop();
+  if(unsubC){try{unsubC()}catch(e){}unsubC=null}
+  if(nsub){try{nsub()}catch(e){}nsub=null}
+  room=null;members=[];chat=[];notifs=[];friends=[];prof=null;musicStop();
   $("shell").classList.add("hidden");$("auth").classList.remove("hidden");$("pw").value="";return;
  }
  try{
   const ref=doc(db,"users",u.uid);
   const s=await getDoc(ref);
-  P={username:"Student"+Math.floor(1000+Math.random()*9000),points:0,streak:0,bestStreak:0,lastDay:"",tasksDone:0,cardsStudied:0,decksMade:0,published:0,quizzesMade:0,quizzesTaken:0,perfectQuizzes:0,perfectDecks:0,revisionDone:0,focusDone:0,roomsJoined:0,goalDay:"",goalPts:0,goalDone:"",exams:[],revPer:2,revStart:"16:00",revDone:{},pet:{name:"Buddy",species:"🐱"},avatar:{skin:1,hair:0,hs:1,eye:0,fit:0,acc:0},backdrop:0,tasks:[],...(s.exists()?s.data():{})};
+  P={username:genName(),emoji:"😀",points:0,streak:0,bestStreak:0,lastDay:"",tasksDone:0,cardsStudied:0,decksMade:0,published:0,quizzesMade:0,quizzesTaken:0,perfectQuizzes:0,perfectDecks:0,revisionDone:0,focusDone:0,roomsJoined:0,goalDay:"",goalPts:0,goalDone:"",exams:[],revPer:2,revStart:"16:00",studyMin:45,breakMin:15,revDone:{},remSent:{},pet:{name:"Buddy",species:"🐱"},avatar:{skin:1,hair:0,hs:1,eye:0,fit:0,acc:0},backdrop:0,tasks:[],...(s.exists()?s.data():{})};
   if(!s.exists())await setDoc(ref,P);
+  await ensureUsername();
   await sync();
  }catch(e){alert("Database error: "+(e.code||e.message)+". Check your Firestore rules.");return}
  $("auth").classList.add("hidden");$("shell").classList.remove("hidden");
  renderMusic();
+ startNotifs();
  go("planner");
 });
 
 /* ---------- data helpers ---------- */
 const liveStreak=p=>(p.lastDay===day()||p.lastDay===day(1))?p.streak:0;
-const sync=()=>setDoc(doc(db,"leaderboard",user.uid),{username:P.username,points:P.points,streak:liveStreak(P)});
+const PROFILE_KEYS=["username","emoji","points","streak","bestStreak","lastDay","tasksDone","cardsStudied","decksMade","published","quizzesMade","quizzesTaken","perfectQuizzes","perfectDecks","revisionDone","focusDone","roomsJoined","pet"];
+const sync=()=>Promise.all([
+ setDoc(doc(db,"leaderboard",user.uid),{username:P.username,points:P.points,streak:liveStreak(P)}),
+ setDoc(doc(db,"profiles",user.uid),Object.fromEntries(PROFILE_KEYS.map(k=>[k,P[k]??0])))
+]);
 const save=async f=>{
  const before=unlocked(P);
  Object.assign(P,f);
  await updateDoc(doc(db,"users",user.uid),f);
- if("points" in f||"username" in f)await sync();
+ if(PROFILE_KEYS.some(k=>k in f))await sync();
  const fresh=unlocked(P).filter(n=>!before.includes(n));
  if(fresh.length)toast("🏆 Achievement unlocked: "+fresh.join(", "));
 };
@@ -448,11 +496,88 @@ const planDays=()=>{
  return out;
 };
 
+/* reminders: tasks and exams due tomorrow go to the bell */
+async function checkReminders(){
+ if(!P||!user||remBusy)return;
+ remBusy=true;
+ try{
+  const t=plus(0),tm=plus(1),pre="r"+t.replace(/-/g,"");
+  const key=(kind,name,d)=>(pre+"_"+kind+"_"+name+"_"+d).replace(/[^A-Za-z0-9_]/g,"_");
+  const sent={};
+  Object.keys(P.remSent||{}).forEach(k=>{if(k.startsWith(pre))sent[k]=true});
+  const items=[];
+  (P.tasks||[]).forEach(x=>{if(!x.done&&x.due===tm)items.push({k:key("t",x.name,x.due),text:"📌 Task due tomorrow: "+x.name})});
+  (P.exams||[]).forEach(e=>{if(e.date===tm)items.push({k:key("e",e.subject,e.date),text:"📝 Exam tomorrow: "+e.subject+". Good luck!"})});
+  const fresh=items.filter(i=>!sent[i.k]);
+  for(const i of fresh){
+   await addDoc(collection(db,"notifications"),{to:user.uid,from:user.uid,fromName:"DueDash",type:"reminder",text:i.text.slice(0,200),at:Date.now()});
+   sent[i.k]=true;
+  }
+  if(fresh.length||Object.keys(sent).length!==Object.keys(P.remSent||{}).length)await save({remSent:sent});
+ }catch(e){console.warn("reminders",e)}
+ remBusy=false;
+}
+
+/* notifications */
+function startNotifs(){
+ if(nsub){try{nsub()}catch(e){}}
+ nFirst=true;notifs=[];
+ nsub=onSnapshot(query(collection(db,"notifications"),where("to","==",user.uid)),snap=>{
+  const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.at||0)-(a.at||0));
+  if(nFirst){if(list.length)toast("🔔 You have "+list.length+" notification"+(list.length===1?"":"s"))}
+  else snap.docChanges().forEach(c=>{if(c.type==="added")toast("🔔 "+(c.doc.data().text||"New notification"))});
+  nFirst=false;notifs=list;
+  renderNav();
+  if(view==="notifs")render();
+ },err=>console.warn("notifications",err));
+}
+
+/* friends */
+async function loadFriends(){
+ const snap=await getDocs(query(collection(db,"friendships"),where("users","array-contains",user.uid)));
+ const ids=snap.docs.map(d=>(d.data().users||[]).find(u=>u!==user.uid)).filter(Boolean);
+ friends=await Promise.all(ids.map(async id=>{
+  try{const s=await getDoc(doc(db,"profiles",id));return s.exists()?{uid:id,...s.data()}:{uid:id,username:"(unknown)"}}
+  catch(e){return{uid:id,username:"(unknown)"}}
+ }));
+ friends.sort((a,b)=>String(a.username).localeCompare(String(b.username)));
+}
+const pairId=(a,b)=>[a,b].sort().join("_");
+async function searchFriend(){
+ const n=($("fs")?$("fs").value:"").trim();
+ fsq=n;
+ if(!NAME_RE.test(n))fres={msg:"Usernames are 3 to 20 letters, numbers or underscores."};
+ else if(n.toLowerCase()===P.username.toLowerCase())fres={msg:"That's you! 😄"};
+ else{
+  const r=await getDoc(doc(db,"usernames",n.toLowerCase()));
+  fres=r.exists()?{uid:r.data().uid,username:r.data().username}:{msg:'No one is called "'+n+'". Check the spelling.'};
+ }
+ render();
+}
+
 /* study rooms */
 const mkCode=()=>Array.from({length:6},()=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random()*32)]).join("");
-const heartbeat=()=>room?setDoc(doc(db,"rooms",room.code,"members",user.uid),{username:P.username,avatar:P.avatar,pet:(P.pet&&P.pet.species)||"🐱",status:rs.status,emote:rs.emote,emoteAt:rs.emoteAt,lastSeen:Date.now()}).catch(()=>{}):null;
+const heartbeat=()=>room?setDoc(doc(db,"rooms",room.code,"members",user.uid),{username:P.username,avatar:P.avatar,pet:(P.pet&&P.pet.species)||"🐱",emoji:P.emoji||"😀",status:rs.status,emote:rs.emote,emoteAt:rs.emoteAt,lastSeen:Date.now()}).catch(()=>{}):null;
 const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
 const paintRoom=()=>{const el=$("scene");if(el&&view==="room")el.innerHTML=sceneHTML()};
+const chatHTML=()=>chat.length?chat.map(m=>`<div class="msg ${m.uid===user.uid?"me":""}"><b>${esc(m.username||"Student")}:</b> ${esc(m.text||"")}</div>`).join(""):'<div class="sub">No messages yet. Say hi! 👋</div>';
+const paintChat=()=>{
+ const el=$("chatlog");if(!el||view!=="room")return;
+ const atEnd=el.scrollHeight-el.scrollTop-el.clientHeight<40;
+ el.innerHTML=chatHTML();
+ if(atEnd)el.scrollTop=el.scrollHeight;
+};
+async function sendChat(){
+ const inp=$("chatin");
+ if(!inp||!room)return;
+ const text=inp.value.trim().slice(0,100);
+ if(!text)return;
+ if(Date.now()-lastSend<800){toast("Slow down a little 🙂");return}
+ lastSend=Date.now();
+ inp.value="";
+ try{await addDoc(collection(db,"rooms",room.code,"messages"),{uid:user.uid,username:P.username,text,at:Date.now()})}
+ catch(e){toast("Message couldn't be sent")}
+}
 const finishFocus=async()=>{
  rs.status="studying";rs.focusEnd=0;heartbeat();
  try{await earn(5,{focusDone:(P.focusDone||0)+1});toast("🎯 Focus session complete! +5 points")}catch(e){}
@@ -460,10 +585,19 @@ const finishFocus=async()=>{
 };
 async function enterRoom(code,info){
  await leaveRoom();
- room={code,name:info.name};members=[];
+ room={code,name:info.name};members=[];chat=[];chatSeen={};chatFirst=true;
  rs={status:"studying",emote:"",emoteAt:0,focusEnd:0};
  await heartbeat();
  unsub=onSnapshot(collection(db,"rooms",code,"members"),snap=>{members=snap.docs.map(d=>({id:d.id,...d.data()}));paintRoom()},err=>alert("Room error: "+(err.code||err.message)));
+ const since=Date.now()-30000;
+ unsubC=onSnapshot(query(collection(db,"rooms",code,"messages"),where("at",">=",since),orderBy("at","desc"),limit(50)),snap=>{
+  const list=snap.docs.map(d=>({id:d.id,...d.data()})).reverse();
+  const now=Date.now();let fresh=false;
+  list.forEach(m=>{if(!(m.id in chatSeen)){chatSeen[m.id]=chatFirst?0:now;if(!chatFirst)fresh=true}});
+  chatFirst=false;chat=list;
+  paintRoom();paintChat();
+  if(fresh)setTimeout(paintRoom,8300);
+ },err=>alert("Chat error: "+(err.code||err.message)));
  hb=setInterval(heartbeat,30000);
  tickN=0;
  rt=setInterval(()=>{
@@ -473,14 +607,16 @@ async function enterRoom(code,info){
   if(++tickN%5===0)paintRoom();
  },1000);
  await save({roomsJoined:(P.roomsJoined||0)+1});
+ try{await loadFriends()}catch(e){}
  view="room";render();
 }
 async function leaveRoom(){
  if(!room)return;
  const code=room.code;
  try{if(unsub)unsub()}catch(e){}
- unsub=null;clearInterval(hb);clearInterval(rt);
- room=null;members=[];
+ try{if(unsubC)unsubC()}catch(e){}
+ unsub=null;unsubC=null;clearInterval(hb);clearInterval(rt);
+ room=null;members=[];chat=[];chatSeen={};
  try{await deleteDoc(doc(db,"rooms",code,"members",user.uid))}catch(e){}
 }
 
@@ -488,8 +624,10 @@ async function go(v){
  if(v==="room"&&!room)v="rooms";
  view=v;
  try{
+  if(v==="planner"||v==="rev")checkReminders();
   if(v==="decks")decks=(await getDocs(query(collection(db,"decks"),where("ownerId","==",user.uid)))).docs.map(d=>({id:d.id,...d.data()}));
   if(v==="quizzes")quizzes=(await getDocs(query(collection(db,"quizzes"),where("ownerId","==",user.uid)))).docs.map(d=>({id:d.id,...d.data()}));
+  if(v==="friends"){fsq="";fres=null;await loadFriends()}
   if(v==="explore"){
    q="";
    pub=(await getDocs(query(collection(db,"decks"),where("isPublic","==",true),limit(100)))).docs.map(d=>({id:d.id,...d.data()}));
@@ -516,10 +654,10 @@ const vPlanner=()=>{
   const dueTxt=t.due?(od?"⚠️ Overdue · ":"Due: ")+esc(t.due):"";
   return`<div class="card row ${t.done?"done":""}"><div><div class="nm">${esc(t.name)}</div><div class="sub ${od?"overdue":""}">${dueTxt}</div></div><div>${t.done?"":`<button data-act="done" data-i="${i}">Done +5</button> `}<button class="alt" data-act="deltask" data-i="${i}">Delete</button></div></div>`;
  }).join("");
- return`<h2>Hi, ${esc(P.username)} 👋</h2><p class="sub">Here's what's on your plate.</p>
+ return`<h2>Hi, ${esc(P.emoji||"😀")} ${esc(P.username)} 👋</h2><p class="sub">Here's what's on your plate.</p>
 <div class="stats"><div class="stat"><b>⭐ ${P.points}</b><span>points</span></div><div class="stat"><b>🔥 ${liveStreak(P)}</b><span>day streak</span></div><div class="stat"><b>✅ ${P.tasksDone}</b><span>tasks done</span></div></div>
 <div class="card row"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:40px">${petEmoji()}</span><div><b>${esc(P.pet.name)}</b><div class="sub">Level ${lvl(P)}</div></div></div><div style="flex:1;min-width:200px"><b>🎯 Daily goal</b>${goalBar()}</div></div>
-<div class="card"><input id="tk" placeholder="Task, like Math worksheet" maxlength="100"><input id="td" type="date"><button data-act="addtask">+ Add task</button></div>`+
+<div class="card"><input id="tk" placeholder="Task, like Math worksheet" maxlength="100"><input id="td" type="date"><button data-act="addtask">+ Add task</button><div class="sub" style="margin-top:8px">🔔 Tasks due tomorrow send a reminder to your Notifications.</div></div>`+
  (rows||'<div class="empty">No tasks yet. Add your first one above! ✨</div>');
 };
 
@@ -527,9 +665,12 @@ const vPlanner=()=>{
 const fmtT=m=>{let h=Math.floor(m/60)%24;const mm=m%60,ap=h>=12?"PM":"AM";h=h%12||12;return h+":"+String(mm).padStart(2,"0")+" "+ap};
 const slotTime=k=>{
  const [h,m]=(P.revStart||"16:00").split(":").map(Number);
- const s=h*60+m+k*60;
- return fmtT(s)+" – "+fmtT(s+45);
+ const sm=P.studyMin||45,bm=P.breakMin===undefined?15:P.breakMin;
+ const s=h*60+m+k*(sm+bm);
+ return fmtT(s)+" – "+fmtT(s+sm);
 };
+const SM=[15,20,25,30,45,50,60,75,90,120],BM=[0,5,10,15,20,30];
+const opts=(arr,cur,fmt)=>arr.map(n=>`<option value="${n}" ${cur===n?"selected":""}>${fmt?fmt(n):n}</option>`).join("");
 
 const vRev=()=>{
  const t0=plus(0);
@@ -556,12 +697,16 @@ const vRev=()=>{
    '<div class="cal-e"></div>'.repeat(lead)+
    plan.map(cell).join("")+`</div>`;
  }
+ const sm=P.studyMin||45,bm=P.breakMin===undefined?15:P.breakMin;
  return`<h2>Revision Planner</h2><p class="sub">Add your exams and DueDash builds your study calendar, with more sessions for the exams coming up soonest.</p>
 <div class="card"><h3 style="margin-top:0">Your exams</h3>`+
  (exs.length?exs.map(e=>`<div class="row" style="margin-bottom:8px"><span>📝 <b>${esc(e.subject)}</b> · ${esc(e.date)}</span><button class="alt" data-act="xdel" data-i="${e.i}">Remove</button></div>`).join(""):'<p class="sub">No exams yet.</p>')+
  `<input id="xs" placeholder="Subject, like Maths" maxlength="30"><input id="xd" type="date" min="${t0}"><button data-act="xadd">+ Add exam</button>
-<div class="sub" style="margin-top:12px">Study sessions per day: <select id="rp">${[1,2,3,4].map(n=>`<option value="${n}" ${(P.revPer||2)===n?"selected":""}>${n}</option>`).join("")}</select></div>
-<div class="sub" style="margin-top:10px">First session starts at: <input id="rstart" type="time" value="${esc(P.revStart||"16:00")}" style="width:auto;margin:0 0 0 6px;padding:7px 10px"> · 45 min sessions, 15 min break between</div></div>`+
+<h3>⏱️ Your study schedule</h3>
+<div class="sub" style="margin-top:6px">Study sessions per day: <select id="rp">${opts([1,2,3,4,5,6],P.revPer||2)}</select></div>
+<div class="sub" style="margin-top:10px">Study length: <select id="rsm">${opts(SM,sm,n=>n+" min")}</select> · Break length: <select id="rbm">${opts(BM,bm,n=>n===0?"No break":n+" min")}</select></div>
+<div class="sub" style="margin-top:10px">First session starts at: <input id="rstart" type="time" value="${esc(P.revStart||"16:00")}" style="width:auto;margin:0 0 0 6px;padding:7px 10px"></div>
+<div class="sub" style="margin-top:8px">🔔 You get a reminder the day before each exam.</div></div>`+
  (plan.length?grid:'<div class="empty">Add an exam date to see your study calendar 📅</div>');
 };
 
@@ -584,10 +729,10 @@ const swatch=(k,arr)=>arr.map((c,i)=>`<button class="sw ${(Math.abs(+P.avatar[k]
 const tbtn=(k,arr)=>arr.map((n,i)=>`<button class="alt pk ${(Math.abs(+P.avatar[k]||0)%arr.length)===i?"on":""}" data-act="av" data-k="${k}" data-i="${i}">${n}</button>`).join("");
 const bdPicker=()=>`<div class="btns">${BACKDROPS.map((b,i)=>`<button class="alt pk ${ix(BACKDROPS,P.backdrop)===b?"on":""}" data-act="bd" data-i="${i}">${b.n}</button>`).join("")}</div>`;
 
-const vRooms=()=>`<h2>Study Rooms</h2><p class="sub">Study alongside friends. Rooms are private: only people with your code can join.</p>
+const vRooms=()=>`<h2>Study Rooms</h2><p class="sub">Study alongside friends. Rooms are private: only people with your code (or an invite) can join.</p>
 <div class="two"><div class="card"><h3 style="margin-top:0">Create a room</h3><input id="rn" placeholder="Room name, like Maths group" maxlength="30"><button data-act="rcreate">+ Create room</button></div>
 <div class="card"><h3 style="margin-top:0">Join a room</h3><input id="rc" placeholder="6-letter room code" maxlength="6" style="text-transform:uppercase"><button data-act="rjoin">Join</button></div></div>
-<p class="sub">🔒 There's no free-text chat in rooms, only emotes. Use a nickname and never share personal info.</p>
+<p class="sub">🔒 Chat is only seen by people in the room. Never share personal info like your real name, address or school.</p>
 <h3>Your character</h3>
 <div class="card two"><div class="prev">${avatar(P.avatar)}</div>
 <div><div class="sub">Skin</div><div class="swatches">${swatch("skin",SK)}</div>
@@ -602,17 +747,77 @@ const sceneHTML=()=>{
  const b=bd(),now=Date.now();
  const deco=b.d.map((e,k)=>`<span class="deco" style="left:${8+k*38}%">${e}</span>`).join("");
  const act=members.filter(m=>now-(m.lastSeen||0)<90000).sort((a,c)=>String(a.username||"").localeCompare(String(c.username||"")));
- return deco+(act.length?act.map(m=>`<div class="who">${m.emote&&now-(m.emoteAt||0)<8000?`<div class="bub">${esc(m.emote)}</div>`:""}${avatar(m.avatar)}<span class="wp">${esc(m.pet||"")}</span><div class="wn">${esc(m.username||"Student")}${m.id===user.uid?" (you)":""}</div><div class="st">${ST[m.status]||ST.studying}</div></div>`).join(""):'<div class="sub" style="color:#fff">Waiting for people to join…</div>');
+ const lastMsg=uid=>{for(let i=chat.length-1;i>=0;i--)if(chat[i].uid===uid)return chat[i];return null};
+ const bubble=m=>{
+  const cm=lastMsg(m.id);
+  if(cm&&chatSeen[cm.id]&&now-chatSeen[cm.id]<8000)return`<div class="bub">${esc(cm.text)}</div>`;
+  if(m.emote&&now-(m.emoteAt||0)<8000)return`<div class="bub">${esc(m.emote)}</div>`;
+  return"";
+ };
+ return deco+(act.length?act.map(m=>`<div class="who">${bubble(m)}${avatar(m.avatar)}<span class="wp">${esc(m.pet||"")}</span><div class="wn">${esc(m.emoji||"")} ${esc(m.username||"Student")}${m.id===user.uid?" (you)":""}</div><div class="st">${ST[m.status]||ST.studying}</div></div>`).join(""):'<div class="sub" style="color:#fff">Waiting for people to join…</div>');
 };
 
 const vRoom=()=>`<div class="row"><div><h2 style="margin:0">🏠 ${esc(room.name)}</h2><div class="sub">Room code: <b>${esc(room.code)}</b> · share it with friends</div></div><div><button class="alt" data-act="copycode">Copy code</button> <button class="red" data-act="leave">Leave</button></div></div><br>
 <div id="scene" class="scene" style="background:${bd().bg}">${sceneHTML()}</div>
+<div class="card"><b>💬 Chat</b><div id="chatlog" style="margin-top:8px">${chatHTML()}</div>
+<div class="chatrow"><input id="chatin" placeholder="Type a message..." maxlength="100" autocomplete="off"><button data-act="chatsend">Send</button></div></div>
+<div class="card"><b>👥 Invite a friend</b>${friends.length?`<div class="btns">${friends.map(f=>`<button class="alt pk" data-act="invite" data-id="${esc(f.uid)}">${esc(f.emoji||"😀")} ${esc(f.username)}</button>`).join("")}</div><div class="sub">They get the invite in their 🔔 Notifications and can accept or decline.</div>`:'<p class="sub">Add friends in the Friends tab, then you can invite them here.</p>'}</div>
 <div class="card"><b>Status</b><div class="btns"><button class="alt pk ${rs.status==="studying"?"on":""}" data-act="rstatus" data-k="studying">📖 Studying</button><button class="alt pk ${rs.status==="break"?"on":""}" data-act="rstatus" data-k="break">☕ On break</button></div></div>
 <div class="card"><b>Say something</b><div class="btns">${EMOTES.map((e,i)=>`<button class="alt pk" data-act="emote" data-i="${i}">${e}</button>`).join("")}</div></div>
 <div class="card">${rs.status==="focus"
  ?`<b>🎯 Focus session</b> <span id="ftimer" style="font-size:22px;font-weight:700;margin:0 12px">${mmss(rs.focusEnd-Date.now())}</span><button class="alt" data-act="fstop">Stop</button>`
  :`<b>🎯 Focus timer</b><p class="sub" style="margin:4px 0 10px">25 minutes of focus earns +5 points. Your friends can see you're focusing.</p><button data-act="fstart">Start 25 min focus</button>`}</div>
 <div class="card"><b>Backdrop</b>${bdPicker()}</div>`;
+
+/* friends and notifications */
+const vFriends=()=>{
+ let res="";
+ if(fres){
+  if(fres.msg)res=`<div class="sub" style="margin-top:4px">${esc(fres.msg)}</div>`;
+  else{
+   const already=friends.some(f=>f.uid===fres.uid);
+   res=`<div class="row" style="margin-top:4px"><b>👤 ${esc(fres.username)}</b>${already?"<span>✅ Already friends</span>":`<button data-act="freq" data-id="${esc(fres.uid)}">+ Send friend request</button>`}</div>`;
+  }
+ }
+ const rows=friends.map(f=>`<div class="card row"><div style="display:flex;gap:12px;align-items:center"><div class="pfp sm">${esc(f.emoji||"😀")}</div><div><b>${esc(f.username||"(unknown)")}</b><div class="sub">⭐ ${f.points||0} · 🔥 ${liveStreak(f)} · Pet Lv ${lvl(f)}</div></div></div><div><button data-act="fview" data-id="${esc(f.uid)}">View profile</button> <button class="alt" data-act="fremove" data-id="${esc(f.uid)}">Remove</button></div></div>`).join("");
+ const pend=notifs.filter(n=>n.type==="friend").length;
+ return`<h2>Friends</h2><p class="sub">Search a username to send a friend request. Friends can see each other's profiles.</p>
+<div class="card"><div class="pair"><input id="fs" placeholder="Search a username" maxlength="20" value="${esc(fsq)}"><button data-act="fsearch" style="white-space:nowrap">🔍 Search</button></div>${res}</div>
+${pend?`<div class="card row"><span>👥 You have ${pend} friend request${pend===1?"":"s"} waiting.</span><button data-go="notifs">Open 🔔</button></div>`:""}
+<h3>Your friends · ${friends.length}</h3>`+(rows||'<div class="empty">No friends yet. Search a username above to add one! 👥</div>');
+};
+
+const achTiles=p=>AWARDS.map(a=>{
+ const v=a.val(p),ok=v>=a.goal,pct=Math.min(100,Math.round(v/a.goal*100));
+ return`<div class="ach ${ok?"got":""}"><div class="ic">${ok?a.icon:"🔒"}</div><b>${a.name}</b><div class="sub">${a.desc}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="sub">${Math.min(v,a.goal)} / ${a.goal}</div></div>`;
+}).join("");
+
+const vProfile=()=>{
+ const p=prof;
+ if(!p)return`<h2>Profile</h2><div class="empty">Couldn't load this profile.</div><br><button data-go="friends">Back</button>`;
+ const L=lvl(p),got=AWARDS.filter(a=>a.val(p)>=a.goal).length;
+ const pet=L<2?"🥚":(p.pet&&p.pet.species)||"🐱";
+ const S=(i,n,l)=>`<div class="stat"><b>${i} ${n}</b><span>${l}</span></div>`;
+ return`<button class="alt" data-go="friends">← Back to friends</button><br><br>
+<div class="card row"><div style="display:flex;gap:16px;align-items:center"><div class="pfp">${esc(p.emoji||"😀")}</div><div><h2 style="margin:0">${esc(p.username||"Student")}</h2><div class="sub">Your friend 👥</div></div></div><button class="alt" data-act="fremove" data-id="${esc(p.uid)}">Remove friend</button></div>
+<div class="stats">
+${S("⭐",p.points||0,"points")}${S("🔥",liveStreak(p),"day streak")}${S("🏁",bestStreak(p),"best streak")}${S(pet,L,"pet level")}
+${S("🐾",esc((p.pet&&p.pet.name)||"Buddy"),"pet name")}${S("📚",p.cardsStudied||0,"cards studied")}${S("✅",p.tasksDone||0,"tasks done")}${S("📝",p.quizzesTaken||0,"quizzes finished")}
+${S("🏗️",p.decksMade||0,"decks made")}${S("🎯",p.focusDone||0,"focus sessions")}${S("🗓️",p.revisionDone||0,"revision sessions")}${S("🏠",p.roomsJoined||0,"rooms joined")}
+</div>
+<h3>🏆 Achievements · ${got} / ${AWARDS.length} unlocked</h3><div class="awards">${achTiles(p)}</div>`;
+};
+
+const NI={friend:"👥",invite:"🏠",reminder:"⏰",info:"🔔"};
+const vNotifs=()=>`<h2>🔔 Notifications</h2><p class="sub">Friend requests, room invites and reminders.</p><br>`+
+(notifs.length?notifs.map(n=>{
+ const when=new Date(n.at||0).toLocaleString(undefined,{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+ const id=esc(n.id);
+ const btns=n.type==="friend"?`<button class="green" data-act="nacc" data-id="${id}">Accept</button> <button class="alt" data-act="ndec" data-id="${id}">Decline</button>`
+  :n.type==="invite"?`<button class="green" data-act="njoin" data-id="${id}">Join room</button> <button class="alt" data-act="ndec" data-id="${id}">Decline</button>`
+  :`<button class="alt" data-act="ndec" data-id="${id}">Dismiss</button>`;
+ return`<div class="card row"><div><div>${NI[n.type]||"🔔"} ${esc(n.text||"")}</div><div class="sub">${esc(when)}</div></div><div>${btns}</div></div>`;
+}).join(""):'<div class="empty">All caught up! Friend requests, invites and reminders will show up here 🔔</div>');
 
 const vDecks=()=>`<h2>My Decks</h2><p class="sub">Flashcards you made.</p><button data-act="new">+ New deck</button><br><br>`+
 (decks.length?decks.map(d=>`<div class="card row"><div><b>${esc(d.title)}</b><div class="sub">${d.cards.length} cards · ${d.isPublic?"Public":"Private"}</div></div><div><button data-act="study" data-id="${d.id}">Study</button> <button class="alt" data-act="edit" data-id="${d.id}">Edit</button> <button class="red" data-act="deldeck" data-id="${d.id}">Delete</button></div></div>`).join(""):'<div class="empty">No decks yet. Make your first one!</div>');
@@ -721,12 +926,10 @@ const vLeaders=()=>{
 
 const vAccount=()=>{
  const got=AWARDS.filter(a=>a.val(P)>=a.goal).length;
- const tiles=AWARDS.map(a=>{
-  const v=a.val(P),ok=v>=a.goal,pct=Math.min(100,Math.round(v/a.goal*100));
-  return`<div class="ach ${ok?"got":""}"><div class="ic">${ok?a.icon:"🔒"}</div><b>${a.name}</b><div class="sub">${a.desc}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="sub">${Math.min(v,a.goal)} / ${a.goal}</div></div>`;
- }).join("");
  return`<h2>Account</h2>
-<div class="card"><div class="sub">Username (shown on public decks, quizzes, study rooms and the leaderboards, don't use your real name)</div><input id="un" maxlength="20" value="${esc(P.username)}"><button data-act="name">Save username</button></div>
+<div class="card"><div style="display:flex;gap:16px;align-items:center"><div class="pfp">${esc(P.emoji||"😀")}</div><div><b>Profile picture</b><div class="sub">Pick an emoji. Friends and study rooms will see it.</div></div></div>
+<div class="btns" style="margin-top:12px">${EMOJIS.map((e,i)=>`<button class="alt pk ${(P.emoji||"😀")===e?"on":""}" style="font-size:22px" data-act="emoji" data-i="${i}">${e}</button>`).join("")}</div></div>
+<div class="card"><div class="sub">Username. 3 to 20 letters, numbers or underscores. Only one person can have each username, so friends can find you. Don't use your real name.</div><input id="un" maxlength="20" value="${esc(P.username)}"><button data-act="name">Save username</button></div>
 <div class="stats">
 <div class="stat"><b>⭐ ${P.points}</b><span>points</span></div>
 <div class="stat"><b>🔥 ${liveStreak(P)}</b><span>day streak</span></div>
@@ -737,19 +940,25 @@ const vAccount=()=>{
 <div class="stat"><b>📝 ${P.quizzesTaken}</b><span>quizzes finished</span></div>
 </div>
 <h3>🏆 Achievements · ${got} / ${AWARDS.length} unlocked</h3>
-<div class="awards">${tiles}</div>`;
+<div class="awards">${achTiles(P)}</div>`;
 };
 
-function render(){
+const NAV=[["planner","📅","Planner"],["rev","🗓️","Revision"],["decks","📚","My Decks"],["quizzes","📝","My Quizzes"],["explore","🔍","Explore"],["rooms","🏠","Study Rooms"],["friends","👥","Friends"],["notifs","🔔","Notifications"],["pet","🐾","My Pet"],["leaders","🏆","Leaderboard"],["account","👤","Account"]];
+function renderNav(){
+ if(!P)return;
  const f=(view==="study"&&study)?study.from:(view==="qtake"&&qz)?qz.from:"";
- const on=k=>(view===k||(k==="decks"&&(view==="edit"||f==="decks"))||(k==="quizzes"&&(view==="qedit"||f==="quizzes"))||(k==="explore"&&f==="explore")||(k==="rooms"&&view==="room"))?"on":"";
+ const on=k=>(view===k||(k==="decks"&&(view==="edit"||f==="decks"))||(k==="quizzes"&&(view==="qedit"||f==="quizzes"))||(k==="explore"&&f==="explore")||(k==="rooms"&&view==="room")||(k==="friends"&&view==="profile"))?"on":"";
  $("nav").innerHTML='<img src="logo.png" alt="DueDash">'+
- [["planner","📅","Planner"],["rev","🗓️","Revision"],["decks","📚","My Decks"],["quizzes","📝","My Quizzes"],["explore","🔍","Explore"],["rooms","🏠","Study Rooms"],["pet","🐾","My Pet"],["leaders","🏆","Leaderboard"],["account","👤","Account"]].map(([k,ic,l])=>`<button data-go="${k==="rooms"&&room?"room":k}" class="${on(k)}"><span>${ic}</span>${l}</button>`).join("")+
- `<div class="chips"><span class="chip">⭐ ${P.points}</span><span class="chip">🔥 ${liveStreak(P)}</span><span class="chip">${petEmoji()} Lv ${lvl(P)}</span></div><button class="alt" data-act="out">Log out</button>`;
+ NAV.map(([k,ic,l])=>`<button data-go="${k==="rooms"&&room?"room":k}" class="${on(k)}"><span>${ic}</span>${l}${k==="notifs"&&notifs.length?`<span class="badge">${notifs.length}</span>`:""}</button>`).join("")+
+ `<div class="chips"><span class="chip">${esc(P.emoji||"😀")}</span><span class="chip">⭐ ${P.points}</span><span class="chip">🔥 ${liveStreak(P)}</span><span class="chip">${petEmoji()} Lv ${lvl(P)}</span></div><button class="alt" data-act="out">Log out</button>`;
+}
+function render(){
+ renderNav();
  const m=$("main");
  m.classList.toggle("anim",view!==lastView);
  lastView=view;
- m.innerHTML=({planner:vPlanner,rev:vRev,pet:vPet,rooms:vRooms,room:vRoom,decks:vDecks,edit:vEdit,study:vStudy,quizzes:vQuizzes,qedit:vQEdit,qtake:vQTake,explore:vExplore,account:vAccount,leaders:vLeaders})[view]();
+ m.innerHTML=({planner:vPlanner,rev:vRev,pet:vPet,rooms:vRooms,room:vRoom,decks:vDecks,edit:vEdit,study:vStudy,quizzes:vQuizzes,qedit:vQEdit,qtake:vQTake,explore:vExplore,account:vAccount,leaders:vLeaders,friends:vFriends,profile:vProfile,notifs:vNotifs})[view]();
+ if(view==="room"){const el=$("chatlog");if(el)el.scrollTop=el.scrollHeight}
 }
 
 /* ---------- clicks ---------- */
@@ -769,7 +978,7 @@ document.addEventListener("click",async e=>{
   /* planner */
   if(a==="addtask"){
    const name=$("tk").value.trim();if(!name)return;
-   await save({tasks:[...P.tasks,{name,due:$("td").value,done:false}]});render();
+   await save({tasks:[...P.tasks,{name,due:$("td").value,done:false}]});render();checkReminders();
   }
   if(a==="done"){await earn(5,{tasks:P.tasks.map((x,j)=>j===i?{...x,done:true}:x),tasksDone:P.tasksDone+1});render()}
   if(a==="deltask"){await save({tasks:P.tasks.filter((_,j)=>j!==i)});render()}
@@ -780,7 +989,7 @@ document.addEventListener("click",async e=>{
    if(!s||!d){alert("Add a subject and an exam date.");return}
    if(d<plus(0)){alert("Pick a date that is today or later.");return}
    if((P.exams||[]).length>=10){alert("10 exams is the maximum.");return}
-   await save({exams:[...(P.exams||[]),{subject:s,date:d}]});render();
+   await save({exams:[...(P.exams||[]),{subject:s,date:d}]});render();checkReminders();
   }
   if(a==="xdel"){await save({exams:P.exams.filter((_,j)=>j!==i)});render()}
   if(a==="rdone"){
@@ -794,7 +1003,7 @@ document.addEventListener("click",async e=>{
   if(a==="petsp"){await save({pet:{...P.pet,species:PETS[i]}});render()}
   if(a==="petname"){const n=$("pn").value.trim().slice(0,16);if(!n)return;await save({pet:{...P.pet,name:n}});toast("🐾 Pet renamed!");render()}
 
-  /* characters, backdrops, rooms */
+  /* characters, backdrops, rooms, chat */
   if(a==="av"){await save({avatar:{...P.avatar,[b.dataset.k]:i}});render();heartbeat()}
   if(a==="bd"){await save({backdrop:i});render()}
   if(a==="rcreate"){
@@ -817,6 +1026,57 @@ document.addEventListener("click",async e=>{
   if(a==="emote"){rs.emote=EMOTES[i];rs.emoteAt=Date.now();heartbeat()}
   if(a==="fstart"){rs.status="focus";rs.focusEnd=Date.now()+25*60000;heartbeat();render()}
   if(a==="fstop"){rs.status="studying";rs.focusEnd=0;heartbeat();render()}
+  if(a==="chatsend"){await sendChat();const c=$("chatin");if(c)c.focus()}
+  if(a==="invite"){
+   const f=friends.find(x=>x.uid===id);
+   if(!f||!room)return;
+   await addDoc(collection(db,"notifications"),{to:id,from:user.uid,fromName:P.username,type:"invite",text:(P.username+' invited you to study in "'+room.name+'"').slice(0,200),roomCode:room.code,roomName:room.name,at:Date.now()});
+   toast("📨 Invite sent to "+f.username);
+  }
+
+  /* friends and notifications */
+  if(a==="fsearch")await searchFriend();
+  if(a==="freq"){
+   if(friends.some(f=>f.uid===id))return;
+   if(notifs.some(n=>n.type==="friend"&&n.from===id)){alert("They already sent you a request! Accept it in 🔔 Notifications.");return}
+   try{
+    await setDoc(doc(db,"notifications","fr_"+user.uid+"_"+id),{to:id,from:user.uid,fromName:P.username,type:"friend",text:P.username+" sent you a friend request",at:Date.now()});
+    fres={msg:"✅ Friend request sent!"};
+   }catch(err){fres={msg:"Couldn't send the request. You might have already sent one."}}
+   render();
+  }
+  if(a==="nacc"){
+   const n=notifs.find(x=>x.id===id);if(!n)return;
+   const users=[user.uid,n.from].sort();
+   try{await setDoc(doc(db,"friendships",users.join("_")),{users,at:Date.now()})}
+   catch(err){await deleteDoc(doc(db,"notifications",id));alert("You may already be friends with this person.");return}
+   await deleteDoc(doc(db,"notifications",id));
+   try{await addDoc(collection(db,"notifications"),{to:n.from,from:user.uid,fromName:P.username,type:"info",text:P.username+" accepted your friend request 🎉",at:Date.now()})}catch(err){}
+   try{await loadFriends()}catch(err){}
+   toast("🎉 You're now friends with "+(n.fromName||"them")+"!");
+   render();
+  }
+  if(a==="ndec"){await deleteDoc(doc(db,"notifications",id))}
+  if(a==="njoin"){
+   const n=notifs.find(x=>x.id===id);if(!n)return;
+   const snap=await getDoc(doc(db,"rooms",n.roomCode));
+   await deleteDoc(doc(db,"notifications",id));
+   if(!snap.exists()){alert("That room doesn't exist any more.");return}
+   await enterRoom(n.roomCode,{name:snap.data().name});
+  }
+  if(a==="fview"){
+   try{const s=await getDoc(doc(db,"profiles",id));prof=s.exists()?{uid:id,...s.data()}:(friends.find(f=>f.uid===id)||null)}
+   catch(err){prof=friends.find(f=>f.uid===id)||null}
+   view="profile";render();
+  }
+  if(a==="fremove"&&confirm("Remove this friend?")){
+   await deleteDoc(doc(db,"friendships",pairId(user.uid,id)));
+   await loadFriends();
+   go("friends");
+  }
+
+  /* profile picture */
+  if(a==="emoji"){await save({emoji:EMOJIS[i]});render();heartbeat()}
 
   /* flashcard decks */
   if(a==="new"){draft={title:"",cards:[{front:"",back:""}],isPublic:false};view="edit";render()}
@@ -898,7 +1158,19 @@ document.addEventListener("click",async e=>{
   }
   if(a==="qreport"){await addDoc(collection(db,"reports"),{quizId:id,reporterId:user.uid,createdAt:Date.now()});alert("Thanks, this quiz was reported.")}
 
-  if(a==="name"){const n=$("un").value.trim();if(!n)return;await save({username:n});alert("Username saved!");render();heartbeat()}
+  /* username (one person per username) */
+  if(a==="name"){
+   const n=$("un").value.trim();
+   if(!NAME_RE.test(n)){alert("Usernames need 3 to 20 letters, numbers or underscores, with no spaces.");return}
+   if(n===P.username)return;
+   const oldL=P.username.toLowerCase(),newL=n.toLowerCase();
+   const batch=writeBatch(db);
+   batch.set(doc(db,"usernames",newL),{uid:user.uid,username:n});
+   if(oldL!==newL)batch.delete(doc(db,"usernames",oldL));
+   try{await batch.commit()}
+   catch(err){alert("That username is already taken (or not allowed). Try another one.");return}
+   await save({username:n});toast("✅ Username saved!");render();heartbeat();
+  }
  }catch(err){alert("Something went wrong: "+(err.code||err.message))}
 });
 
@@ -906,6 +1178,8 @@ document.addEventListener("input",e=>{
  const t=e.target;
  if(t.id==="vol"){mus.vol=+t.value;if(mus.master)mus.master.gain.value=mus.vol;return}
  if(t.id==="rp"){save({revPer:+t.value}).then(render);return}
+ if(t.id==="rsm"){save({studyMin:+t.value}).then(render);return}
+ if(t.id==="rbm"){save({breakMin:+t.value}).then(render);return}
  if(t.id==="sq"){q=t.value;$("results").innerHTML=exploreList();return}
  if(qz&&view==="qtake"&&t.dataset.mi!==undefined){qz.m[+t.dataset.mi]=t.value;return}
  if(qdraft&&view==="qedit"){
@@ -933,10 +1207,17 @@ document.addEventListener("input",e=>{
  else if(t.id==="dp")draft.isPublic=t.checked;
 });
 
-/* start time box: saves when the person finishes picking, not on every keystroke */
+/* start time box: saves when the person finishes picking */
 document.addEventListener("change",e=>{
  const t=e.target;
  if(t.id==="rstart"&&t.value&&P){save({revStart:t.value}).then(render)}
+});
+
+/* Enter key in chat and friend search */
+document.addEventListener("keydown",e=>{
+ if(e.key!=="Enter"||!P)return;
+ if(e.target.id==="chatin"){e.preventDefault();sendChat()}
+ else if(e.target.id==="fs"){e.preventDefault();searchFriend().catch(err=>alert("Something went wrong: "+(err.code||err.message)))}
 });
 </script>
 </body>

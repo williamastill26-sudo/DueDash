@@ -1,6 +1,3 @@
-Absolutely — here is a complete replacement file with the logo redesigned to match the mockup you sent. I kept the app structure intact, but replaced the logo SVGs so the branding now looks like the reference.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -672,28 +669,31 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
     <div class="brand-wrap">
       <svg class="brand-svg" viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg" aria-label="DueDash logo">
         <defs>
-          <linearGradient id="logoGrad" x1="0" x2="1">
-            <stop offset="0%" stop-color="#5d7d61"/>
-            <stop offset="100%" stop-color="#2c4d3d"/>
+          <linearGradient id="dgrad" x1="0" x2="1">
+            <stop offset="0%" stop-color="#4e6a57"/>
+            <stop offset="100%" stop-color="#2d4738"/>
           </linearGradient>
         </defs>
-        <rect x="18" y="18" width="784" height="484" rx="98" fill="#efe8dd" stroke="#2d4738" stroke-width="18"/>
-        <g transform="translate(72 30)">
-          <g fill="url(#logoGrad)">
-            <path d="M265 160c0-29 23-52 52-52h68c86 0 142 63 142 146 0 82-56 146-142 146h-68c-29 0-52-23-52-52V160zm74 52v142c0 16 13 29 29 29h28c53 0 86-37 86-89 0-52-33-89-86-89h-28c-16 0-29 13-29 29z"/>
+        <rect x="20" y="20" width="780" height="480" rx="90" fill="#eee7da" stroke="#2d4738" stroke-width="18"/>
+        <g transform="translate(90 90)">
+          <g fill="url(#dgrad)">
+            <path d="M240 26C160 26 95 88 95 180V218C95 310 160 372 240 372H302C357 372 395 337 395 285C395 258 382 236 360 223L299 181L360 142C382 129 395 107 395 80C395 28 357 26 302 26H240Z" opacity="0.96"/>
           </g>
-          <g fill="#dfe8dc" opacity=".9">
-            <rect x="18" y="160" width="198" height="25" rx="12" transform="rotate(-20 18 160)"/>
-            <rect x="26" y="210" width="234" height="25" rx="12" transform="rotate(-20 26 210)"/>
-            <rect x="35" y="260" width="270" height="25" rx="12" transform="rotate(-20 35 260)"/>
-            <rect x="42" y="310" width="300" height="25" rx="12" transform="rotate(-20 42 310)"/>
-            <rect x="48" y="360" width="326" height="25" rx="12" transform="rotate(-20 48 360)"/>
+          <g fill="#dfe7db">
+            <rect x="92" y="164" width="260" height="46" rx="18" transform="rotate(-20 92 164)" opacity="0.9"/>
+            <rect x="110" y="210" width="280" height="46" rx="18" transform="rotate(-20 110 210)" opacity="0.8"/>
+            <rect x="130" y="256" width="300" height="46" rx="18" transform="rotate(-20 130 256)" opacity="0.72"/>
+            <rect x="150" y="302" width="320" height="46" rx="18" transform="rotate(-20 150 302)" opacity="0.68"/>
           </g>
-          <g fill="#ecf1e7">
-            <path d="M372 195L435 250L520 150L535 161L438 285L360 214Z" transform="rotate(10 372 195)"/>
+          <g fill="#dfe7db" stroke="#dfe7db" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M350 110 L430 190 L510 110" opacity="0.9"/>
+          </g>
+          <g fill="none" stroke="#dfe7db" stroke-width="18" stroke-linecap="round">
+            <path d="M360 100 L425 165"/>
+            <path d="M425 165 L490 100"/>
           </g>
         </g>
-        <text x="410" y="420" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2d4738" letter-spacing="-7">DueDash</text>
+        <text x="410" y="420" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2a4738" letter-spacing="-7">DueDash</text>
       </svg>
     </div>
     <h2 id="at">Log in</h2>
@@ -1131,6 +1131,136 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       mus.stops.push(() => clearInterval(id));
     };
 
+    const addWind = (ctx, out) => {
+      const n = noiseSrc(ctx, true);
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 380;
+      const g = ctx.createGain();
+      g.gain.value = 0.18;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.07;
+      const lg = ctx.createGain();
+      lg.gain.value = 0.12;
+      lfo.connect(lg);
+      lg.connect(g.gain);
+      n.connect(lp);
+      lp.connect(g);
+      g.connect(out);
+      lfo.start();
+      mus.stops.push(() => { n.stop(); lfo.stop(); });
+    };
+
+    const addFireplace = (ctx, out) => {
+      const n = noiseSrc(ctx, false);
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 650;
+      bp.Q.value = 0.7;
+      const g = ctx.createGain();
+      g.gain.value = 0.09;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 1.8;
+      const lg = ctx.createGain();
+      lg.gain.value = 0.035;
+      lfo.connect(lg);
+      lg.connect(g.gain);
+      n.connect(bp);
+      bp.connect(g);
+      g.connect(out);
+      lfo.start();
+      mus.stops.push(() => { n.stop(); lfo.stop(); });
+    };
+
+    const addBirdsong = (ctx, out) => {
+      const playChirp = () => {
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1700 + Math.random() * 900, t);
+        osc.frequency.exponentialRampToValueAtTime(1100 + Math.random() * 500, t + 0.16);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.035, t + 0.025);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+
+        osc.connect(g);
+        g.connect(out);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      };
+
+      playChirp();
+      const id = setInterval(() => {
+        if (Math.random() > 0.35) playChirp();
+        if (Math.random() > 0.75) setTimeout(playChirp, 180);
+      }, 850);
+
+      mus.stops.push(() => clearInterval(id));
+    };
+
+    const addForest = (ctx, out) => {
+      const n = noiseSrc(ctx, true);
+      const hp = ctx.createBiquadFilter();
+      hp.type = "highpass";
+      hp.frequency.value = 400;
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 1200;
+      const g = ctx.createGain();
+      g.gain.value = 0.11;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.18;
+      const lg = ctx.createGain();
+      lg.gain.value = 0.07;
+      lfo.connect(lg);
+      lg.connect(g.gain);
+
+      n.connect(hp);
+      hp.connect(lp);
+      lp.connect(g);
+      g.connect(out);
+
+      lfo.start();
+      mus.stops.push(() => { n.stop(); lfo.stop(); });
+    };
+
+    const addThunder = (ctx, out) => {
+      const base = ctx.createOscillator();
+      base.type = "sawtooth";
+      base.frequency.value = 90;
+      const g = ctx.createGain();
+      g.gain.value = 0.015;
+      base.connect(g);
+      g.connect(out);
+      base.start();
+
+      const burst = () => {
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(110, t);
+        osc.frequency.exponentialRampToValueAtTime(32, t + 0.45);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.08, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+
+        osc.connect(gain);
+        gain.connect(out);
+        osc.start(t);
+        osc.stop(t + 0.45);
+      };
+
+      const id = setInterval(() => {
+        if (Math.random() > 0.45) burst();
+      }, 2400);
+
+      mus.stops.push(() => { clearInterval(id); base.stop(); });
+    };
+
     const CH1 = [[220,261.63,329.63,392],[174.61,220,261.63,329.63],[261.63,329.63,392,493.88],[196,246.94,293.66,329.63]];
     const CH2 = [[146.83,174.61,220,261.63],[196,246.94,293.66,329.63],[130.81,164.81,196,246.94,293.66],[220,261.63,329.63,392]];
 
@@ -1149,6 +1279,11 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       if (k === "lofi") { addPad(ctx, out, CH2, 4); addRain(ctx, out, .12); }
       if (k === "rain") addRain(ctx, out, .45);
       if (k === "ocean") addOcean(ctx, out);
+      if (k === "wind") addWind(ctx, out);
+      if (k === "fire") addFireplace(ctx, out);
+      if (k === "birds") addBirdsong(ctx, out);
+      if (k === "forest") addForest(ctx, out);
+      if (k === "thunder") addThunder(ctx, out);
 
       mus.cur = k;
     };
@@ -1159,7 +1294,12 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       ["piano","🎹 Quiet piano"],
       ["lofi","☕ Lo-fi chill"],
       ["rain","🌧️ Soft rain"],
-      ["ocean","🌊 Ocean waves"]
+      ["ocean","🌊 Ocean waves"],
+      ["wind","🍃 Gentle wind"],
+      ["fire","🔥 Fireplace"],
+      ["birds","🐦 Morning birds"],
+      ["forest","🌲 Forest hush"],
+      ["thunder","⛈️ Distant thunder"]
     ];
 
     const renderMusic = () => {
@@ -2677,28 +2817,31 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
         <div class="brand-wrap" style="margin-bottom:8px; width:100%">
           <svg class="brand-svg" viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg" aria-label="DueDash logo">
             <defs>
-              <linearGradient id="navLogoGrad" x1="0" x2="1">
-                <stop offset="0%" stop-color="#5d7d61"/>
-                <stop offset="100%" stop-color="#2c4d3d"/>
+              <linearGradient id="navdgrad" x1="0" x2="1">
+                <stop offset="0%" stop-color="#4e6a57"/>
+                <stop offset="100%" stop-color="#2d4738"/>
               </linearGradient>
             </defs>
-            <rect x="18" y="18" width="784" height="484" rx="98" fill="#efe8dd" stroke="#2d4738" stroke-width="18"/>
-            <g transform="translate(72 30)">
-              <g fill="url(#navLogoGrad)">
-                <path d="M265 160c0-29 23-52 52-52h68c86 0 142 63 142 146 0 82-56 146-142 146h-68c-29 0-52-23-52-52V160zm74 52v142c0 16 13 29 29 29h28c53 0 86-37 86-89 0-52-33-89-86-89h-28c-16 0-29 13-29 29z"/>
+            <rect x="20" y="20" width="780" height="480" rx="90" fill="#eee7da" stroke="#2d4738" stroke-width="18"/>
+            <g transform="translate(90 90)">
+              <g fill="url(#navdgrad)">
+                <path d="M240 26C160 26 95 88 95 180V218C95 310 160 372 240 372H302C357 372 395 337 395 285C395 258 382 236 360 223L299 181L360 142C382 129 395 107 395 80C395 28 357 26 302 26H240Z" opacity="0.96"/>
               </g>
-              <g fill="#dfe8dc" opacity=".9">
-                <rect x="18" y="160" width="198" height="25" rx="12" transform="rotate(-20 18 160)"/>
-                <rect x="26" y="210" width="234" height="25" rx="12" transform="rotate(-20 26 210)"/>
-                <rect x="35" y="260" width="270" height="25" rx="12" transform="rotate(-20 35 260)"/>
-                <rect x="42" y="310" width="300" height="25" rx="12" transform="rotate(-20 42 310)"/>
-                <rect x="48" y="360" width="326" height="25" rx="12" transform="rotate(-20 48 360)"/>
+              <g fill="#dfe7db">
+                <rect x="92" y="164" width="260" height="46" rx="18" transform="rotate(-20 92 164)" opacity="0.9"/>
+                <rect x="110" y="210" width="280" height="46" rx="18" transform="rotate(-20 110 210)" opacity="0.8"/>
+                <rect x="130" y="256" width="300" height="46" rx="18" transform="rotate(-20 130 256)" opacity="0.72"/>
+                <rect x="150" y="302" width="320" height="46" rx="18" transform="rotate(-20 150 302)" opacity="0.68"/>
               </g>
-              <g fill="#ecf1e7">
-                <path d="M372 195L435 250L520 150L535 161L438 285L360 214Z" transform="rotate(10 372 195)"/>
+              <g fill="#dfe7db" stroke="#dfe7db" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M350 110 L430 190 L510 110" opacity="0.9"/>
+              </g>
+              <g fill="none" stroke="#dfe7db" stroke-width="18" stroke-linecap="round">
+                <path d="M360 100 L425 165"/>
+                <path d="M425 165 L490 100"/>
               </g>
             </g>
-            <text x="410" y="420" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2d4738" letter-spacing="-7">DueDash</text>
+            <text x="410" y="420" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2a4738" letter-spacing="-7">DueDash</text>
           </svg>
         </div>
 
@@ -2975,4 +3118,382 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
           try {
             const s = await getDoc(doc(db, "profiles", id));
             prof = s.exists() ? { uid:id, ...s.data() } : (friends.find(f => f.uid === id) || null);
-          } catch
+          } catch (err) {
+            prof = friends.find(f => f.uid === id) || null;
+          }
+          view = "profile";
+          render();
+        }
+
+        if (a === "fremove" && confirm("Remove this friend?")) {
+          await deleteDoc(doc(db, "friendships", pairId(user.uid, id)));
+          await loadFriends();
+          go("friends");
+        }
+
+        if (a === "rpost") {
+          const d = getQuiz(id);
+          if (!d || !room) return;
+          const qs = shuffle(playable(d)).slice(0, 30).map(x => {
+            if ((x.type || "mc") === "tf") return { type:"tf", q:x.q, ans:!!x.ans };
+            const order = shuffle(x.opts.map((_, k) => k));
+            return { type:"mc", q:x.q, opts:order.map(k => x.opts[k]), ans:order.indexOf(x.ans) };
+          });
+
+          if (qs.length < 2) { alert("Races need at least 2 multiple choice or true/false questions."); return; }
+          const ref = await addDoc(collection(db, "rooms", room.code, "races"), {
+            hostId:user.uid,
+            title:d.title.slice(0, 60),
+            quizId:d.id,
+            questions:qs,
+            status:"open",
+            startAt:0,
+            createdAt:Date.now()
+          });
+          await setDoc(doc(db, "rooms", room.code, "races", ref.id, "players", user.uid), { username:P.username, emoji:P.emoji || "😀", correct:0, answered:0, finished:false, finishedAt:0 });
+          toast("🏁 Race posted! Wait for friends to join, then press Start.");
+        }
+
+        if (a === "rjoinrace") {
+          if (!race || race.status !== "open") return;
+          await pushProgress(0, 0);
+          myRace = { rid:race.id, i:0, correct:0, sel:null, paid:false };
+          paintRace();
+        }
+
+        if (a === "rstart") {
+          if (race && race.hostId === user.uid) await updateDoc(raceRef(), { status:"live", startAt:Date.now() + 4000 });
+        }
+
+        if (a === "rend") {
+          if (race && race.hostId === user.uid) await updateDoc(raceRef(), { status:"done" });
+        }
+
+        if (a === "rpick") raceAnswer(i);
+        if (a === "preset") {
+          await save({ avatar:{ ...PRESETS[i].v } });
+          render();
+          heartbeat();
+        }
+
+        if (a === "emoji") {
+          await save({ emoji:EMOJIS[i] });
+          render();
+          heartbeat();
+        }
+
+        if (a === "new") {
+          draft = { title:"", cards:[{ front:"", back:"" }], isPublic:false };
+          view = "edit";
+          render();
+        }
+
+        if (a === "edit") {
+          const d = getDeck(id);
+          draft = { id:d.id, title:d.title, cards:d.cards.map(c => ({ ...c })), isPublic:d.isPublic, wasPublic:d.isPublic };
+          view = "edit";
+          render();
+        }
+
+        if (a === "addcard") {
+          if (draft.cards.length < 100) draft.cards.push({ front:"", back:"" });
+          render();
+        }
+
+        if (a === "delcard") {
+          draft.cards.splice(i, 1);
+          render();
+        }
+
+        if (a === "savedeck") {
+          const cards = draft.cards.filter(c => c.front.trim() && c.back.trim());
+          if (!draft.title.trim() || !cards.length) { alert("Add a title and at least one full card."); return; }
+          const data = { ownerId:user.uid, ownerName:P.username, title:draft.title.trim(), cards, isPublic:draft.isPublic, updated:Date.now() };
+          if (draft.id) await updateDoc(doc(db, "decks", draft.id), data);
+          else { await addDoc(collection(db, "decks"), data); await save({ decksMade:P.decksMade + 1 }); }
+          if (data.isPublic && !draft.wasPublic) await save({ published:P.published + 1 });
+          go("decks");
+        }
+
+        if (a === "deldeck" && confirm("Delete this deck?")) {
+          await deleteDoc(doc(db, "decks", id));
+          go("decks");
+        }
+
+        if (a === "study") {
+          const d = getDeck(id);
+          study = { title:d.title, cards:[...d.cards], i:0, flip:false, got:0, from:view };
+          view = "study";
+          render();
+        }
+
+        if (a === "flip") {
+          study.flip = !study.flip;
+          render();
+        }
+        if (a === "got" || a === "again") {
+          const n = a === "got" ? 1 : 0;
+          study.got += n;
+          study.i++;
+          study.flip = false;
+          const fin = study.i >= study.cards.length;
+          const perfect = fin && study.got === study.cards.length && study.cards.length >= 5;
+          await earn(n + (fin ? 10 : 0), { cardsStudied:P.cardsStudied + 1, perfectDecks:P.perfectDecks + (perfect ? 1 : 0) });
+          render();
+        }
+
+        if (a === "copy") {
+          const d = getDeck(id);
+          await addDoc(collection(db, "decks"), { ownerId:user.uid, ownerName:P.username, title:d.title + " (copy)", cards:d.cards, isPublic:false, updated:Date.now() });
+          await save({ decksMade:P.decksMade + 1 });
+          alert("Saved to My Decks!");
+        }
+        if (a === "report") {
+          await addDoc(collection(db, "reports"), { deckId:id, reporterId:user.uid, createdAt:Date.now() });
+          alert("Thanks, this deck was reported.");
+        }
+
+        if (a === "qnew") {
+          qdraft = { title:"", questions:[newQ("mc")], isPublic:false };
+          view = "qedit";
+          render();
+        }
+
+        if (a === "qedit") {
+          const d = getQuiz(id);
+          qdraft = {
+            id:d.id,
+            title:d.title,
+            questions:d.questions.map(x => JSON.parse(JSON.stringify({ type:"mc", ...x }))),
+            isPublic:d.isPublic,
+            wasPublic:d.isPublic
+          };
+          view = "qedit";
+          render();
+        }
+
+        if (a === "qaddq") {
+          if (qdraft.questions.length < 50) qdraft.questions.push(newQ("mc"));
+          render();
+        }
+
+        if (a === "qdelq") {
+          qdraft.questions.splice(i, 1);
+          render();
+        }
+
+        if (a === "qsave") {
+          const qs = qdraft.questions.map(cleanQ).filter(Boolean);
+          if (!qdraft.title.trim() || !qs.length) {
+            alert("Add a title and at least one complete question. Multiple choice needs all 4 answers, and match needs at least 2 complete pairs.");
+            return;
+          }
+          const data = { ownerId:user.uid, ownerName:P.username, title:qdraft.title.trim(), questions:qs, isPublic:qdraft.isPublic, updated:Date.now() };
+          if (qdraft.id) await updateDoc(doc(db, "quizzes", qdraft.id), data);
+          else { await addDoc(collection(db, "quizzes"), data); await save({ quizzesMade:P.quizzesMade + 1 }); }
+          if (data.isPublic && !qdraft.wasPublic) await save({ published:P.published + 1 });
+          go("quizzes");
+        }
+
+        if (a === "qdel" && confirm("Delete this quiz?")) {
+          await deleteDoc(doc(db, "quizzes", id));
+          go("quizzes");
+        }
+
+        if (a === "qtake") {
+          const d = getQuiz(id);
+          qz = { title:d.title, questions:d.questions, i:0, correct:0, from:view };
+          prep();
+          view = "qtake";
+          render();
+        }
+
+        if (a === "pick") {
+          if (qz.sel === null) {
+            qz.sel = i;
+            if (i === qz.questions[qz.i].ans) qz.correct++;
+            render();
+          }
+        }
+
+        if (a === "pickTF") {
+          if (qz.sel === null) {
+            qz.sel = (i === 1);
+            if (qz.sel === qz.questions[qz.i].ans) qz.correct++;
+            render();
+          }
+        }
+
+        if (a === "mcheck") {
+          const x = qz.questions[qz.i];
+          if (x.pairs.some((_, k) => !qz.m[k])) {
+            alert("Choose a match for every item first.");
+            return;
+          }
+          qz.chk = true;
+          if (x.pairs.every((p, k) => qz.m[k] === p.r)) qz.correct++;
+          render();
+        }
+
+        if (a === "qnext") {
+          qz.i++;
+          prep();
+          if (qz.i >= qz.questions.length) {
+            const len = qz.questions.length;
+            const pts = qz.correct * 2 + (qz.correct === len ? 10 : 0);
+            const perfect = qz.correct === len && len >= 3;
+            await earn(pts, { quizzesTaken:P.quizzesTaken + 1, perfectQuizzes:P.perfectQuizzes + (perfect ? 1 : 0) });
+          }
+          render();
+        }
+
+        if (a === "qcopy") {
+          const d = getQuiz(id);
+          await addDoc(collection(db, "quizzes"), { ownerId:user.uid, ownerName:P.username, title:d.title + " (copy)", questions:d.questions, isPublic:false, updated:Date.now() });
+          await save({ quizzesMade:P.quizzesMade + 1 });
+          alert("Saved to My Quizzes!");
+        }
+
+        if (a === "qreport") {
+          await addDoc(collection(db, "reports"), { quizId:id, reporterId:user.uid, createdAt:Date.now() });
+          alert("Thanks, this quiz was reported.");
+        }
+
+        if (a === "name") {
+          const n = $("un").value.trim();
+          if (!NAME_RE.test(n)) { alert("Usernames need 3 to 20 letters, numbers or underscores, with no spaces."); return; }
+          if (n === P.username) return;
+          const oldL = P.username.toLowerCase(), newL = n.toLowerCase();
+          const batch = writeBatch(db);
+          batch.set(doc(db, "usernames", newL), { uid:user.uid, username:n });
+          if (oldL !== newL) batch.delete(doc(db, "usernames", oldL));
+          try {
+            await batch.commit();
+          } catch (err) {
+            alert("That username is already taken (or not allowed). Try another one.");
+            return;
+          }
+          await save({ username:n });
+          toast("✅ Username saved!");
+          render();
+          heartbeat();
+        }
+      } catch (err) {
+        alert("Something went wrong: " + (err.code || err.message));
+      }
+    });
+
+    document.addEventListener("input", e => {
+      const t = e.target;
+
+      if (t.id === "vol") {
+        mus.vol = +t.value;
+        if (mus.master) mus.master.gain.value = mus.vol;
+        return;
+      }
+
+      if (t.id === "sq") {
+        q = t.value;
+        const root = $("results");
+        if (root) root.innerHTML = exploreList();
+        return;
+      }
+
+      if (t.id === "rsq") {
+        rsq = t.value;
+        const root = $("rres");
+        if (root) root.innerHTML = raceResults();
+        return;
+      }
+
+      if (t.matches("[data-qf='opt']")) {
+        const qi = +t.dataset.qi;
+        const oi = +t.dataset.oi;
+        if (qdraft && qdraft.questions[qi]) {
+          qdraft.questions[qi].opts[oi] = t.value;
+        }
+        return;
+      }
+
+      if (t.matches("[data-qf='q']")) {
+        const qi = +t.dataset.qi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].q = t.value;
+        return;
+      }
+
+      if (t.matches("[data-qf='l']")) {
+        const qi = +t.dataset.qi;
+        const pi = +t.dataset.pi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].pairs[pi].l = t.value;
+        return;
+      }
+
+      if (t.matches("[data-qf='r']")) {
+        const qi = +t.dataset.qi;
+        const pi = +t.dataset.pi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].pairs[pi].r = t.value;
+        return;
+      }
+
+      if (t.matches("[data-qf='tf']")) {
+        const qi = +t.dataset.qi;
+        const v = t.dataset.v === "1";
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].ans = v;
+        return;
+      }
+
+      if (t.matches("[data-qf='ans']")) {
+        const qi = +t.dataset.qi;
+        const oi = +t.dataset.oi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].ans = oi;
+        return;
+      }
+
+      if (t.matches("[data-qf='type']")) {
+        const qi = +t.dataset.qi;
+        if (qdraft && qdraft.questions[qi]) {
+          qdraft.questions[qi].type = t.value;
+          if (t.value === "tf") qdraft.questions[qi] = { type:"tf", q:qdraft.questions[qi].q || "", ans: true };
+          if (t.value === "match") qdraft.questions[qi] = { type:"match", q:qdraft.questions[qi].q || "Match each item with its partner.", pairs:[{l:"",r:""},{l:"",r:""}] };
+          if (t.value === "mc") qdraft.questions[qi] = { type:"mc", q:qdraft.questions[qi].q || "", opts:["","","",""], ans:0 };
+        }
+        return;
+      }
+
+      if (t.matches("[data-mi]")) {
+        const k = +t.dataset.mi;
+        if (qz && qz.m) qz.m[k] = t.value;
+        return;
+      }
+    });
+
+    document.addEventListener("change", e => {
+      const t = e.target;
+      if (t.id === "rp") {
+        if (P) save({ revPer: +t.value });
+      }
+      if (t.id === "rsm") {
+        if (P) save({ studyMin: +t.value });
+      }
+      if (t.id === "rbm") {
+        if (P) save({ breakMin: +t.value });
+      }
+      if (t.id === "rstart") {
+        if (P) save({ revStart: t.value });
+      }
+      if (t.id === "dp") {
+        if (draft) draft.isPublic = t.checked;
+      }
+      if (t.id === "qp") {
+        if (qdraft) qdraft.isPublic = t.checked;
+      }
+      if (t.id === "qt") {
+        if (qdraft) qdraft.title = t.value;
+      }
+      if (t.id === "dt") {
+        if (draft) draft.title = t.value;
+      }
+    });
+  </script>
+</body>
+</html>

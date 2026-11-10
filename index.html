@@ -1,6 +1,3 @@
-Absolutely — here is a complete replacement file with the logo redesigned to match the mockup you sent. I kept the app structure intact, but replaced the logo SVGs so the branding now looks like the reference.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +22,7 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       --red:#b7604b;
       --red-soft:#f6e4e1;
       --shadow:0 18px 48px rgba(30,34,28,.08);
-      --header:ui-serif,Georgia,"Times New Roman",serif;
+      --header:Georgia,"Times New Roman",serif;
       --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
 
@@ -672,30 +669,36 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
     <div class="brand-wrap">
       <svg class="brand-svg" viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg" aria-label="DueDash logo">
         <defs>
-          <linearGradient id="logoGrad" x1="0" x2="1">
-            <stop offset="0%" stop-color="#5d7d61"/>
-            <stop offset="100%" stop-color="#2c4d3d"/>
+          <linearGradient id="loginGrad" x1="0" x2="1">
+            <stop offset="0%" stop-color="#4a6c59"/>
+            <stop offset="100%" stop-color="#234635"/>
           </linearGradient>
         </defs>
-        <rect x="18" y="18" width="784" height="484" rx="98" fill="#efe8dd" stroke="#2d4738" stroke-width="18"/>
-        <g transform="translate(72 30)">
-          <g fill="url(#logoGrad)">
-            <path d="M265 160c0-29 23-52 52-52h68c86 0 142 63 142 146 0 82-56 146-142 146h-68c-29 0-52-23-52-52V160zm74 52v142c0 16 13 29 29 29h28c53 0 86-37 86-89 0-52-33-89-86-89h-28c-16 0-29 13-29 29z"/>
+        <rect x="18" y="18" width="784" height="484" rx="95" fill="#eee7dc" stroke="#2d4738" stroke-width="18"/>
+        <g transform="translate(70 44)">
+          <g fill="url(#loginGrad)">
+            <path d="M250 56c-115 0-178 74-178 175v20c0 101 63 175 178 175h74c60 0 98-38 98-96 0-45-28-75-68-90l-90-38 90-40c40-15 68-45 68-90 0-58-38-96-98-96h-74Z" opacity=".98"/>
           </g>
           <g fill="#dfe8dc" opacity=".9">
-            <rect x="18" y="160" width="198" height="25" rx="12" transform="rotate(-20 18 160)"/>
-            <rect x="26" y="210" width="234" height="25" rx="12" transform="rotate(-20 26 210)"/>
-            <rect x="35" y="260" width="270" height="25" rx="12" transform="rotate(-20 35 260)"/>
-            <rect x="42" y="310" width="300" height="25" rx="12" transform="rotate(-20 42 310)"/>
-            <rect x="48" y="360" width="326" height="25" rx="12" transform="rotate(-20 48 360)"/>
+            <rect x="28" y="110" width="230" height="24" rx="12" transform="rotate(-20 28 110)"/>
+            <rect x="35" y="160" width="263" height="24" rx="12" transform="rotate(-20 35 160)"/>
+            <rect x="38" y="210" width="294" height="24" rx="12" transform="rotate(-20 38 210)"/>
+            <rect x="42" y="260" width="320" height="24" rx="12" transform="rotate(-20 42 260)"/>
+            <rect x="50" y="310" width="348" height="24" rx="12" transform="rotate(-20 50 310)"/>
           </g>
-          <g fill="#ecf1e7">
-            <path d="M372 195L435 250L520 150L535 161L438 285L360 214Z" transform="rotate(10 372 195)"/>
+          <g fill="#dfe8dc">
+            <path d="M338 134L421 205L506 120" stroke="#dfe8dc" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M340 134L420 214L510 120" stroke="#dfe8dc" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".9"/>
+          </g>
+          <g fill="#dfe8dc" stroke="#dfe8dc" stroke-width="14" stroke-linecap="round">
+            <path d="M358 100L420 162"/>
+            <path d="M420 162L480 100"/>
           </g>
         </g>
-        <text x="410" y="420" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2d4738" letter-spacing="-7">DueDash</text>
+        <text x="410" y="425" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2d4738" letter-spacing="-7">DueDash</text>
       </svg>
     </div>
+
     <h2 id="at">Log in</h2>
     <input id="em" type="email" placeholder="Email" autocomplete="email" />
     <input id="pw" type="password" placeholder="Password (6+ characters)" autocomplete="current-password" />
@@ -758,218 +761,157 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const $ = (id) => document.getElementById(id);
-    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
     }[c]));
-    const day = (o = 0) => new Date(Date.now() - o * 864e5).toISOString().slice(0, 10);
-    const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    const plus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return ymd(d); };
-    const shuffle = (a) => { const x = [...a]; for (let k = x.length -1; k > 0; k--) { const j = Math.floor(Math.random()*(k+1)); [x[k], x[j]] = [x[j], x[k]]; } return x; };
+    const day = (o = 0) => new Date(Date.now() - o * 864e5).toISOString().slice(0,10);
+    const ymd = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+    const plus = n => { const d = new Date(); d.setDate(d.getDate()+n); return ymd(d); };
+    const shuffle = arr => { const x = [...arr]; for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x; };
     const ix = (arr, i) => arr[Math.abs(Math.trunc(+i || 0)) % arr.length];
 
     const NAME_RE = /^[A-Za-z0-9_]{3,20}$/;
-
-    let user, P, view = "planner", lastView = "", decks = [], pub = [], quizzes = [], pubQ = [], board = [], streaks = [], draft = null, qdraft = null, study = null, qz = null, q = "";
-    let room = null, members = [], unsub = null, hb = 0, rt = 0, tickN = 0, rs = { status:"studying", emote:"", emoteAt:0, focusEnd:0 };
-    let chat = [], chatSeen = {}, chatFirst = true, unsubC = null, lastSend = 0;
-    let notifs = [], nsub = null, nFirst = true, friends = [], fsq = "", fres = null, prof = null, remBusy = false;
-    let race = null, racePlayers = [], myRace = null, rsub = null, psub = null, firstRace = true, winBusy = false, rsq = "";
-    let signingUp = false;
-
     const GOAL = 20;
     const PETS = ["🐱","🐶","🦊","🐰","🐼","🐲"];
     const EMOJIS = ["😀","😎","🤓","🥳","😺","🐶","🦊","🐼","🐯","🦁","🐸","🐵","🦄","🐲","🐧","🐨","🦉","🐙","🦋","🐢","🌟","🔥","⚡","🌈","🍀","🌸","🍕","🍩","⚽","🏀","🎮","🎧","🎨","🚀","🛸","👾","🤖","👻","🎃","🧠"];
-    const lvl = (p) => 1 + Math.floor(Math.sqrt((p.points || 0) / 10));
-    const bestStreak = (p) => Math.max(p.bestStreak || 0, p.streak || 0);
 
-    const A = (icon, name, desc, goal, val) => ({ icon, name, desc, goal, val });
-    const AWARDS = [
-      A("🌱","First Steps","Earn 10 points",10,p=>p.points||0),
-      A("⭐","Point Collector","Earn 100 points",100,p=>p.points||0),
-      A("💎","Point Hoarder","Earn 500 points",500,p=>p.points||0),
-      A("👑","Point Legend","Earn 2,000 points",2000,p=>p.points||0),
-      A("🏗️","Deck Builder","Make your first deck",1,p=>p.decksMade||0),
-      A("🏛️","Library Builder","Make 10 decks",10,p=>p.decksMade||0),
-      A("🌍","Sharing Is Caring","Publish a deck or quiz",1,p=>p.published||0),
-      A("📣","Community Star","Publish 5 decks or quizzes",5,p=>p.published||0),
-      A("🧠","Quick Learner","Study 25 cards",25,p=>p.cardsStudied||0),
-      A("🎓","Scholar","Study 250 cards",250,p=>p.cardsStudied||0),
-      A("✅","Task Crusher","Finish 5 tasks",5,p=>p.tasksDone||0),
-      A("🛠️","Task Master","Finish 50 tasks",50,p=>p.tasksDone||0),
-      A("🔥","On Fire","Reach a 3 day streak",3,bestStreak),
-      A("⚡","Week Warrior","Reach a 7 day streak",7,bestStreak),
-      A("🚀","Unstoppable","Reach a 30 day streak",30,bestStreak),
-      A("📝","Quiz Maker","Make your first quiz",1,p=>p.quizzesMade||0),
-      A("🎯","Quiz Whiz","Finish 3 quizzes",3,p=>p.quizzesTaken||0),
-      A("🏅","Perfectionist","Get 5 perfect quiz scores (3+ questions)",5,p=>p.perfectQuizzes||0),
-      A("💯","Flawless Memory","Finish 3 decks (5+ cards) without pressing Again",3,p=>p.perfectDecks||0),
-      A("🗓️","Revision Rookie","Complete 5 revision sessions",5,p=>p.revisionDone||0),
-      A("⏱️","Focus Fan","Finish 5 focus sessions",5,p=>p.focusDone||0),
-      A("🐾","Pet Parent","Raise your pet to level 5",5,lvl),
-      A("🧑‍🤝‍🧑","Study Buddy","Join a study room",1,p=>p.roomsJoined||0),
-      A("🏁","Racer","Join a racing game",1,p=>p.racesPlayed||0),
-      A("🏆","Race Champion","Win 3 racing games",3,p=>p.racesWon||0)
-    ];
-    const unlocked = (p) => AWARDS.filter(a => a.val(p) >= a.goal).map(a => a.name);
+    const state = {
+      user: null,
+      profile: null,
+      view: "planner",
+      lastView: "",
+      decks: [],
+      pubDecks: [],
+      quizes: [],
+      pubQuizes: [],
+      leaderboard: [],
+      streaks: [],
+      tasks: [],
+      room: null,
+      members: [],
+      chat: [],
+      chatSeen: {},
+      notify: [],
+      friends: [],
+      searchUser: "",
+      searchResult: null,
+      currentDeckDraft: null,
+      currentQuizDraft: null,
+      study: null,
+      quizTake: null,
+      race: null,
+      racePlayers: [],
+      myRace: null
+    };
 
-    let toastT;
-    const toast = (m) => {
+    const levelOf = p => 1 + Math.floor(Math.sqrt((p.points || 0) / 10));
+    const bestStreak = p => Math.max(p.bestStreak || 0, p.streak || 0);
+    const liveStreak = p => (p.lastDay === day() || p.lastDay === day(1)) ? (p.streak || 0) : 0;
+    const petEmoji = p => levelOf(p) < 2 ? "🥚" : (p.pet && p.pet.species) || "🐱";
+
+    const logoSvg = (variant = "main") => `
+      <svg class="brand-svg" viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg" aria-label="DueDash logo">
+        <defs>
+          <linearGradient id="${variant === "nav" ? "navGrad" : "logoGrad"}" x1="0" x2="1">
+            <stop offset="0%" stop-color="#4a6c59"/>
+            <stop offset="100%" stop-color="#234635"/>
+          </linearGradient>
+        </defs>
+        <rect x="18" y="18" width="784" height="484" rx="95" fill="#eee7dc" stroke="#2d4738" stroke-width="18"/>
+        <g transform="translate(70 44)">
+          <g fill="url(#${variant === "nav" ? "navGrad" : "logoGrad"})">
+            <path d="M250 56c-115 0-178 74-178 175v20c0 101 63 175 178 175h74c60 0 98-38 98-96 0-45-28-75-68-90l-90-38 90-40c40-15 68-45 68-90 0-58-38-96-98-96h-74Z" opacity=".98"/>
+          </g>
+          <g fill="#dfe8dc" opacity=".9">
+            <rect x="28" y="110" width="230" height="24" rx="12" transform="rotate(-20 28 110)"/>
+            <rect x="35" y="160" width="263" height="24" rx="12" transform="rotate(-20 35 160)"/>
+            <rect x="38" y="210" width="294" height="24" rx="12" transform="rotate(-20 38 210)"/>
+            <rect x="42" y="260" width="320" height="24" rx="12" transform="rotate(-20 42 260)"/>
+            <rect x="50" y="310" width="348" height="24" rx="12" transform="rotate(-20 50 310)"/>
+          </g>
+          <g fill="#dfe8dc">
+            <path d="M338 134L421 205L506 120" stroke="#dfe8dc" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M340 134L420 214L510 120" stroke="#dfe8dc" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".9"/>
+          </g>
+          <g fill="#dfe8dc" stroke="#dfe8dc" stroke-width="14" stroke-linecap="round">
+            <path d="M358 100L420 162"/>
+            <path d="M420 162L480 100"/>
+          </g>
+        </g>
+        <text x="410" y="425" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2d4738" letter-spacing="-7">DueDash</text>
+      </svg>
+    `;
+
+    const toastTimer = null;
+    const toast = (msg) => {
       const t = $("toast");
-      t.textContent = m;
+      if (!t) return;
+      t.textContent = msg;
       t.classList.add("show");
-      clearTimeout(toastT);
-      toastT = setTimeout(() => t.classList.remove("show"), 4500);
+      clearTimeout(toastTimer);
+      setTimeout(() => t.classList.remove("show"), 3500);
     };
 
-    const SK = ["#ffe3d1", "#f6cba8", "#e3a97c", "#bd8460", "#8b5a3c"];
-    const HR = ["#2b2b3a", "#6b3f2a", "#d9a441", "#e6e0d2", "#ff7eb6", "#6c8cff", "#8e5bd9", "#e8503a"];
-    const EY = ["#4aa3ff", "#37c96a", "#a06bff", "#ff8f4a", "#e8506a", "#3fd0c9"];
-    const FT = ["#6366f1", "#ef4444", "#22c55e", "#f59e0b", "#ec4899", "#0ea5e9"];
-    const HS = ["Spiky","Long","Twin tails","Bun","Short","Side part","Messy","Buzz cut","Mohawk","Curly","Slick back","Ponytail"];
-    const AC = ["None","Glasses","Headphones","Cat ears","Bow","Cap","Beanie","Sunglasses"];
-    const TP = ["Uniform","Hoodie","T-shirt","Suit & tie"];
-    const LK = ["Cute","Boyish"];
-    const PRESETS = [
-      {n:"😎 Cool boy", v:{skin:2,hair:0,hs:10,eye:0,fit:0,acc:7,look:1,top:3}},
-      {n:"⚽ Sporty boy", v:{skin:3,hair:1,hs:4,eye:1,fit:2,acc:5,look:1,top:2}},
-      {n:"🤓 Nerdy boy", v:{skin:1,hair:0,hs:5,eye:0,fit:5,acc:1,look:1,top:2}},
-      {n:"🛹 Skater boy", v:{skin:2,hair:2,hs:6,eye:3,fit:3,acc:6,look:1,top:1}},
-      {n:"🎸 Rocker boy", v:{skin:0,hair:7,hs:8,eye:4,fit:1,acc:2,look:1,top:1}},
-      {n:"🌟 Curly boy", v:{skin:4,hair:0,hs:9,eye:5,fit:4,acc:0,look:0,top:0}}
-    ];
+    const errMsg = e => ({
+      "auth/invalid-email": "That email doesn't look right.",
+      "auth/missing-password": "Please enter a password.",
+      "auth/weak-password": "Password needs at least 6 characters.",
+      "auth/email-already-in-use": "That email already has an account. Try logging in.",
+      "auth/invalid-credential": "Wrong email or password.",
+      "auth/too-many-requests": "Too many tries. Wait a minute.",
+      "auth/unauthorized-domain": "This domain is not authorized in Firebase."
+    }[e.code] || "Something went wrong.") + " (" + (e.code || "unknown") + ")";
 
-    const avatar = (a = {}) => {
-      const sk = ix(SK, a.skin);
-      const hr = ix(HR, a.hair);
-      const ey = ix(EY, a.eye);
-      const ft = ix(FT, a.fit);
-
-      const n = (v, m) => Math.abs(Math.trunc(+v || 0)) % m;
-      const hs = n(a.hs, 12);
-      const ac = n(a.acc, 8);
-      const tp = n(a.top, 4);
-      const lk = n(a.look, 2);
-
-      const C = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hr}"/>`;
-      const P_ = (d) => `<path d="${d}" fill="${hr}"/>`;
-      const GEN = P_("M22 62 Q18 14 60 12 Q102 14 98 62 Q92 40 80 34 Q70 50 58 36 Q44 48 38 34 Q27 42 22 62 Z");
-      const SHORT = P_("M24 58 Q20 18 60 14 Q100 18 96 58 Q90 38 78 32 Q60 40 42 32 Q30 38 24 58 Z");
-      const BACKS = [
-        "",
-        P_("M20 58 Q16 128 38 132 L82 132 Q104 128 100 58 Z"),
-        `<ellipse cx="12" cy="86" rx="11" ry="30" fill="${hr}"/><ellipse cx="108" cy="86" rx="11" ry="30" fill="${hr}"/>`,
-        C(60,10,15),
-        "","","","","",
-        C(22,60,14)+C(98,60,14)+C(60,30,34),
-        "",
-        P_("M94 40 Q124 40 118 84 Q114 102 102 94 Q108 72 92 58 Z")+`<circle cx="96" cy="44" r="5" fill="#ff7eb6"/>`
-      ];
-      const FRS = [
-        P_("M23 62 Q16 22 38 14 L45 30 L56 8 L64 30 L77 10 L81 30 Q104 22 97 62 Q91 42 79 38 Q68 52 58 40 Q44 50 38 38 Q28 46 23 62 Z"),
-        GEN, GEN, GEN,
-        SHORT,
-        P_("M23 60 Q18 16 58 12 Q100 12 98 60 Q94 36 84 30 Q66 26 46 40 Q36 36 28 46 Q24 52 23 60 Z"),
-        P_("M22 62 Q14 24 34 14 L40 26 L50 8 L58 26 L70 6 L76 26 L90 12 Q104 28 98 62 Q92 44 82 38 L74 48 L64 36 L54 48 L44 36 Q30 44 22 62 Z"),
-        `<path d="M26 54 Q24 22 60 20 Q96 22 94 54 Q88 36 60 34 Q32 36 26 54 Z" fill="${hr}" opacity=".85"/>`,
-        `<path d="M27 52 Q26 28 60 26 Q94 28 93 52 Q86 38 60 36 Q34 38 27 52 Z" fill="${hr}" opacity=".8"/>`+P_("M48 32 Q46 6 60 2 Q74 6 72 32 Q60 26 48 32 Z"),
-        C(30,36,13)+C(46,25,14)+C(62,21,14)+C(78,25,14)+C(92,36,13)+C(25,52,9)+C(95,52,9),
-        P_("M22 60 Q16 14 60 10 Q104 14 98 60 Q96 34 80 26 Q60 20 40 26 Q24 34 22 60 Z"),
-        SHORT
-      ];
-      const ties = hs === 2 ? `<circle cx="15" cy="60" r="5" fill="#ff7eb6"/><circle cx="105" cy="60" r="5" fill="#ff7eb6"/>` : "";
-      const eye = (cx) => `
-        <ellipse cx="${cx}" cy="64" rx="9" ry="11.5" fill="#1a1a2e"/>
-        <ellipse cx="${cx}" cy="65" rx="7.4" ry="10" fill="${ey}"/>
-        <ellipse cx="${cx}" cy="67" rx="3.8" ry="5.2" fill="#1a1a2e" opacity=".55"/>
-        <circle cx="${cx-3}" cy="59.5" r="3.2" fill="#fff"/>
-        <circle cx="${cx+4}" cy="70" r="1.7" fill="#fff"/>
-        <path d="M${cx-10} 57 Q${cx} 49 ${cx+10} 57" stroke="#1a1a2e" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-      `;
-      const ACS = [
-        "",
-        `<circle cx="44" cy="64" r="14" fill="none" stroke="#2b2b3a" stroke-width="2.6"/><circle cx="76" cy="64" r="14" fill="none" stroke="#2b2b3a" stroke-width="2.6"/><path d="M58 64 L62 64" stroke="#2b2b3a" stroke-width="2.6"/>`,
-        `<path d="M20 60 Q18 8 60 8 Q102 8 100 60" fill="none" stroke="#2b2b3a" stroke-width="5"/><rect x="11" y="52" width="13" height="26" rx="6" fill="#ff5c8a"/><rect x="96" y="52" width="13" height="26" rx="6" fill="#ff5c8a"/>`,
-        `<path d="M24 34 L28 4 L50 22 Z" fill="${hr}"/><path d="M96 34 L92 4 L70 22 Z" fill="${hr}"/><path d="M30 28 L32 12 L43 22 Z" fill="#ffb3c7"/><path d="M90 28 L88 12 L77 22 Z" fill="#ffb3c7"/>`,
-        `<path d="M84 20 L106 10 L106 34 Z" fill="#ff5c8a"/><path d="M84 20 L62 10 L62 34 Z" fill="#ff5c8a"/><circle cx="84" cy="21" r="5" fill="#ff3d73"/>`,
-        `<path d="M22 46 Q22 8 60 8 Q98 8 98 46 Q60 38 22 46 Z" fill="${ft}"/><path d="M62 42 L112 46 Q110 56 64 50 Z" fill="${ft}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>`,
-        `<path d="M22 48 Q20 4 60 4 Q100 4 98 48 Z" fill="${ft}"/><rect x="19" y="40" width="82" height="13" rx="6" fill="${ft}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/><circle cx="60" cy="4" r="7" fill="#fff"/>`,
-        `<rect x="29" y="55" width="30" height="18" rx="7" fill="#111"/><rect x="61" y="55" width="30" height="18" rx="7" fill="#111"/><path d="M59 62 L61 62" stroke="#111" stroke-width="3"/>`
-      ];
-      const TOPS = [
-        `<path d="M48 103 L60 119 L72 103 Z" fill="#fff"/>`,
-        `<path d="M38 106 Q60 128 82 106 Q60 114 38 106 Z" fill="rgba(0,0,0,.25)"/><path d="M54 113 L53 130 M66 113 L67 130" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`,
-        `<path d="M46 103 Q60 120 74 103 Z" fill="${sk}"/>`,
-        `<path d="M48 103 L60 124 L72 103 Z" fill="#fff"/><path d="M57 108 L63 108 L64 128 L60 133 L56 128 Z" fill="#ef4444"/><path d="M48 103 L56 140 M72 103 L64 140" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`
-      ];
-      const head = lk ? `<path d="M23 54 Q23 18 60 18 Q97 18 97 54 L96 70 Q94 96 60 98 Q26 96 24 70 Z" fill="${sk}"/>` : `<ellipse cx="60" cy="58" rx="37" ry="39" fill="${sk}"/>`;
-      const bw = lk ? 3.8 : 2.4;
-      const bo = lk ? .18 : .45;
-      const brows = lk
-        ? `<path d="M33 50 L52 46" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/><path d="M68 46 L87 50" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/>`
-        : `<path d="M34 49 Q43 44 52 47" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/><path d="M68 47 Q77 44 86 49" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/>`;
-
-      return `
-        <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
-          ${BACKS[hs]}
-          <path d="M22 140 Q24 106 60 102 Q96 106 98 140 Z" fill="${ft}"/>
-          <rect x="52" y="88" width="16" height="18" rx="7" fill="${sk}"/>
-          ${TOPS[tp]}
-          ${head}
-          <ellipse cx="35" cy="78" rx="7" ry="4" fill="#ff8aa0" opacity="${bo}"/>
-          <ellipse cx="85" cy="78" rx="7" ry="4" fill="#ff8aa0" opacity="${bo}"/>
-          ${eye(44)}${eye(76)}
-          ${brows}
-          <path d="M54 84 Q60 89 66 84" stroke="#b5485d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-          ${FRS[hs]}${ties}${ACS[ac]}
-        </svg>
-      `;
+    const renderAuth = () => {
+      $("auth").classList.remove("hidden");
+      $("shell").classList.add("hidden");
+      $("pw").value = "";
     };
 
-    const BACKDROPS = [
-      {n:"Cozy room", bg:"linear-gradient(#f2ecdf,#d7d0bf 58%,#c7b39a)", d:["🪟","🛋️","🕯️"]},
-      {n:"Starry night", bg:"radial-gradient(circle at 20% 20%,#dfe5ff,transparent 40%),linear-gradient(#eae6f3,#b3bfd9)", d:["🌙","✨","⭐"]},
-      {n:"Library", bg:"linear-gradient(#f5ede3,#d9c1b1)", d:["📚","🕰️","📖"]},
-      {n:"Sakura", bg:"linear-gradient(#f6dfe9,#f3bfd0)", d:["🌸","🌸","🌸"]},
-      {n:"Rainy café", bg:"linear-gradient(#e6ebf5,#c5d0df)", d:["🌧️","☕","🌃"]},
-      {n:"Sunset beach", bg:"linear-gradient(#f8d8c1,#f1a3a0 52%,#b6a9d9)", d:["🌅","🏖️","🐚"]}
-    ];
-    const bd = () => ix(BACKDROPS, P.backdrop);
+    const genName = () => "Student" + Math.floor(1000 + Math.random()*9000);
 
-    const EMOTES = ["👋 Hi!","💪 Let's focus","☕ Break time","🎉 Nice work!","✅ Done!","😅 Tough one"];
-    const ST = { studying:"📖 Studying", break:"☕ On break", focus:"🎯 Focusing" };
-
-    const mus = { ctx:null, master:null, stops:[], cur:null, vol:.42 };
-    const musicStop = () => {
-      mus.stops.forEach(f => { try { f(); } catch (e) {} });
-      mus.stops = [];
-      if (mus.master) { try { mus.master.disconnect(); } catch (e) {} mus.master = null; }
-      mus.cur = null;
+    const music = {
+      ctx: null,
+      master: null,
+      current: null,
+      volume: 0.42,
+      stops: []
     };
 
-    const noiseSrc = (ctx, brown) => {
+    const stopMusic = () => {
+      music.stops.forEach(fn => { try { fn(); } catch (e) {} });
+      music.stops = [];
+      if (music.master) {
+        try { music.master.disconnect(); } catch (e) {}
+        music.master = null;
+      }
+      music.current = null;
+    };
+
+    const noiseSource = (ctx, brown) => {
       const len = ctx.sampleRate * 2;
-      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-      const d = buf.getChannelData(0);
+      const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
       let last = 0;
       for (let i = 0; i < len; i++) {
         const w = Math.random() * 2 - 1;
         if (brown) {
-          last = (last + .02 * w) / 1.02;
-          d[i] = last * 3.5;
+          last = (last + 0.02 * w) / 1.02;
+          data[i] = last * 3.5;
         } else {
-          d[i] = w * .5;
+          data[i] = w * 0.5;
         }
       }
-      const s = ctx.createBufferSource();
-      s.buffer = buf;
-      s.loop = true;
-      s.start();
-      return s;
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.loop = true;
+      src.start();
+      return src;
     };
 
-    const addRain = (ctx, out, amt) => {
-      const n = noiseSrc(ctx, false);
+    const addRain = (ctx, out, amount) => {
+      const src = noiseSource(ctx, false);
       const hp = ctx.createBiquadFilter();
       hp.type = "highpass";
       hp.frequency.value = 900;
@@ -977,80 +919,81 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       lp.type = "lowpass";
       lp.frequency.value = 7000;
       const g = ctx.createGain();
-      g.gain.value = amt;
-      n.connect(hp);
+      g.gain.value = amount;
+      src.connect(hp);
       hp.connect(lp);
       lp.connect(g);
       g.connect(out);
-      mus.stops.push(() => n.stop());
+      music.stops.push(() => src.stop());
     };
 
     const addOcean = (ctx, out) => {
-      const n = noiseSrc(ctx, true);
+      const src = noiseSource(ctx, true);
       const lp = ctx.createBiquadFilter();
       lp.type = "lowpass";
       lp.frequency.value = 500;
       const g = ctx.createGain();
-      g.gain.value = .5;
+      g.gain.value = 0.5;
       const lfo = ctx.createOscillator();
-      lfo.frequency.value = .09;
-      const lg = ctx.createGain();
-      lg.gain.value = .35;
-      lfo.connect(lg);
-      lg.connect(g.gain);
-      n.connect(lp);
+      lfo.frequency.value = 0.09;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 0.35;
+      lfo.connect(lfoGain);
+      lfoGain.connect(g.gain);
+      src.connect(lp);
       lp.connect(g);
       g.connect(out);
       lfo.start();
-      mus.stops.push(() => { n.stop(); lfo.stop(); });
+      music.stops.push(() => { src.stop(); lfo.stop(); });
     };
 
-    const addPad = (ctx, out, chords, gap) => {
-      const lp = ctx.createBiquadFilter();
-      lp.type = "lowpass";
-      lp.frequency.value = 1100;
-      const dl = ctx.createDelay();
-      dl.delayTime.value = .45;
+    const dreamNotes = [220, 261.63, 329.63, 392, 329.63, 261.63, 293.66, 349.23];
+    const addDreamPad = (ctx, out) => {
+      const master = ctx.createGain();
+      master.gain.value = 0.1;
+      master.connect(out);
+
+      const delay = ctx.createDelay();
+      delay.delayTime.value = 0.45;
       const fb = ctx.createGain();
-      fb.gain.value = .35;
-      dl.connect(fb);
-      fb.connect(dl);
-      const bus = ctx.createGain();
-      bus.gain.value = .55;
-      bus.connect(lp);
-      lp.connect(out);
-      lp.connect(dl);
-      dl.connect(out);
-      let k = 0;
+      fb.gain.value = 0.22;
+      delay.connect(fb);
+      fb.connect(delay);
+
+      let i = 0;
       const play = () => {
         const t = ctx.currentTime;
-        const notes = chords[k++ % chords.length];
-        notes.forEach(f => {
-          const o = ctx.createOscillator();
-          o.type = "triangle";
-          o.frequency.value = f;
-          const g = ctx.createGain();
-          g.gain.setValueAtTime(0, t);
-          g.gain.linearRampToValueAtTime(.12, t + gap * .35);
-          g.gain.linearRampToValueAtTime(0, t + gap * 1.25);
-          o.connect(g);
-          g.connect(bus);
-          o.start(t);
-          o.stop(t + gap * 1.3);
-        });
+        const freq = dreamNotes[i % dreamNotes.length];
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        filter.type = "lowpass";
+        filter.frequency.value = 1200;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.08, t + 0.8);
+        gain.gain.linearRampToValueAtTime(0.0001, t + 4.5);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(master);
+        gain.connect(delay);
+        osc.start(t);
+        osc.stop(t + 4.8);
+        i++;
       };
       play();
-      const id = setInterval(play, gap * 1000);
-      mus.stops.push(() => clearInterval(id));
+      const interval = setInterval(play, 2600);
+      music.stops.push(() => clearInterval(interval));
     };
 
     const addQuietPiano = (ctx, out) => {
       const delay = ctx.createDelay();
-      delay.delayTime.value = .32;
+      delay.delayTime.value = 0.32;
       const feedback = ctx.createGain();
-      feedback.gain.value = .18;
+      feedback.gain.value = 0.18;
       const wet = ctx.createGain();
-      wet.gain.value = .2;
+      wet.gain.value = 0.2;
       delay.connect(feedback);
       feedback.connect(delay);
       delay.connect(wet);
@@ -1069,8 +1012,8 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
         filter.type = "lowpass";
         filter.frequency.value = 1500;
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(.055, t + .08);
-        gain.gain.exponentialRampToValueAtTime(.001, t + 2.8);
+        gain.gain.linearRampToValueAtTime(0.055, t + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 2.8);
         osc.connect(filter);
         filter.connect(gain);
         gain.connect(out);
@@ -1079,145 +1022,243 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
         osc.stop(t + 2.9);
       };
       play();
-      const id = setInterval(play, 2400);
-      mus.stops.push(() => clearInterval(id));
+      const interval = setInterval(play, 2400);
+      music.stops.push(() => clearInterval(interval));
     };
 
-    const dreamNotes = [220, 261.63, 329.63, 392, 329.63, 261.63, 293.66, 349.23];
-
-    const addDreamPad = (ctx, out) => {
-      const master = ctx.createGain();
-      master.gain.value = 0.1;
-      master.connect(out);
-
+    const addPad = (ctx, out, chords, gap) => {
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 1100;
       const delay = ctx.createDelay();
       delay.delayTime.value = 0.45;
-      const feedback = ctx.createGain();
-      feedback.gain.value = 0.22;
-      delay.connect(feedback);
-      feedback.connect(delay);
+      const fb = ctx.createGain();
+      fb.gain.value = 0.35;
+      delay.connect(fb);
+      fb.connect(delay);
+      const bus = ctx.createGain();
+      bus.gain.value = 0.55;
+      bus.connect(lp);
+      lp.connect(out);
+      lp.connect(delay);
+      delay.connect(out);
 
       let i = 0;
-
       const play = () => {
         const t = ctx.currentTime;
-        const freq = dreamNotes[i % dreamNotes.length];
+        const notes = chords[i++ % chords.length];
+        notes.forEach(freq => {
+          const osc = ctx.createOscillator();
+          osc.type = "triangle";
+          osc.frequency.value = freq;
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(.12, t + gap * .35);
+          gain.gain.linearRampToValueAtTime(0, t + gap * 1.25);
+          osc.connect(gain);
+          gain.connect(bus);
+          osc.start(t);
+          osc.stop(t + gap * 1.3);
+        });
+      };
+      play();
+      const interval = setInterval(play, gap * 1000);
+      music.stops.push(() => clearInterval(interval));
+    };
+
+    const addForest = (ctx, out) => {
+      const left = ctx.createOscillator();
+      left.type = "sine";
+      left.frequency.value = 196;
+      const right = ctx.createOscillator();
+      right.type = "triangle";
+      right.frequency.value = 293.66;
+      const gain = ctx.createGain();
+      gain.gain.value = 0.035;
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 1800;
+      left.connect(filter);
+      right.connect(filter);
+      filter.connect(gain);
+      gain.connect(out);
+      left.start();
+      right.start();
+      const interval = setInterval(() => {
+        const f = left.frequency.value;
+        left.frequency.setTargetAtTime(f * (Math.random() * 0.12 + 0.94), ctx.currentTime, 1.2);
+      }, 1800);
+      music.stops.push(() => { left.stop(); right.stop(); clearInterval(interval); });
+    };
+
+    const addChime = (ctx, out) => {
+      const notes = [392, 523.25, 659.25];
+      let i = 0;
+      const play = () => {
+        const t = ctx.currentTime;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-
         osc.type = "sine";
-        osc.frequency.value = freq;
-        filter.type = "lowpass";
-        filter.frequency.value = 1200;
-
+        osc.frequency.value = notes[i++ % notes.length];
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.08, t + 0.8);
-        gain.gain.linearRampToValueAtTime(0.0001, t + 4.5);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(master);
-        gain.connect(delay);
-
+        gain.gain.linearRampToValueAtTime(0.06, t + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 2.8);
+        osc.connect(gain);
+        gain.connect(out);
         osc.start(t);
-        osc.stop(t + 4.8);
-
-        i++;
+        osc.stop(t + 3);
       };
-
       play();
-      const id = setInterval(play, 2600);
-      mus.stops.push(() => clearInterval(id));
+      const interval = setInterval(play, 4500);
+      music.stops.push(() => clearInterval(interval));
+    };
+
+    const addNight = (ctx, out) => {
+      const osc = ctx.createOscillator();
+      osc.type = "sawtooth";
+      osc.frequency.value = 110;
+      const gain = ctx.createGain();
+      gain.gain.value = 0.03;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.18;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 18;
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+      osc.connect(gain);
+      gain.connect(out);
+      osc.start();
+      music.stops.push(() => osc.stop());
     };
 
     const CH1 = [[220,261.63,329.63,392],[174.61,220,261.63,329.63],[261.63,329.63,392,493.88],[196,246.94,293.66,329.63]];
     const CH2 = [[146.83,174.61,220,261.63],[196,246.94,293.66,329.63],[130.81,164.81,196,246.94,293.66],[220,261.63,329.63,392]];
-
-    const musicPlay = (k) => {
-      musicStop();
-      const ctx = mus.ctx || (mus.ctx = new (window.AudioContext || window.webkitAudioContext)());
+    const musicPlay = key => {
+      stopMusic();
+      const ctx = music.ctx || (music.ctx = new (window.AudioContext || window.webkitAudioContext)());
       ctx.resume();
       const out = ctx.createGain();
-      out.gain.value = mus.vol;
+      out.gain.value = music.volume;
       out.connect(ctx.destination);
-      mus.master = out;
-
-      if (k === "pad") addPad(ctx, out, CH1, 6);
-      if (k === "piano") addQuietPiano(ctx, out);
-      if (k === "dream") addDreamPad(ctx, out);
-      if (k === "lofi") { addPad(ctx, out, CH2, 4); addRain(ctx, out, .12); }
-      if (k === "rain") addRain(ctx, out, .45);
-      if (k === "ocean") addOcean(ctx, out);
-
-      mus.cur = k;
+      music.master = out;
+      if (key === "dream") addDreamPad(ctx, out);
+      if (key === "pad") addPad(ctx, out, CH1, 6);
+      if (key === "piano") addQuietPiano(ctx, out);
+      if (key === "lofi") { addPad(ctx, out, CH2, 4); addRain(ctx, out, .12); }
+      if (key === "rain") addRain(ctx, out, .45);
+      if (key === "ocean") addOcean(ctx, out);
+      if (key === "forest") addForest(ctx, out);
+      if (key === "chime") addChime(ctx, out);
+      if (key === "night") addNight(ctx, out);
+      music.current = key;
     };
 
-    const TRACKS = [
+    const tracks = [
       ["dream","🌿 Dreamy ambient"],
       ["pad","🌙 Calm pad"],
       ["piano","🎹 Quiet piano"],
       ["lofi","☕ Lo-fi chill"],
       ["rain","🌧️ Soft rain"],
-      ["ocean","🌊 Ocean waves"]
+      ["ocean","🌊 Ocean waves"],
+      ["forest","🌲 Forest calm"],
+      ["chime","🔔 Bell chime"],
+      ["night","🌙 Midnight glow"]
     ];
 
     const renderMusic = () => {
-      $("mbtn").classList.toggle("playing", !!mus.cur);
-      $("mpanel").innerHTML = `
+      const btn = $("mbtn");
+      const panel = $("mpanel");
+      if (!btn || !panel) return;
+      btn.classList.toggle("playing", !!music.current);
+      panel.innerHTML = `
         <b>🎵 Study music</b>
-        <p class="sub" style="margin:4px 0 10px">A calm, browser-made ambience for deep focus.</p>
-        ${TRACKS.map(([k, n]) => `<button class="${mus.cur === k ? "" : "alt"}" data-act="mplay" data-k="${k}">${mus.cur === k ? "▶ " : ""}${n}</button>`).join("")}
+        <p class="sub" style="margin:4px 0 10px">Calm browser-made ambience for deep focus.</p>
+        ${tracks.map(([k, label]) => `<button class="${music.current === k ? "" : "alt"}" data-act="mplay" data-k="${k}">${music.current === k ? "▶ " : ""}${label}</button>`).join("")}
         <button class="red" data-act="mstop">⏹ Stop</button>
-        <input id="vol" type="range" min="0" max="1" step="0.05" value="${mus.vol}">
+        <input id="vol" type="range" min="0" max="1" step="0.05" value="${music.volume}">
       `;
     };
 
-    const errMsg = (e) => ({
-      "auth/invalid-email":"That email doesn't look right.",
-      "auth/missing-password":"Please enter a password.",
-      "auth/weak-password":"Password needs at least 6 characters.",
-      "auth/email-already-in-use":"That email already has an account. Try logging in.",
-      "auth/invalid-credential":"Wrong email or password.",
-      "auth/too-many-requests":"Too many tries. Wait a minute.",
-      "auth/unauthorized-domain":"Add this website under Authorized domains in Firebase."
-    }[e.code] || "Something went wrong.") + " (" + e.code + ")";
-
-    $("sw").onclick = () => {
-      signingUp = !signingUp;
-      $("at").textContent = signingUp ? "Create account" : "Log in";
-      $("ab").textContent = signingUp ? "Sign up" : "Log in";
-      $("sw").textContent = signingUp ? "Already have an account? Log in" : "New here? Create an account";
-      $("er").textContent = "";
+    const save = async patch => {
+      if (!state.user) return;
+      const updated = { ...state.profile, ...patch };
+      state.profile = updated;
+      await updateDoc(doc(db, "users", state.user.uid), patch);
+      await syncProfile();
     };
 
-    $("ab").onclick = async () => {
-      $("er").textContent = "";
-      try {
-        const f = signingUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
-        await f(auth, $("em").value.trim(), $("pw").value);
-      } catch (e) {
-        $("er").textContent = errMsg(e);
+    async function syncProfile() {
+      if (!state.user) return;
+      const p = state.profile || {};
+      await setDoc(doc(db, "leaderboard", state.user.uid), {
+        username: p.username || "Student",
+        points: p.points || 0,
+        streak: liveStreak(p)
+      });
+      await setDoc(doc(db, "profiles", state.user.uid), {
+        username: p.username || "Student",
+        emoji: p.emoji || "😀",
+        points: p.points || 0,
+        streak: p.streak || 0,
+        bestStreak: p.bestStreak || 0,
+        lastDay: p.lastDay || "",
+        tasksDone: p.tasksDone || 0,
+        cardsStudied: p.cardsStudied || 0,
+        decksMade: p.decksMade || 0,
+        published: p.published || 0,
+        quizzesMade: p.quizzesMade || 0,
+        quizzesTaken: p.quizzesTaken || 0,
+        perfectQuizzes: p.perfectQuizzes || 0,
+        perfectDecks: p.perfectDecks || 0,
+        revisionDone: p.revisionDone || 0,
+        focusDone: p.focusDone || 0,
+        roomsJoined: p.roomsJoined || 0,
+        racesPlayed: p.racesPlayed || 0,
+        racesWon: p.racesWon || 0,
+        pet: p.pet || { name:"Buddy", species:"🐱" }
+      });
+    }
+
+    const earn = async (n, extra = {}) => {
+      if (!state.profile) return;
+      const today = day();
+      let streak = state.profile.streak || 0;
+      if (state.profile.lastDay !== today) streak = state.profile.lastDay === day(1) ? streak + 1 : 1;
+      const currentGoal = (state.profile.goalDay === today ? (state.profile.goalPts || 0) : 0) + n;
+      let bonus = 0;
+      let goalDone = state.profile.goalDone || "";
+      if (goalDone !== today && currentGoal >= GOAL) {
+        bonus = 5;
+        goalDone = today;
+        setTimeout(() => toast("🎯 Daily goal complete! +5 bonus points"), 300);
       }
+      await save({
+        points: (state.profile.points || 0) + n + bonus,
+        streak,
+        bestStreak: Math.max(state.profile.bestStreak || 0, streak),
+        lastDay: today,
+        goalDay: today,
+        goalPts: currentGoal,
+        goalDone,
+        ...extra
+      });
     };
-
-    const genName = () => "Student" + Math.floor(1000 + Math.random() * 9000);
 
     async function ensureUsername() {
-      const old = P.username;
+      const old = state.profile.username;
       let name = old;
       for (let t = 0; t < 12; t++) {
         if (NAME_RE.test(name)) {
           const ref = doc(db, "usernames", name.toLowerCase());
-          const r = await getDoc(ref);
-          if (r.exists()) {
-            if (r.data().uid === user.uid) {
+          const snap = await getDoc(ref);
+          if (snap.exists()) {
+            if (snap.data().uid === state.user.uid) {
               if (name !== old) await save({ username: name });
               return;
             }
           } else {
             try {
-              await setDoc(ref, { uid: user.uid, username: name });
+              await setDoc(ref, { uid: state.user.uid, username: name });
               if (name !== old) {
                 await save({ username: name });
                 toast("Your username is now " + name + " because the old one was taken or not allowed.");
@@ -1230,24 +1271,21 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       }
     }
 
-    onAuthStateChanged(auth, async (u) => {
-      user = u;
-      if (!u) {
-        clearInterval(hb); clearInterval(rt);
-        if (unsub) { try { unsub(); } catch (e) {} unsub = null; }
-        if (unsubC) { try { unsubC(); } catch (e) {} unsubC = null; }
-        if (nsub) { try { nsub(); } catch (e) {} nsub = null; }
-        room = null; members = []; chat = []; notifs = []; friends = []; prof = null; musicStop();
-        $("shell").classList.add("hidden");
-        $("auth").classList.remove("hidden");
-        $("pw").value = "";
+    onAuthStateChanged(auth, async user => {
+      state.user = user;
+      if (!user) {
+        renderAuth();
+        state.profile = null;
+        state.view = "planner";
+        state.room = null;
+        stopMusic();
         return;
       }
 
       try {
-        const ref = doc(db, "users", u.uid);
-        const s = await getDoc(ref);
-        P = {
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+        state.profile = {
           username: genName(),
           emoji: "😀",
           points: 0,
@@ -1267,8 +1305,6 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
           roomsJoined: 0,
           racesPlayed: 0,
           racesWon: 0,
-          lastWonRace: "",
-          lastRaceDone: "",
           goalDay: "",
           goalPts: 0,
           goalDone: "",
@@ -1283,647 +1319,129 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
           avatar: { skin:1, hair:0, hs:1, eye:0, fit:0, acc:0, look:0, top:0 },
           backdrop: 0,
           tasks: [],
-          ...(s.exists() ? s.data() : {})
+          ...(snap.exists() ? snap.data() : {})
         };
 
-        if (!s.exists()) await setDoc(ref, P);
+        if (!snap.exists()) await setDoc(ref, state.profile);
         await ensureUsername();
-        await sync();
-      } catch (e) {
-        alert("Database error: " + (e.code || e.message) + ". Check your Firestore rules.");
-        return;
-      }
-
-      $("auth").classList.add("hidden");
-      $("shell").classList.remove("hidden");
-      renderMusic();
-      musicPlay("dream");
-      startNotifs();
-      go("planner");
-    });
-
-    const liveStreak = (p) => (p.lastDay === day() || p.lastDay === day(1)) ? p.streak : 0;
-
-    const PROFILE_KEYS = [
-      "username","emoji","points","streak","bestStreak","lastDay","tasksDone","cardsStudied","decksMade","published","quizzesMade","quizzesTaken","perfectQuizzes","perfectDecks","revisionDone","focusDone","roomsJoined","racesPlayed","racesWon","pet"
-    ];
-
-    const sync = () => Promise.all([
-      setDoc(doc(db, "leaderboard", user.uid), { username:P.username, points:P.points, streak:liveStreak(P) }),
-      setDoc(doc(db, "profiles", user.uid), Object.fromEntries(PROFILE_KEYS.map(k => [k, P[k] ?? 0])))
-    ]);
-
-    const save = async (f) => {
-      const before = unlocked(P);
-      Object.assign(P, f);
-      await updateDoc(doc(db, "users", user.uid), f);
-      if (PROFILE_KEYS.some(k => k in f)) await sync();
-      const fresh = unlocked(P).filter(n => !before.includes(n));
-      if (fresh.length) toast("🏆 Achievement unlocked: " + fresh.join(", "));
-    };
-
-    const earn = (n, extra = {}) => {
-      const t = day();
-      let s = P.streak;
-      if (P.lastDay !== t) s = P.lastDay === day(1) ? s + 1 : 1;
-
-      const tp = (P.goalDay === t ? (P.goalPts || 0) : 0) + n;
-      let bonus = 0;
-      let gd = P.goalDone || "";
-      if (gd !== t && tp >= GOAL) {
-        bonus = 5;
-        gd = t;
-        setTimeout(() => toast("🎯 Daily goal complete! +5 bonus points"), 400);
-      }
-
-      return save({
-        points: P.points + n + bonus,
-        streak: s,
-        bestStreak: Math.max(P.bestStreak || 0, s),
-        lastDay: t,
-        goalDay: t,
-        goalPts: tp,
-        goalDone: gd,
-        ...extra
-      });
-    };
-
-    const getDeck = (id) => decks.find(d => d.id === id) || pub.find(d => d.id === id);
-    const getQuiz = (id) => quizzes.find(d => d.id === id) || pubQ.find(d => d.id === id);
-
-    const newQ = (type) => type === "tf"
-      ? { type:"tf", q:"", ans:true }
-      : type === "match"
-      ? { type:"match", q:"Match each item with its partner.", pairs:[{l:"",r:""},{l:"",r:""},{l:"",r:""},{l:"",r:""}] }
-      : { type:"mc", q:"", opts:["","","",""], ans:0 };
-
-    const cleanQ = (x) => {
-      const t = x.type || "mc";
-      const text = x.q.trim();
-      if (t === "tf") return text ? { type:"tf", q:text, ans: !!x.ans } : null;
-      if (t === "match") {
-        const pairs = (x.pairs || []).filter(p => (p.l || "").trim() && (p.r || "").trim()).map(p => ({ l:p.l.trim(), r:p.r.trim() }));
-        return pairs.length >= 2 ? { type:"match", q:text || "Match each item with its partner.", pairs } : null;
-      }
-      return text && (x.opts || []).every(o => String(o).trim()) ? { type:"mc", q:text, opts:(x.opts||[]).map(o => String(o).trim()), ans:x.ans } : null;
-    };
-
-    const prep = () => {
-      const x = qz.questions[qz.i];
-      qz.sel = null;
-      qz.chk = false;
-      qz.m = [];
-      qz.order = [];
-      if (x && x.type === "match") qz.order = shuffle(x.pairs.map((_, k) => k));
-      else if (x && (x.type || "mc") === "mc") qz.order = shuffle(x.opts.map((_, k) => k));
-    };
-
-    const planDays = () => {
-      const t0 = plus(0);
-      const ex = (P.exams || []).filter(e => e.date >= t0);
-      if (!ex.length) return [];
-      const last = ex.reduce((m, e) => e.date > m ? e.date : m, "");
-      const out = [], used = {};
-      ex.forEach(e => used[e.subject + e.date] = 0);
-
-      for (let o = 0; o <= 120; o++) {
-        const d = plus(o);
-        if (d > last) break;
-        const active = ex.filter(e => e.date > d);
-        const slots = [];
-        if (active.length) {
-          for (let s = 0; s < (P.revPer || 2); s++) {
-            let best = null, bs = -1;
-            active.forEach(e => {
-              const left = Math.max(1, Math.round((new Date(e.date + "T00:00:00") - new Date(d + "T00:00:00")) / 864e5));
-              const sc = (1 / left) / (used[e.subject + e.date] + 1);
-              if (sc > bs) { bs = sc; best = e; }
-            });
-            if (!best) break;
-            used[best.subject + best.date]++;
-            slots.push(best.subject);
-          }
-        }
-
-        out.push({ d, slots, exams: ex.filter(e => e.date === d) });
-      }
-
-      return out;
-    };
-
-    async function checkReminders() {
-      if (!P || !user || remBusy) return;
-      remBusy = true;
-      try {
-        const t = plus(0), tm = plus(1), pre = "r" + t.replace(/-/g, "");
-        const key = (kind, name, d) => (pre + "_" + kind + "_" + name + "_" + d).replace(/[^A-Za-z0-9_]/g, "_");
-        const sent = {};
-        Object.keys(P.remSent || {}).forEach(k => { if (k.startsWith(pre)) sent[k] = true; });
-
-        const items = [];
-        (P.tasks || []).forEach(x => {
-          if (!x.done && x.due === tm) items.push({ k:key("t", x.name, x.due), text:"📌 Task due tomorrow: " + x.name });
-        });
-        (P.exams || []).forEach(e => {
-          if (e.date === tm) items.push({ k:key("e", e.subject, e.date), text:"📝 Exam tomorrow: " + e.subject + ". Good luck!" });
-        });
-
-        const fresh = items.filter(i => !sent[i.k]);
-        for (const i of fresh) {
-          await addDoc(collection(db, "notifications"), {
-            to: user.uid,
-            from: user.uid,
-            fromName: "DueDash",
-            type: "reminder",
-            text: i.text.slice(0,200),
-            at: Date.now()
-          });
-          sent[i.k] = true;
-        }
-
-        if (fresh.length || Object.keys(sent).length !== Object.keys(P.remSent || {}).length) {
-          await save({ remSent: sent });
-        }
-      } catch (e) {
-        console.warn("reminders", e);
-      }
-      remBusy = false;
-    }
-
-    function startNotifs() {
-      if (nsub) { try { nsub(); } catch (e) {} }
-      nFirst = true;
-      notifs = [];
-      nsub = onSnapshot(query(collection(db, "notifications"), where("to", "==", user.uid)), snap => {
-        const list = snap.docs.map(d => ({ id:d.id, ...d.data() })).sort((a, b) => (b.at || 0) - (a.at || 0));
-        if (nFirst && list.length) toast("🔔 You have " + list.length + " notification" + (list.length === 1 ? "" : "s"));
-        else snap.docChanges().forEach(c => { if (c.type === "added") toast("🔔 " + (c.doc.data().text || "New notification")); });
-        nFirst = false;
-        notifs = list;
+        await syncProfile();
+        $("auth").classList.add("hidden");
+        $("shell").classList.remove("hidden");
         renderNav();
-        if (view === "notifs") render();
-      }, err => console.warn("notifications", err));
-    }
-
-    async function loadFriends() {
-      const snap = await getDocs(query(collection(db, "friendships"), where("users", "array-contains", user.uid)));
-      const ids = snap.docs.map(d => (d.data().users || []).find(u => u !== user.uid)).filter(Boolean);
-      friends = await Promise.all(ids.map(async id => {
-        try {
-          const s = await getDoc(doc(db, "profiles", id));
-          return s.exists() ? { uid:id, ...s.data() } : { uid:id, username:"(unknown)" };
-        } catch (e) {
-          return { uid:id, username:"(unknown)" };
-        }
-      }));
-      friends.sort((a, b) => String(a.username).localeCompare(String(b.username)));
-    }
-
-    const pairId = (a, b) => [a, b].sort().join("_");
-
-    async function searchFriend() {
-      const n = ($("fs") ? $("fs").value : "").trim();
-      fsq = n;
-      if (!NAME_RE.test(n)) fres = { msg: "Usernames are 3 to 20 letters, numbers or underscores." };
-      else if (n.toLowerCase() === P.username.toLowerCase()) fres = { msg: "That's you! 😄" };
-      else {
-        const r = await getDoc(doc(db, "usernames", n.toLowerCase()));
-        fres = r.exists() ? { uid:r.data().uid, username:r.data().username } : { msg:'No one is called "' + n + '". Check the spelling.' };
+        renderMain();
+        renderMusic();
+        musicPlay("dream");
+        go("planner");
+      } catch (err) {
+        alert("Database error: " + (err.code || err.message));
       }
-      render();
-    }
-
-    const mkCode = () => Array.from({ length:6 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
-    const heartbeat = () => room
-      ? setDoc(doc(db, "rooms", room.code, "members", user.uid), {
-          username:P.username,
-          avatar:P.avatar,
-          pet:(P.pet && P.pet.species) || "🐱",
-          emoji:P.emoji || "😀",
-          status:rs.status,
-          emote:rs.emote,
-          emoteAt:rs.emoteAt,
-          lastSeen:Date.now()
-        }).catch(() => {})
-      : null;
-
-    const mmss = (ms) => {
-      const s = Math.max(0, Math.ceil(ms / 1000));
-      return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
-    };
-
-    const chatHTML = () => chat.length
-      ? chat.map(m => `<div class="msg ${m.uid === user.uid ? "me" : ""}"><b>${esc(m.username || "Student")}:</b> ${esc(m.text || "")}</div>`).join("")
-      : '<div class="sub">No messages yet. Say hi! 👋</div>';
-
-    const paintChat = () => {
-      const el = $("chatlog");
-      if (!el || view !== "room") return;
-      const atEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
-      el.innerHTML = chatHTML();
-      if (atEnd) el.scrollTop = el.scrollHeight;
-    };
-
-    async function sendChat() {
-      const inp = $("chatin");
-      if (!inp || !room) return;
-      const text = inp.value.trim().slice(0, 100);
-      if (!text) return;
-      if (Date.now() - lastSend < 800) { toast("Slow down a little 🙂"); return; }
-      lastSend = Date.now();
-      inp.value = "";
-      try {
-        await addDoc(collection(db, "rooms", room.code, "messages"), {
-          uid:user.uid,
-          username:P.username,
-          text,
-          at:Date.now()
-        });
-      } catch (e) {
-        toast("Message couldn't be sent");
-      }
-    }
-
-    const playable = (d) => (d.questions || []).filter(x => (x.type || "mc") !== "match");
-    const raceOver = () => !!race && (race.status === "done" || (race.status === "live" && racePlayers.length > 0 && racePlayers.every(p => p.finished)));
-    const standings = () => [...racePlayers].sort((a, b) => (b.correct || 0) - (a.correct || 0) || ((a.finished ? a.finishedAt : 9e15) - (b.finished ? b.finishedAt : 9e15)) || (b.answered || 0) - (a.answered || 0));
-    const raceRef = () => doc(db, "rooms", room.code, "races", race.id);
-    const pushProgress = (answered, correct) => setDoc(doc(db, "rooms", room.code, "races", race.id, "players", user.uid), {
-      username:P.username,
-      emoji:P.emoji || "😀",
-      correct,
-      answered,
-      finished: answered >= race.questions.length,
-      finishedAt: answered >= race.questions.length ? Date.now() : 0
     });
 
-    const paintRace = () => {
-      const el = $("racebox");
-      if (el && view === "room") el.innerHTML = raceHTML();
+    $("sw").onclick = () => {
+      const isSignup = $("at").textContent === "Log in";
+      $("at").textContent = isSignup ? "Create account" : "Log in";
+      $("ab").textContent = isSignup ? "Sign up" : "Log in";
+      $("sw").textContent = isSignup ? "Already have an account? Log in" : "New here? Create an account";
+      $("er").textContent = "";
     };
 
-    const raceResults = () => {
-      const t = rsq.trim().toLowerCase();
-      const mine = quizzes.filter(d => playable(d).length >= 2 && String(d.title).toLowerCase().includes(t));
-      const others = pubQ.filter(d => d.ownerId !== user.uid && playable(d).length >= 2 && String(d.title).toLowerCase().includes(t));
-      const row = (d, by) => `
-        <div class="card row">
-          <div>
-            <b>${esc(d.title)}</b>
-            <div class="sub">${by ? "Public · by " + esc(d.ownerName || "someone") : "Your quiz"} · ${playable(d).length} questions</div>
-          </div>
-          <button data-act="rpost" data-id="${esc(d.id)}">🏁 Post race</button>
-        </div>
-      `;
-      const all = [...mine.map(d => row(d, false)), ...others.map(d => row(d, true))];
-      if (!all.length) return `<div class="empty">${t ? "No quizzes match your search." : "No public quizzes yet."}</div>`;
-      return all.slice(0, 20).join("") + (all.length > 20 ? '<div class="sub">Showing the first 20. Type to narrow it down.</div>' : "");
-    };
-
-    const postForm = () => {
-      const any = quizzes.some(d => playable(d).length >= 2) || pubQ.some(d => d.ownerId !== user.uid && playable(d).length >= 2);
-      if (!any) return '<div class="sub">No quizzes are available yet. Make one in My Quizzes or share a public one in Explore. A race needs at least 2 multiple-choice or true/false questions.</div>';
-      return `
-        <div class="sub" style="margin:6px 0 10px">Search for one of your own quizzes or a public quiz. Questions are shuffled and only correct answers move you forward.</div>
-        <input id="rsq" placeholder="🔍 Search quizzes by name..." value="${esc(rsq)}" autocomplete="off" />
-        <div id="rres">${raceResults()}</div>
-      `;
-    };
-
-    const lanes = () => {
-      const total = race.questions.length;
-      return [...racePlayers].sort((a, b) => (b.correct || 0) - (a.correct || 0) || (b.answered || 0) - (a.answered || 0)).map(p => {
-        const pct = Math.round(((p.correct || 0) / total) * 100);
-        const left = Math.min(94, Math.max(4, pct));
-        return `
-          <div class="lane">
-            <div class="ln">${esc(p.emoji || "😀")} ${esc(p.username || "Student")}${p.id === user.uid ? " (you)" : ""}</div>
-            <div class="track">
-              <i style="width:${pct}%"></i>
-              <span class="flag">🏁</span>
-              <span class="rider" style="left:${left}%">${esc(p.emoji || "😀")}</span>
-            </div>
-            <div class="sc">${p.correct || 0} ✅</div>
-          </div>
-        `;
-      }).join("");
-    };
-
-    const questionUI = (total) => {
-      const x = race.questions[myRace.i];
-      const rev = myRace.sel !== null;
-      const items = x.type === "tf"
-        ? [["True", 1], ["False", 0]]
-        : x.opts.map((o, k) => [`ABCD`[k] + ". " + o, k]);
-      const ci = x.type === "tf" ? (x.ans ? 1 : 0) : x.ans;
-
-      return `
-        <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct}</p>
-        <div class="card"><b>${esc(x.q)}</b></div>
-        ${items.map(([label, index]) => `
-          <button class="choice ${rev ? (index === ci ? "green" : index === myRace.sel ? "red" : "alt") : "alt"}"
-            data-act="rpick" data-i="${index}" ${rev ? "disabled" : ""}>
-            ${esc(label)}
-          </button>
-        `).join("")}
-      `;
-    };
-
-    const raceHTML = () => {
-      if (!race) return postForm();
-
-      const total = race.questions.length;
-      const mine = racePlayers.find(p => p.id === user.uid);
-      const host = race.hostId === user.uid;
-      const hostP = racePlayers.find(p => p.id === race.hostId);
-      const head = `
-        <div class="row">
-          <div><b>🏁 ${esc(race.title)}</b></div>
-          <span class="sub">${total} questions${hostP ? " · posted by " + esc(hostP.username) : ""}</span>
-        </div>
-      `;
-
-      if (raceOver()) {
-        const st = standings();
-        const w = st[0];
-        const medal = i => ["🥇","🥈","🥉"][i] || "#" + (i + 1);
-
-        return head + (w ? `<div class="card" style="margin:10px 0;text-align:center"><div style="font-size:34px">🏆</div><b>${esc(w.emoji || "")} ${esc(w.username)} wins with ${w.correct || 0} / ${total}!</b></div>` : "") +
-          st.map((p, i) => `
-            <div class="card row ${p.id === user.uid ? "me" : ""}">
-              <b>${medal(i)} ${esc(p.emoji || "😀")} ${esc(p.username)}${p.id === user.uid ? " (you)" : ""}</b>
-              <span>${p.correct || 0} / ${total} correct</span>
-            </div>
-          `).join("") +
-          `<h3>Race again?</h3>${postForm()}`;
+    $("ab").onclick = async () => {
+      $("er").textContent = "";
+      try {
+        const method = $("at").textContent === "Create account" ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
+        await method(auth, $("em").value.trim(), $("pw").value);
+      } catch (e) {
+        $("er").textContent = errMsg(e);
       }
-
-      if (race.status === "open") {
-        const chips = racePlayers.map(p => `<span class="chip">${esc(p.emoji || "😀")} ${esc(p.username)}</span>`).join(" ");
-        return head + `
-          <div class="sub" style="margin:8px 0">Waiting for players to join…</div>
-          <div class="btns">${chips || '<span class="sub">No one yet</span>'}</div>
-          <div class="btns" style="margin-top:10px">
-            ${mine ? "<span class='sub'>✅ You're in!</span>" : `<button data-act="rjoinrace">Join race</button>`}
-            ${host ? ` <button class="green" data-act="rstart">▶ Start race (${racePlayers.length} player${racePlayers.length === 1 ? "" : "s"})</button> <button class="alt" data-act="rend">Cancel</button>` : ""}
-          </div>
-        `;
-      }
-
-      const left = race.startAt - Date.now();
-      let mid = "";
-      if (left > 0) {
-        mid = `<div class="cd">${Math.max(1, Math.ceil(left / 1000))}</div><div class="sub" style="text-align:center">Get ready…</div>`;
-      } else if (mine && myRace && myRace.i < total) {
-        mid = questionUI(total);
-      } else if (mine) {
-        mid = `<div class="card" style="text-align:center">🏁 You finished with <b>${myRace ? myRace.correct : (mine.correct || 0)} / ${total}</b>. Waiting for the others…</div>`;
-      } else {
-        mid = `<div class="sub">The race has started. You can watch from here.</div>`;
-      }
-
-      return head + mid + `<div style="margin-top:10px">${lanes()}</div>` + (host ? `<button class="alt" data-act="rend" style="margin-top:8px">End race now</button>` : "");
     };
 
-    function watchPlayers() {
-      if (psub) { try { psub(); } catch (e) {} psub = null; }
-      if (!race || !room) return;
-      psub = onSnapshot(collection(db, "rooms", room.code, "races", race.id, "players"), snap => {
-        racePlayers = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-        const mine = racePlayers.find(p => p.id === user.uid);
-        if (mine && myRace && myRace.rid === race.id && myRace.sel === null && myRace.i < (mine.answered || 0)) {
-          myRace.i = mine.answered;
-          myRace.correct = mine.correct || 0;
-        }
-        paintRace();
-        maybeWin();
-      }, err => console.warn("race players", err));
-    }
+    const renderNav = () => {
+      if (!state.profile) return;
+      const f = (state.view === "study" && state.study) ? state.study.from : (state.view === "qtake" && state.quizTake) ? state.quizTake.from : "";
+      const nav = [
+        ["planner","📅","Planner"],
+        ["rev","🗓️","Revision"],
+        ["decks","📚","My Decks"],
+        ["quizzes","📝","My Quizzes"],
+        ["explore","🔍","Explore"],
+        ["rooms","🏠","Study Rooms"],
+        ["friends","👥","Friends"],
+        ["notifs","🔔","Notifications"],
+        ["pet","🐾","My Pet"],
+        ["leaders","🏆","Leaderboard"],
+        ["account","👤","Account"]
+      ];
 
-    function raceAnswer(i) {
-      if (!race || !myRace || myRace.rid !== race.id || myRace.sel !== null) return;
-      if (race.status !== "live" || Date.now() < race.startAt) return;
-      const x = race.questions[myRace.i];
-      if (!x) return;
-      if (!racePlayers.some(p => p.id === user.uid)) return;
-
-      const right = x.type === "tf" ? ((i === 1) === !!x.ans) : i === x.ans;
-      myRace.sel = i;
-      if (right) myRace.correct++;
-      pushProgress(myRace.i + 1, myRace.correct).catch(() => {});
-      paintRace();
-
-      const rid = race.id;
-      setTimeout(() => {
-        if (!race || race.id !== rid || !myRace) return;
-        myRace.i++;
-        myRace.sel = null;
-        if (myRace.i >= race.questions.length) finishMyRace();
-        paintRace();
-      }, 700);
-    }
-
-    async function finishMyRace() {
-      if (!myRace || myRace.paid || !race || P.lastRaceDone === race.id) return;
-      myRace.paid = true;
-      const total = race.questions.length;
-      const c = myRace.correct;
-      const pts = c * 2 + (c === total ? 10 : 0);
-      try {
-        await earn(pts, { racesPlayed:(P.racesPlayed || 0) + 1, lastRaceDone: race.id });
-        toast("🏁 You finished! +" + pts + " points");
-      } catch (e) {}
-    }
-
-    async function maybeWin() {
-      if (winBusy || !raceOver()) return;
-      const st = standings();
-      if (st.length < 2 || st[0].id !== user.uid || !(st[0].correct > 0) || P.lastWonRace === race.id) return;
-      winBusy = true;
-      try {
-        await earn(15, { racesWon:(P.racesWon || 0) + 1, lastWonRace: race.id });
-        toast("🏆 You won the race! +15 points");
-      } catch (e) {}
-      winBusy = false;
-    }
-
-    const finishFocus = async () => {
-      rs.status = "studying";
-      rs.focusEnd = 0;
-      heartbeat();
-      try {
-        await earn(5, { focusDone:(P.focusDone || 0) + 1 });
-        toast("🎯 Focus session complete! +5 points");
-      } catch (e) {}
-      if (view === "room") render();
-    };
-
-    async function enterRoom(code, info) {
-      await leaveRoom();
-      room = { code, name: info.name };
-      members = [];
-      chat = [];
-      chatSeen = {};
-      chatFirst = true;
-      race = null;
-      racePlayers = [];
-      myRace = null;
-      firstRace = true;
-      rs = { status:"studying", emote:"", emoteAt:0, focusEnd:0 };
-
-      await heartbeat();
-
-      unsub = onSnapshot(collection(db, "rooms", code, "members"), snap => {
-        members = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-        paintRoom();
-      }, err => alert("Room error: " + (err.code || err.message)));
-
-      const since = Date.now() - 30000;
-      unsubC = onSnapshot(query(collection(db, "rooms", code, "messages"), where("at", ">=", since), orderBy("at", "desc"), limit(50)), snap => {
-        const list = snap.docs.map(d => ({ id:d.id, ...d.data() })).reverse();
-        const now = Date.now();
-        let fresh = false;
-        list.forEach(m => {
-          if (!(m.id in chatSeen)) {
-            chatSeen[m.id] = chatFirst ? 0 : now;
-            if (!chatFirst) fresh = true;
-          }
-        });
-        chatFirst = false;
-        chat = list;
-        paintRoom();
-        paintChat();
-        if (fresh) setTimeout(paintRoom, 8300);
-      }, err => alert("Chat error: " + (err.code || err.message)));
-
-      rsub = onSnapshot(query(collection(db, "rooms", code, "races"), orderBy("createdAt", "desc"), limit(1)), snap => {
-        const d = snap.docs[0];
-        let nr = d ? { id:d.id, ...d.data() } : null;
-        if (nr && Date.now() - (nr.createdAt || 0) > 7200000) nr = null;
-        const changed = (nr ? nr.id : null) !== (race ? race.id : null);
-        const was = race ? race.status : "";
-        race = nr;
-        if (changed) {
-          racePlayers = [];
-          myRace = nr ? { rid:nr.id, i:0, correct:0, sel:null, paid:false } : null;
-          watchPlayers();
-          if (!firstRace && nr && nr.hostId !== user.uid && nr.status === "open") toast("🏁 A racing game was posted in your room!");
-        } else if (nr && was === "open" && nr.status === "live" && !firstRace) {
-          toast("🏁 The race is starting!");
-        }
-        firstRace = false;
-        paintRace();
-      }, err => console.warn("races", err));
-
-      hb = setInterval(heartbeat, 30000);
-      tickN = 0;
-      rt = setInterval(() => {
-        if (view !== "room") return;
-        if (rs.status === "focus" && Date.now() >= rs.focusEnd) finishFocus();
-        const el = $("ftimer");
-        if (el && rs.status === "focus") el.textContent = mmss(rs.focusEnd - Date.now());
-        if (race && race.status === "live" && Date.now() < race.startAt + 1100) paintRace();
-        if (++tickN % 5 === 0) paintRoom();
-      }, 1000);
-
-      await save({ roomsJoined:(P.roomsJoined || 0) + 1 });
-      try { await loadFriends(); } catch (e) {}
-      try { quizzes = (await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() })); } catch (e) {}
-      try { pubQ = (await getDocs(query(collection(db, "quizzes"), where("isPublic", "==", true), limit(100)))).docs.map(d => ({ id:d.id, ...d.data() })); } catch (e) {}
-      view = "room";
-      render();
-    }
-
-    async function leaveRoom() {
-      if (!room) return;
-      const code = room.code;
-      try { if (unsub) unsub(); } catch (e) {}
-      try { if (unsubC) unsubC(); } catch (e) {}
-      try { if (rsub) rsub(); } catch (e) {}
-      try { if (psub) psub(); } catch (e) {}
-      unsub = null; unsubC = null; rsub = null; psub = null;
-      clearInterval(hb); clearInterval(rt);
-      room = null; members = []; chat = []; chatSeen = {}; race = null; racePlayers = []; myRace = null;
-      try { await deleteDoc(doc(db, "rooms", code, "members", user.uid)); } catch (e) {}
-    }
-
-    async function go(v) {
-      if (v === "room" && !room) v = "rooms";
-      view = v;
-      try {
-        if (v === "planner" || v === "rev") checkReminders();
-        if (v === "decks") decks = (await getDocs(query(collection(db, "decks"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() }));
-        if (v === "quizzes") quizzes = (await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() }));
-        if (v === "friends") { fsq = ""; fres = null; await loadFriends(); }
-        if (v === "explore") {
-          q = "";
-          pub = (await getDocs(query(collection(db, "decks"), where("isPublic", "==", true), limit(100)))).docs.map(d => ({ id:d.id, ...d.data() }));
-          pubQ = (await getDocs(query(collection(db, "quizzes"), where("isPublic", "==", true), limit(100)))).docs.map(d => ({ id:d.id, ...d.data() }));
-        }
-        if (v === "leaders") {
-          board = (await getDocs(query(collection(db, "leaderboard"), orderBy("points", "desc"), limit(20)))).docs.map(d => ({ id:d.id, ...d.data() }));
-          streaks = (await getDocs(query(collection(db, "leaderboard"), orderBy("streak", "desc"), limit(20)))).docs.map(d => ({ id:d.id, ...d.data() }));
-        }
-      } catch (e) { alert("Database error: " + (e.code || e.message)); }
-      render();
-    }
-
-    const petEmoji = () => lvl(P) < 2 ? "🥚" : (P.pet && P.pet.species) || "🐱";
-    const goalBar = () => {
-      const gp = Math.min(GOAL, P.goalDay === day() ? (P.goalPts || 0) : 0);
-      return `
-        <div class="bar"><i style="width:${(gp / GOAL) * 100}%"></i></div>
-        <div class="sub">${gp} / ${GOAL} points today${gp >= GOAL ? " ✅ goal done!" : " · hit the goal for +5 bonus"}</div>
-      `;
-    };
-
-    const paintRoom = () => {
-      const el = $("scene");
-      if (el && view === "room") el.innerHTML = sceneHTML();
-    };
-
-    const sceneHTML = () => {
-      const b = bd();
-      const now = Date.now();
-      const deco = b.d.map((e, k) => `<span class="deco" style="left:${8 + k * 38}%">${e}</span>`).join("");
-      const act = members.filter(m => now - (m.lastSeen || 0) < 90000).sort((a, c) => String(a.username || "").localeCompare(String(c.username || "")));
-      const lastMsg = uid => {
-        for (let i = chat.length - 1; i >= 0; i--) {
-          if (chat[i].uid === uid) return chat[i];
-        }
-        return null;
-      };
-      const bubble = m => {
-        const cm = lastMsg(m.id);
-        if (cm && chatSeen[cm.id] && now - chatSeen[cm.id] < 8000) return `<div class="bub">${esc(cm.text)}</div>`;
-        if (m.emote && now - (m.emoteAt || 0) < 8000) return `<div class="bub">${esc(m.emote)}</div>`;
+      const on = key => {
+        if (state.view === key) return "on";
+        if (key === "decks" && (state.view === "edit" || f === "decks")) return "on";
+        if (key === "quizzes" && (state.view === "qedit" || f === "quizzes")) return "on";
+        if (key === "explore" && f === "explore") return "on";
+        if (key === "rooms" && state.view === "room") return "on";
+        if (key === "friends" && state.view === "profile") return "on";
         return "";
       };
-      return deco + (act.length
-        ? act.map(m => `
-            <div class="who">
-              ${bubble(m)}
-              ${avatar(m.avatar)}
-              <span class="wp">${esc(m.pet || "")}</span>
-              <div class="wn">${esc(m.emoji || "😀")} ${esc(m.username || "Student")}${m.id === user.uid ? " (you)" : ""}</div>
-              <div class="st">${ST[m.status] || ST.studying}</div>
-            </div>
-          `).join("")
-        : '<div class="sub" style="color:#fff">Waiting for people to join…</div>');
+
+      $("nav").innerHTML = `
+        <div class="brand-wrap" style="margin-bottom:8px; width:100%">
+          ${logoSvg("nav")}
+        </div>
+        ${nav.map(([k, icon, label]) => `
+          <button data-go="${k === "rooms" && state.room ? "room" : k}" class="${on(k)}">
+            <span>${icon}</span>
+            ${label}
+            ${k === "notifs" && state.notify && state.notify.length ? `<span class="badge">${state.notify.length}</span>` : ""}
+          </button>
+        `).join("")}
+        <div class="chips">
+          <span class="chip">${esc(state.profile.emoji || "😀")}</span>
+          <span class="chip">⭐ ${state.profile.points || 0}</span>
+          <span class="chip">🔥 ${liveStreak(state.profile)}</span>
+          <span class="chip">${petEmoji(state.profile)} Lv ${levelOf(state.profile)}</span>
+        </div>
+        <button class="alt" data-act="out">Log out</button>
+      `;
     };
 
+    const newDeck = () => ({
+      title: "",
+      cards: [{ front: "", back: "" }],
+      isPublic: false
+    });
+
+    const newQuiz = () => ({
+      title: "",
+      questions: [{ type: "mc", q: "", opts: ["","","",""], ans: 0 }],
+      isPublic: false
+    });
+
+    const createDeckDraft = deck => ({
+      id: deck?.id || null,
+      title: deck?.title || "",
+      cards: deck?.cards ? deck.cards.map(c => ({ ...c })) : [{ front: "", back: "" }],
+      isPublic: !!deck?.isPublic,
+      wasPublic: !!deck?.isPublic
+    });
+
+    const createQuizDraft = quiz => ({
+      id: quiz?.id || null,
+      title: quiz?.title || "",
+      questions: quiz?.questions ? JSON.parse(JSON.stringify(quiz.questions)) : [{ type: "mc", q: "", opts: ["","","",""], ans: 0 }],
+      isPublic: !!quiz?.isPublic,
+      wasPublic: !!quiz?.isPublic
+    });
+
     const vPlanner = () => {
-      const rows = P.tasks.map((t, i) => {
-        const od = t.due && !t.done && t.due < day();
-        const dueTxt = t.due ? (od ? "⚠️ Overdue · " : "Due: ") + esc(t.due) : "";
+      const rows = (state.profile.tasks || []).map((task, i) => {
+        const over = task.due && !task.done && task.due < day();
         return `
-          <div class="card row ${t.done ? "done" : ""}">
+          <div class="card row ${task.done ? "done" : ""}">
             <div>
-              <div class="nm">${esc(t.name)}</div>
-              <div class="sub ${od ? "overdue" : ""}">${dueTxt}</div>
+              <div class="nm">${esc(task.name)}</div>
+              <div class="sub ${over ? "overdue" : ""}">${task.due ? (over ? "⚠️ Overdue · " : "Due: ") + esc(task.due) : ""}</div>
             </div>
             <div>
-              ${t.done ? "" : `<button data-act="done" data-i="${i}">Done +5</button> `}
+              ${task.done ? "" : `<button data-act="done" data-i="${i}">Done +5</button> `}
               <button class="alt" data-act="deltask" data-i="${i}">Delete</button>
             </div>
           </div>
@@ -1931,20 +1449,20 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       }).join("");
 
       return `
-        <h2>Hi, ${esc(P.emoji || "😀")} ${esc(P.username)} 👋</h2>
+        <h2>Hi, ${esc(state.profile.emoji || "😀")} ${esc(state.profile.username)} 👋</h2>
         <p class="sub">Here's what's on your plate.</p>
         <div class="stats">
-          <div class="stat"><b>⭐ ${P.points}</b><span>points</span></div>
-          <div class="stat"><b>🔥 ${liveStreak(P)}</b><span>day streak</span></div>
-          <div class="stat"><b>✅ ${P.tasksDone}</b><span>tasks done</span></div>
+          <div class="stat"><b>⭐ ${state.profile.points || 0}</b><span>points</span></div>
+          <div class="stat"><b>🔥 ${liveStreak(state.profile)}</b><span>day streak</span></div>
+          <div class="stat"><b>✅ ${state.profile.tasksDone || 0}</b><span>tasks done</span></div>
         </div>
 
         <div class="card row">
           <div style="display:flex;gap:12px;align-items:center">
-            <span style="font-size:40px">${petEmoji()}</span>
+            <span style="font-size:40px">${petEmoji(state.profile)}</span>
             <div>
-              <b>${esc(P.pet.name)}</b>
-              <div class="sub">Level ${lvl(P)}</div>
+              <b>${esc((state.profile.pet && state.profile.pet.name) || "Buddy")}</b>
+              <div class="sub">Level ${levelOf(state.profile)}</div>
             </div>
           </div>
           <div style="flex:1;min-width:200px">
@@ -1964,52 +1482,61 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       `;
     };
 
-    const fmtT = (m) => { let h = Math.floor(m / 60) % 24; const mm = m % 60; const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return h + ":" + String(mm).padStart(2, "0") + " " + ap; };
-    const slotTime = (k) => {
-      const [h, m] = (P.revStart || "16:00").split(":").map(Number);
-      const sm = P.studyMin || 45, bm = P.breakMin === undefined ? 15 : P.breakMin;
-      const s = h * 60 + m + k * (sm + bm);
-      return fmtT(s) + " – " + fmtT(s + sm);
+    const goalBar = () => {
+      const gp = Math.min(GOAL, state.profile.goalDay === day() ? (state.profile.goalPts || 0) : 0);
+      return `
+        <div class="bar"><i style="width:${(gp / GOAL) * 100}%"></i></div>
+        <div class="sub">${gp} / ${GOAL} points today${gp >= GOAL ? " ✅ goal done!" : " · hit the goal for +5 bonus"}</div>
+      `;
     };
-    const SM = [15,20,25,30,45,50,60,75,90,120];
-    const BM = [0,5,10,15,20,30];
-    const opts = (arr, cur, fmt) => arr.map(n => `<option value="${n}" ${cur === n ? "selected" : ""}>${fmt ? fmt(n) : n}</option>`).join("");
 
     const vRev = () => {
       const t0 = plus(0);
-      const exs = (P.exams || []).map((e, i) => ({ ...e, i })).sort((a, b) => a.date < b.date ? -1 : 1);
-      const plan = planDays().slice(0, 28);
+      const examList = (state.profile.exams || []).map((e, i) => ({ ...e, i })).sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      const plan = buildPlanDays();
+      const slotTime = k => {
+        const [h, m] = (state.profile.revStart || "16:00").split(":").map(Number);
+        const studyMins = state.profile.studyMin || 45;
+        const breakMins = state.profile.breakMin === undefined ? 15 : state.profile.breakMin;
+        const minutes = h * 60 + m + k * (studyMins + breakMins);
+        const fmt = mins => {
+          let hh = Math.floor(mins / 60) % 24;
+          const mm = mins % 60;
+          const ampm = hh >= 12 ? "PM" : "AM";
+          hh = hh % 12 || 12;
+          return `${hh}:${String(mm).padStart(2, "0")} ${ampm}`;
+        };
+        return fmt(minutes) + " – " + fmt(minutes + studyMins);
+      };
 
-      const dt = d => new Date(d + "T00:00:00");
-      const cell = (x) => {
-        const D = dt(x.d);
-        const isToday = x.d === t0;
-        const wd = D.toLocaleDateString(undefined, { weekday:"short" });
-        const dm = D.toLocaleDateString(undefined, { day:"numeric", month:"short" });
-        const ex = x.exams.map(e => `<div class="cal-x">📝 Exam: ${esc(e.subject)}</div>`).join("");
-        const sl = x.slots.map((s, k) => {
-          const key = x.d + "|" + k + "|" + s;
-          const done = P.revDone && P.revDone[key];
+      const cell = x => {
+        const d = new Date(x.d + "T00:00:00");
+        const dayName = d.toLocaleDateString(undefined, { weekday:"short" });
+        const shortDate = d.toLocaleDateString(undefined, { day:"numeric", month:"short" });
+        const examMarkup = x.exams.map(e => `<div class="cal-x">📝 Exam: ${esc(e.subject)}</div>`).join("");
+        const slotsMarkup = x.slots.map((subject, idx) => {
+          const key = x.d + "|" + idx + "|" + subject;
+          const done = !!(state.profile.revDone && state.profile.revDone[key]);
           return `
             <div class="cal-s ${done ? "done" : ""}">
-              <div class="cal-t">🕒 ${slotTime(k)}</div>
-              <div class="nm">📖 ${esc(s)}</div>
-              ${done ? "<div>✅ Done</div>" : isToday ? `<button data-act="rdone" data-k="${esc(key)}">Done +10</button>` : ""}
+              <div class="cal-t">🕒 ${slotTime(idx)}</div>
+              <div class="nm">📖 ${esc(subject)}</div>
+              ${done ? "<div>✅ Done</div>" : x.d === t0 ? `<button data-act="rdone" data-k="${esc(key)}">Done +10</button>` : ""}
             </div>
           `;
         }).join("");
-        const rest = (!x.slots.length && !x.exams.length) ? '<div class="cal-r">Rest day 🌿</div>' : "";
+        const rest = (!x.slots.length && !x.exams.length) ? "<div class='cal-r'>Rest day 🌿</div>" : "";
         return `
-          <div class="cal-d ${isToday ? "today" : ""}">
-            <div class="cal-h"><span>${wd}</span><b>${dm}</b></div>
-            ${ex}${sl}${rest}
+          <div class="cal-d ${x.d === t0 ? "today" : ""}">
+            <div class="cal-h"><span>${dayName}</span><b>${shortDate}</b></div>
+            ${examMarkup}${slotsMarkup}${rest}
           </div>
         `;
       };
 
       let grid = "";
       if (plan.length) {
-        const lead = (dt(plan[0].d).getDay() + 6) % 7;
+        const lead = (new Date(plan[0].d + "T00:00:00").getDay() + 6) % 7;
         grid = `
           <h3>Your study calendar</h3>
           <div class="cal">
@@ -2020,14 +1547,16 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
         `;
       }
 
-      const sm = P.studyMin || 45, bm = P.breakMin === undefined ? 15 : P.breakMin;
+      const sm = state.profile.studyMin || 45;
+      const bm = state.profile.breakMin === undefined ? 15 : state.profile.breakMin;
+
       return `
         <h2>Revision Planner</h2>
         <p class="sub">Add your exams and DueDash builds your study calendar, with more sessions for the exams coming up soonest.</p>
 
         <div class="card">
           <h3 style="margin-top:0">Your exams</h3>
-          ${exs.length ? exs.map(e => `
+          ${examList.length ? examList.map(e => `
             <div class="row" style="margin-bottom:8px">
               <span>📝 <b>${esc(e.subject)}</b> · ${esc(e.date)}</span>
               <button class="alt" data-act="xdel" data-i="${e.i}">Remove</button>
@@ -2040,15 +1569,15 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
 
           <h3>⏱️ Your study schedule</h3>
           <div class="sub" style="margin-top:6px">Study sessions per day:
-            <select id="rp">${opts([1,2,3,4,5,6], P.revPer || 2)}</select>
+            <select id="rp">${[1,2,3,4,5,6].map(v => `<option value="${v}" ${state.profile.revPer === v ? "selected" : ""}>${v}</option>`).join("")}</select>
           </div>
           <div class="sub" style="margin-top:10px">Study length:
-            <select id="rsm">${opts(SM, sm, n => n + " min")}</select>
+            <select id="rsm">${[15,20,25,30,45,50,60,75,90,120].map(v => `<option value="${v}" ${sm === v ? "selected" : ""}>${v} min</option>`).join("")}</select>
             · Break length:
-            <select id="rbm">${opts(BM, bm, n => n === 0 ? "No break" : n + " min")}</select>
+            <select id="rbm">${[0,5,10,15,20,30].map(v => `<option value="${v}" ${bm === v ? "selected" : ""}>${v === 0 ? "No break" : v + " min"}</option>`).join("")}</select>
           </div>
           <div class="sub" style="margin-top:10px">First session starts at:
-            <input id="rstart" type="time" value="${esc(P.revStart || "16:00")}" style="width:auto;margin:0 0 0 6px;padding:7px 10px" />
+            <input id="rstart" type="time" value="${esc(state.profile.revStart || "16:00")}" style="width:auto;margin:0 0 0 6px;padding:7px 10px" />
           </div>
           <div class="sub" style="margin-top:8px">🔔 You get a reminder the day before each exam.</div>
         </div>
@@ -2057,41 +1586,485 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       `;
     };
 
+    const buildPlanDays = () => {
+      const t0 = plus(0);
+      const exams = (state.profile.exams || []).filter(e => e.date >= t0);
+      if (!exams.length) return [];
+      const lastDate = exams.reduce((m, e) => e.date > m ? e.date : m, "");
+      const used = {};
+      exams.forEach(e => used[e.subject + e.date] = 0);
+      const out = [];
+      for (let offset = 0; offset <= 120; offset++) {
+        const d = plus(offset);
+        if (d > lastDate) break;
+        const active = exams.filter(e => e.date > d);
+        const slots = [];
+        if (active.length) {
+          for (let s = 0; s < (state.profile.revPer || 2); s++) {
+            let best = null, bestScore = -1;
+            active.forEach(e => {
+              const left = Math.max(1, Math.round((new Date(e.date + "T00:00:00") - new Date(d + "T00:00:00")) / 864e5));
+              const score = (1 / left) / (used[e.subject + e.date] + 1);
+              if (score > bestScore) { bestScore = score; best = e; }
+            });
+            if (!best) break;
+            used[best.subject + best.date]++;
+            slots.push(best.subject);
+          }
+        }
+        out.push({ d, slots, exams: exams.filter(e => e.date === d) });
+      }
+      return out;
+    };
+
+    const vDecks = () => `
+      <h2>My Decks</h2>
+      <p class="sub">Flashcards you made.</p>
+      <button data-act="newdeck">+ New deck</button>
+      <br /><br />
+      ${state.decks.length ? state.decks.map(d => `
+        <div class="card row">
+          <div>
+            <b>${esc(d.title)}</b>
+            <div class="sub">${d.cards.length} cards · ${d.isPublic ? "Public" : "Private"}</div>
+          </div>
+          <div>
+            <button data-act="study" data-id="${d.id}">Study</button>
+            <button class="alt" data-act="editdeck" data-id="${d.id}">Edit</button>
+            <button class="red" data-act="deldeck" data-id="${d.id}">Delete</button>
+          </div>
+        </div>
+      `).join("") : '<div class="empty">No decks yet. Make your first one!</div>'}
+    `;
+
+    const vEditDeck = () => {
+      if (!state.currentDeckDraft) return "";
+      return `
+        <h2>${state.currentDeckDraft.id ? "Edit" : "New"} deck</h2>
+        <input id="dt" placeholder="Deck title" maxlength="60" value="${esc(state.currentDeckDraft.title)}" />
+        ${state.currentDeckDraft.cards.map((card, i) => `
+          <div class="card">
+            <input data-f="front" data-i="${i}" placeholder="Front (question)" maxlength="200" value="${esc(card.front)}" />
+            <input data-f="back" data-i="${i}" placeholder="Back (answer)" maxlength="200" value="${esc(card.back)}" />
+            <button class="alt" data-act="delcard" data-i="${i}">Remove card</button>
+          </div>
+        `).join("")}
+        <button class="alt" data-act="addcard">+ Add card</button>
+        <br /><br />
+        <label><input type="checkbox" id="dp" ${state.currentDeckDraft.isPublic ? "checked" : ""} /> Make public so other people can find it</label>
+        <p class="sub">Only share kind, safe stuff. Never put personal info in a public deck.</p>
+        <button data-act="savedeck">Save deck</button>
+        <button class="alt" data-go="decks">Cancel</button>
+      `;
+    };
+
+    const vStudy = () => {
+      if (!state.study) return "";
+      const c = state.study.cards[state.study.i];
+      if (!c) return `
+        <h2>🎉 Deck complete!</h2>
+        <p>You got ${state.study.got} of ${state.study.cards.length}. Bonus +10 points!</p>
+        <button data-go="${state.study.from}">Back</button>
+      `;
+      return `
+        <h2>${esc(state.study.title)}</h2>
+        <p class="sub">Card ${state.study.i + 1} of ${state.study.cards.length}</p>
+        <div class="card big" data-act="flip">${esc(state.study.flip ? c.back : c.front)}<div class="sub">${state.study.flip ? "Answer" : "Tap to flip"}</div></div>
+        ${state.study.flip ? `<button data-act="got">Got it +1</button> <button class="alt" data-act="again">Again</button>` : ""}
+      `;
+    };
+
+    const vQuizzes = () => `
+      <h2>My Quizzes</h2>
+      <p class="sub">Multiple choice, true or false, and match.</p>
+      <button data-act="newquiz">+ New quiz</button>
+      <br /><br />
+      ${state.quizes.length ? state.quizes.map(d => `
+        <div class="card row">
+          <div>
+            <b>${esc(d.title)}</b>
+            <div class="sub">${d.questions.length} questions · ${d.isPublic ? "Public" : "Private"}</div>
+          </div>
+          <div>
+            <button data-act="qtake" data-id="${d.id}">Take</button>
+            <button class="alt" data-act="qedit" data-id="${d.id}">Edit</button>
+            <button class="red" data-act="qdel" data-id="${d.id}">Delete</button>
+          </div>
+        </div>
+      `).join("") : '<div class="empty">No quizzes yet. Make your first one!</div>'}
+    `;
+
+    const qBody = (question, qi) => {
+      if (question.type === "tf") {
+        return `
+          <label class="tick"><input type="radio" name="tf${qi}" data-qf="tf" data-qi="${qi}" data-v="1" ${question.ans ? "checked" : ""} /> True</label>
+          <label class="tick"><input type="radio" name="tf${qi}" data-qf="tf" data-qi="${qi}" data-v="0" ${question.ans ? "" : "checked"} /> False</label>
+          <div class="sub">Pick whether the statement above is true or false.</div>
+        `;
+      }
+
+      if (question.type === "match") {
+        return `
+          ${question.pairs.map((p, pi) => `
+            <div class="pair">
+              <input data-qf="l" data-qi="${qi}" data-pi="${pi}" placeholder="Item ${pi + 1}" maxlength="80" value="${esc(p.l)}" />
+              <input data-qf="r" data-qi="${qi}" data-pi="${pi}" placeholder="Its match" maxlength="80" value="${esc(p.r)}" />
+            </div>
+          `).join("")}
+          <div class="sub">Fill in at least 2 pairs. They get shuffled when someone takes the quiz.</div>
+        `;
+      }
+
+      return `
+        ${question.opts.map((o, oi) => `
+          <div class="opt ${question.ans === oi ? "right" : ""}">
+            <label class="tick">
+              <input type="radio" name="ans${qi}" data-qf="ans" data-qi="${qi}" data-oi="${oi}" ${question.ans === oi ? "checked" : ""} />
+              ${question.ans === oi ? "✓ Correct" : "Mark correct"}
+            </label>
+            <input data-qf="opt" data-qi="${qi}" data-oi="${oi}" placeholder="Answer ${"ABCD"[oi]}" maxlength="120" value="${esc(o)}" />
+          </div>
+        `).join("")}
+        <div class="sub">Click “Mark correct” next to the right answer. The answers get shuffled when someone takes the quiz.</div>
+      `;
+    };
+
+    const vQEdit = () => {
+      if (!state.currentQuizDraft) return "";
+      return `
+        <h2>${state.currentQuizDraft.id ? "Edit" : "New"} quiz</h2>
+        <input id="qt" placeholder="Quiz title" maxlength="60" value="${esc(state.currentQuizDraft.title)}" />
+        ${state.currentQuizDraft.questions.map((question, qi) => `
+          <div class="card">
+            <div class="row" style="margin-bottom:10px">
+              <b>Question ${qi + 1}</b>
+              <select data-qf="type" data-qi="${qi}">
+                <option value="mc" ${question.type === "mc" ? "selected" : ""}>Multiple choice</option>
+                <option value="tf" ${question.type === "tf" ? "selected" : ""}>True / False</option>
+                <option value="match" ${question.type === "match" ? "selected" : ""}>Match</option>
+              </select>
+            </div>
+            <input data-qf="q" data-qi="${qi}" placeholder="${question.type === "match" ? "Instructions (like: Match each country to its capital)" : question.type === "tf" ? "Statement (like: The sun is a star)" : "Question"}" maxlength="200" value="${esc(question.q || "")}" />
+            ${qBody(question, qi)}
+            ${state.currentQuizDraft.questions.length > 1 ? `<br /><button class="alt" data-act="qdelq" data-i="${qi}">Remove question</button>` : ""}
+          </div>
+        `).join("")}
+        <button class="alt" data-act="qaddq">+ Add question</button>
+        <br /><br />
+        <label><input type="checkbox" id="qp" ${state.currentQuizDraft.isPublic ? "checked" : ""} /> Make public so other people can find it</label>
+        <p class="sub">Only share kind, safe stuff. Never put personal info in a public quiz.</p>
+        <button data-act="qsave">Save quiz</button>
+        <button class="alt" data-go="quizzes">Cancel</button>
+      `;
+    };
+
+    const vQTake = () => {
+      if (!state.quizTake) return "";
+      const question = state.quizTake.questions[state.quizTake.i];
+      if (!question) {
+        const pts = state.quizTake.correct * 2 + (state.quizTake.correct === state.quizTake.questions.length ? 10 : 0);
+        return `
+          <h2>🎉 Quiz complete!</h2>
+          <p>You got ${state.quizTake.correct} of ${state.quizTake.questions.length} right. +${pts} points!</p>
+          <button data-go="${state.quizTake.from}">Back</button>
+        `;
+      }
+
+      const type = question.type || "mc";
+      const head = `
+        <h2>${esc(state.quizTake.title)}</h2>
+        <p class="sub">Question ${state.quizTake.i + 1} of ${state.quizTake.questions.length} · ${type === "tf" ? "True or false" : type === "match" ? "Match" : "Multiple choice"}</p>
+        <div class="card"><b>${esc(question.q)}</b></div>
+      `;
+
+      let body = "", done = false, correct = false;
+
+      if (type === "tf") {
+        done = state.quizTake.sel !== null;
+        correct = state.quizTake.sel === question.ans;
+        body = [[true, "True"], [false, "False"]].map(([val, label]) => {
+          const answerValue = val ? 1 : 0;
+          return `<button class="choice ${done ? (answerValue === Number(question.ans) ? "green" : answerValue === Number(state.quizTake.sel) ? "red" : "alt") : "alt"}" data-act="pickTF" data-i="${answerValue}" ${done ? "disabled" : ""}>${label}</button>`;
+        }).join("");
+      } else if (type === "match") {
+        done = state.quizTake.chk;
+        correct = done && question.pairs.every((p, k) => state.quizTake.m[k] === p.r);
+        body = matchRows(question) + (done ? "" : `<button data-act="mcheck">Check answers</button>`);
+      } else {
+        done = state.quizTake.sel !== null;
+        correct = state.quizTake.sel === question.ans;
+        body = state.quizTake.order.map((optIndex, pos) =>
+          `<button class="choice ${done ? (optIndex === question.ans ? "green" : optIndex === state.quizTake.sel ? "red" : "alt") : "alt"}" data-act="pick" data-i="${optIndex}" ${done ? "disabled" : ""}>${"ABCD"[pos]}. ${esc(question.opts[optIndex])}</button>`
+        ).join("");
+      }
+
+      const msg = done ? `<p>${correct ? "✅ Correct!" : "❌ Not quite."}</p>` : "";
+      const next = done ? `<button data-act="qnext">${state.quizTake.i + 1 >= state.quizTake.questions.length ? "Finish" : "Next"}</button>` : "";
+
+      return head + body + msg + next;
+    };
+
+    const matchRows = x => {
+      if (!state.quizTake || !state.quizTake.order) return "";
+      return x.pairs.map((pair, k) => {
+        const options = state.quizTake.order.map(j => x.pairs[j].r).map(r => `<option value="${esc(r)}" ${state.quizTake.m[k] === r ? "selected" : ""}>${esc(r)}</option>`).join("");
+        const mark = state.quizTake.chk ? (state.quizTake.m[k] === pair.r ? " ✅" : " ❌ " + esc(pair.r)) : "";
+        return `
+          <div class="card row">
+            <b>${esc(pair.l)}</b>
+            <span>
+              <select data-mi="${k}" ${state.quizTake.chk ? "disabled" : ""}>
+                <option value="">Choose...</option>
+                ${options}
+              </select>
+              ${mark}
+            </span>
+          </div>
+        `;
+      }).join("");
+    };
+
+    const vExplore = () => `
+      <h2>Explore</h2>
+      <p class="sub">Decks and quizzes other people made public.</p>
+      <br />
+      <input id="sq" placeholder="🔍 Search by title..." value="${esc(state.search || "")}" />
+      <div id="results">${exploreList()}</div>
+    `;
+
+    const exploreList = () => {
+      const s = (state.search || "").trim().toLowerCase();
+      const deckResults = state.pubDecks.filter(d => String(d.title).toLowerCase().includes(s));
+      const quizResults = state.pubQuizes.filter(d => String(d.title).toLowerCase().includes(s));
+
+      return `
+        <h3>📚 Flashcard decks</h3>
+        ${deckResults.length ? deckResults.map(d => `
+          <div class="card row">
+            <div>
+              <b>${esc(d.title)}</b>
+              <div class="sub">by ${esc(d.ownerName)} · ${d.cards.length} cards</div>
+            </div>
+            <div>
+              <button data-act="study" data-id="${d.id}">Study</button>
+              <button class="alt" data-act="copydeck" data-id="${d.id}">Save copy</button>
+            </div>
+          </div>
+        `).join("") : `<div class="empty">${s ? "No decks match your search." : "No public decks yet. Be the first to share one!"}</div>`}
+
+        <h3>📝 Quizzes</h3>
+        ${quizResults.length ? quizResults.map(d => `
+          <div class="card row">
+            <div>
+              <b>${esc(d.title)}</b>
+              <div class="sub">by ${esc(d.ownerName)} · ${d.questions.length} questions</div>
+            </div>
+            <div>
+              <button data-act="qtake" data-id="${d.id}">Take</button>
+              <button class="alt" data-act="copyquiz" data-id="${d.id}">Save copy</button>
+            </div>
+          </div>
+        `).join("") : `<div class="empty">${s ? "No quizzes match your search." : "No public quizzes yet. Be the first to share one!"}</div>`}
+      `;
+    };
+
+    const vFriends = () => {
+      let res = "";
+      if (state.searchResult) {
+        if (state.searchResult.msg) res = `<div class="sub" style="margin-top:6px">${esc(state.searchResult.msg)}</div>`;
+        else {
+          const alreadyFriend = state.friends.some(f => f.uid === state.searchResult.uid);
+          res = `
+            <div class="row" style="margin-top:6px">
+              <b>👤 ${esc(state.searchResult.username)}</b>
+              ${alreadyFriend ? "<span>✅ Already friends</span>" : `<button data-act="freq" data-id="${esc(state.searchResult.uid)}">+ Send friend request</button>`}
+            </div>
+          `;
+        }
+      }
+
+      const rows = state.friends.map(f => `
+        <div class="card row">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="pfp sm">${esc(f.emoji || "😀")}</div>
+            <div>
+              <b>${esc(f.username || "(unknown)")}</b>
+              <div class="sub">⭐ ${f.points || 0} · 🔥 ${liveStreak(f)} · Pet Lv ${levelOf(f)}</div>
+            </div>
+          </div>
+          <div>
+            <button data-act="fview" data-id="${esc(f.uid)}">View profile</button>
+            <button class="alt" data-act="fremove" data-id="${esc(f.uid)}">Remove</button>
+          </div>
+        </div>
+      `).join("");
+
+      return `
+        <h2>Friends</h2>
+        <p class="sub">Search a username to send a friend request. Friends can see each other's profiles.</p>
+
+        <div class="card">
+          <div class="pair">
+            <input id="fs" placeholder="Search a username" maxlength="20" value="${esc(state.searchUser)}" />
+            <button data-act="fsearch" style="white-space:nowrap">🔍 Search</button>
+          </div>
+          ${res}
+        </div>
+
+        <h3>Your friends · ${state.friends.length}</h3>
+        ${rows || '<div class="empty">No friends yet. Search a username above to add one! 👥</div>'}
+      `;
+    };
+
+    const vProfile = () => {
+      const p = state.profileView || state.profile;
+      if (!p) return `<h2>Profile</h2><div class="empty">Couldn't load this profile.</div><br /><button data-go="friends">Back</button>`;
+      const L = levelOf(p);
+      const pet = L < 2 ? "🥚" : (p.pet && p.pet.species) || "🐱";
+      const S = (icon, val, label) => `<div class="stat"><b>${icon} ${val}</b><span>${label}</span></div>`;
+      return `
+        <button class="alt" data-go="friends">← Back to friends</button><br /><br />
+        <div class="card row">
+          <div style="display:flex;gap:16px;align-items:center">
+            <div class="pfp">${esc(p.emoji || "😀")}</div>
+            <div>
+              <h2 style="margin:0">${esc(p.username || "Student")}</h2>
+              <div class="sub">Your friend 👥</div>
+            </div>
+          </div>
+          <button class="alt" data-act="fremove" data-id="${esc(p.uid)}">Remove friend</button>
+        </div>
+
+        <div class="stats">
+          ${S("⭐", p.points || 0, "points")}
+          ${S("🔥", liveStreak(p), "day streak")}
+          ${S("🏁", bestStreak(p), "best streak")}
+          ${S(pet, L, "pet level")}
+          ${S("📚", p.cardsStudied || 0, "cards studied")}
+          ${S("✅", p.tasksDone || 0, "tasks done")}
+          ${S("📝", p.quizzesTaken || 0, "quizzes finished")}
+          ${S("🏗️", p.decksMade || 0, "decks made")}
+          ${S("🎯", p.focusDone || 0, "focus sessions")}
+          ${S("🗓️", p.revisionDone || 0, "revision sessions")}
+          ${S("🏠", p.roomsJoined || 0, "rooms joined")}
+        </div>
+      `;
+    };
+
+    const vNotifs = () => `
+      <h2>🔔 Notifications</h2>
+      <p class="sub">Friend requests, room invites and reminders.</p>
+      <br />
+      ${state.notify.length ? state.notify.map(n => {
+        const when = new Date(n.at || 0).toLocaleString(undefined, { day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
+        const id = esc(n.id);
+        const btns = n.type === "friend"
+          ? `<button class="green" data-act="nacc" data-id="${id}">Accept</button> <button class="alt" data-act="ndec" data-id="${id}">Decline</button>`
+          : n.type === "invite"
+          ? `<button class="green" data-act="njoin" data-id="${id}">Join room</button> <button class="alt" data-act="ndec" data-id="${id}">Decline</button>`
+          : `<button class="alt" data-act="ndec" data-id="${id}">Dismiss</button>`;
+        return `
+          <div class="card row">
+            <div>
+              <div>${n.type === "friend" ? "👥" : n.type === "invite" ? "🏠" : "🔔"} ${esc(n.text || "")}</div>
+              <div class="sub">${esc(when)}</div>
+            </div>
+            <div>${btns}</div>
+          </div>
+        `;
+      }).join("") : '<div class="empty">All caught up! Friend requests, invites and reminders will show up here 🔔</div>'}
+    `;
+
     const vPet = () => {
-      const L = lvl(P);
+      const L = levelOf(state.profile);
       const lo = 10 * (L - 1) ** 2;
       const hi = 10 * L ** 2;
-      const pct = Math.round((P.points - lo) / (hi - lo) * 100);
-      const mood = P.lastDay === day() ? "😊 Happy, you studied today!" : P.lastDay === day(1) ? "🙂 Okay. Study today to keep it happy." : "😴 Sleepy. Study to wake it up!";
+      const pct = Math.max(0, Math.min(100, Math.round((state.profile.points - lo) / (hi - lo) * 100)));
+      const mood = state.profile.lastDay === day() ? "😊 Happy, you studied today!" : state.profile.lastDay === day(1) ? "🙂 Okay. Study today to keep it happy." : "😴 Sleepy. Study to wake it up!";
       const stage = L < 2 ? "Egg" : L < 5 ? "Baby" : L < 10 ? "Teen" : "Legend";
-      const hat = L >= 10 ? "👑" : L >= 5 ? "🎓" : "";
       return `
         <h2>My Pet</h2>
         <p class="sub">Your pet grows every time you earn points.</p>
         <div class="card" style="text-align:center">
-          <div style="font-size:${Math.min(130, 56 + L * 7)}px;line-height:1.1">${hat ? `<div style="font-size:.4em">${hat}</div>` : ""}${petEmoji()}</div>
-          <h3>${esc(P.pet.name)} · Level ${L} ${stage}</h3>
+          <div style="font-size:${Math.min(130, 56 + L * 7)}px;line-height:1.1">${L >= 5 ? "<div style='font-size:.4em'>🎓</div>" : ""}${petEmoji(state.profile)}</div>
+          <h3>${esc((state.profile.pet && state.profile.pet.name) || "Buddy")} · Level ${L} ${stage}</h3>
           <div class="bar"><i style="width:${pct}%"></i></div>
-          <div class="sub">${Math.max(0, hi - P.points)} points to level ${L + 1}</div>
+          <div class="sub">${Math.max(0, hi - (state.profile.points || 0))} points to level ${L + 1}</div>
           <p>${L < 2 ? "🥚 Your egg hatches at level 2. Earn 10 points!" : mood}</p>
         </div>
         <div class="card"><b>🎯 Daily goal</b>${goalBar()}</div>
         <div class="card">
           <b>Choose your pet</b>
           <div class="btns" style="margin-top:10px">
-            ${PETS.map((p, i) => `<button class="alt ${P.pet.species === p ? "on" : ""}" style="font-size:22px" data-act="petsp" data-i="${i}">${p}</button>`).join("")}
+            ${PETS.map((pet, i) => `<button class="alt ${state.profile.pet.species === pet ? "on" : ""}" style="font-size:22px" data-act="petsp" data-i="${i}">${pet}</button>`).join("")}
           </div>
           <br />
           <b>Name</b>
-          <input id="pn" maxlength="16" value="${esc(P.pet.name)}" />
+          <input id="pn" maxlength="16" value="${esc((state.profile.pet && state.profile.pet.name) || "Buddy")}" />
           <button data-act="petname">Save name</button>
         </div>
       `;
     };
 
-    const swatch = (k, arr) => arr.map((c, i) => `<button class="sw ${((+P.avatar[k] || 0) % arr.length) === i ? "on" : ""}" style="background:${c}" data-act="av" data-k="${k}" data-i="${i}"></button>`).join("");
-    const tbtn = (k, arr) => arr.map((n, i) => `<button class="alt ${((+P.avatar[k] || 0) % arr.length) === i ? "on" : ""}" data-act="av" data-k="${k}" data-i="${i}">${n}</button>`).join("");
-    const bdPicker = () => `<div class="btns">${BACKDROPS.map((b, i) => `<button class="alt ${ix(BACKDROPS, P.backdrop) === b ? "on" : ""}" data-act="bd" data-i="${i}">${b.n}</button>`).join("")}</div>`;
+    const vLeaders = () => {
+      const medal = i => ["🥇","🥈","🥉"][i] || "#" + (i + 1);
+      const row = (p, i, val) => `
+        <div class="card row ${p.id === state.user.uid ? "me" : ""}">
+          <div><b>${medal(i)} ${esc(p.username || "Student")}</b>${p.id === state.user.uid ? " (you)" : ""}</div>
+          <div><b>${val}</b></div>
+        </div>
+      `;
+      return `
+        <h2>Leaderboards</h2>
+        <p class="sub">Top 20 players.</p>
+        <div class="two">
+          <div>
+            <h3>⭐ Points</h3>
+            ${state.leaderboard.length ? state.leaderboard.map((p, i) => row(p, i, "⭐ " + (p.points || 0))).join("") : '<div class="empty">No one on the board yet.</div>'}
+          </div>
+          <div>
+            <h3>🔥 Streaks</h3>
+            ${state.streaks.length ? state.streaks.map((p, i) => row(p, i, "🔥 " + (p.streak || 0) + " day" + ((p.streak || 0) === 1 ? "" : "s"))).join("") : '<div class="empty">No streaks yet. Earn points to start yours!</div>'}
+          </div>
+        </div>
+      `;
+    };
+
+    const vAccount = () => {
+      const got = (state.profile.points || 0) > 0 ? 1 : 0;
+      return `
+        <h2>Account</h2>
+
+        <div class="card">
+          <div style="display:flex;gap:16px;align-items:center">
+            <div class="pfp">${esc(state.profile.emoji || "😀")}</div>
+            <div>
+              <b>Profile picture</b>
+              <div class="sub">Pick an emoji. Friends and study rooms will see it.</div>
+            </div>
+          </div>
+          <div class="btns" style="margin-top:12px">
+            ${EMOJIS.map((emoji, i) => `<button class="alt ${((state.profile.emoji || "😀") === emoji) ? "on" : ""}" style="font-size:22px" data-act="emoji" data-i="${i}">${emoji}</button>`).join("")}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sub">Username. 3 to 20 letters, numbers or underscores. Only one person can have each username, so friends can find you.</div>
+          <input id="un" maxlength="20" value="${esc(state.profile.username)}" />
+          <button data-act="name">Save username</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b>⭐ ${state.profile.points || 0}</b><span>points</span></div>
+          <div class="stat"><b>🔥 ${liveStreak(state.profile)}</b><span>day streak</span></div>
+          <div class="stat"><b>🏁 ${bestStreak(state.profile)}</b><span>best streak</span></div>
+          <div class="stat"><b>${petEmoji(state.profile)} ${levelOf(state.profile)}</b><span>pet level</span></div>
+          <div class="stat"><b>📚 ${state.profile.cardsStudied || 0}</b><span>cards studied</span></div>
+          <div class="stat"><b>✅ ${state.profile.tasksDone || 0}</b><span>tasks done</span></div>
+          <div class="stat"><b>📝 ${state.profile.quizzesTaken || 0}</b><span>quizzes finished</span></div>
+        </div>
+      `;
+    };
 
     const vRooms = () => `
       <h2>Study Rooms</h2>
@@ -2112,867 +2085,750 @@ Absolutely — here is a complete replacement file with the logo redesigned to m
       </div>
 
       <p class="sub">🔒 Chat is only visible to people inside the room. Never share private details.</p>
-
-      <h3>Your character</h3>
-      <div class="card two">
-        <div class="prev">${avatar(P.avatar)}</div>
-        <div>
-          <div class="sub">Quick looks</div>
-          <div class="btns" style="margin-top:6px">${PRESETS.map((x, i) => `<button class="alt" data-act="preset" data-i="${i}">${x.n}</button>`).join("")}</div>
-
-          <div class="sub" style="margin-top:12px">Skin</div>
-          <div class="swatches" style="display:flex;gap:8px;flex-wrap:wrap">${swatch("skin", SK)}</div>
-
-          <div class="sub">Hair colour</div>
-          <div class="swatches" style="display:flex;gap:8px;flex-wrap:wrap">${swatch("hair", HR)}</div>
-
-          <div class="sub">Hair style</div>
-          <div class="btns">${tbtn("hs", HS)}</div>
-
-          <div class="sub" style="margin-top:10px">Eyes</div>
-          <div class="swatches" style="display:flex;gap:8px;flex-wrap:wrap">${swatch("eye", EY)}</div>
-
-          <div class="sub">Outfit</div>
-          <div class="swatches" style="display:flex;gap:8px;flex-wrap:wrap">${swatch("fit", FT)}</div>
-
-          <div class="sub">Accessory</div>
-          <div class="btns">${tbtn("acc", AC)}</div>
-
-          <div class="sub" style="margin-top:10px">Face</div>
-          <div class="btns">${tbtn("look", LK)}</div>
-
-          <div class="sub" style="margin-top:10px">Top</div>
-          <div class="btns">${tbtn("top", TP)}</div>
-        </div>
-      </div>
-
-      <h3>Your backdrop</h3>${bdPicker()}
     `;
 
-    const vRoom = () => `
-      <div class="row">
-        <div>
-          <h2 style="margin:0">🏠 ${esc(room.name)}</h2>
-          <div class="sub">Room code: <b>${esc(room.code)}</b> · share it with friends</div>
-        </div>
-        <div>
-          <button class="alt" data-act="copycode">Copy code</button>
-          <button class="red" data-act="leave">Leave</button>
-        </div>
-      </div>
+    const renderMain = () => {
+      const main = $("main");
+      if (!main) return;
+      main.classList.toggle("anim", state.view !== state.lastView);
+      state.lastView = state.view;
 
-      <div id="scene" class="scene" style="background:${bd().bg};margin-top:14px">${sceneHTML()}</div>
-
-      <div class="card">
-        <b>🏁 Racing game</b>
-        <div id="racebox" style="margin-top:8px">${raceHTML()}</div>
-      </div>
-
-      <div class="card">
-        <b>💬 Chat</b>
-        <div id="chatlog" style="margin-top:8px">${chatHTML()}</div>
-        <div class="chatrow">
-          <input id="chatin" placeholder="Type a message..." maxlength="100" autocomplete="off" />
-          <button data-act="chatsend">Send</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <b>👥 Invite a friend</b>
-        ${friends.length ? `
-          <div class="btns" style="margin-top:8px">
-            ${friends.map(f => `<button class="alt" data-act="invite" data-id="${esc(f.uid)}">${esc(f.emoji || "😀")} ${esc(f.username)}</button>`).join("")}
-          </div>
-          <div class="sub">They get the invite in their 🔔 notifications and can accept or decline.</div>
-        ` : '<p class="sub">Add friends in the Friends tab, then you can invite them here.</p>'}
-      </div>
-
-      <div class="card">
-        <b>Status</b>
-        <div class="btns" style="margin-top:8px">
-          <button class="alt ${rs.status === "studying" ? "on" : ""}" data-act="rstatus" data-k="studying">📖 Studying</button>
-          <button class="alt ${rs.status === "break" ? "on" : ""}" data-act="rstatus" data-k="break">☕ On break</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <b>Say something</b>
-        <div class="btns" style="margin-top:8px">${EMOTES.map((e, i) => `<button class="alt" data-act="emote" data-i="${i}">${e}</button>`).join("")}</div>
-      </div>
-
-      <div class="card">
-        ${rs.status === "focus"
-          ? `<b>🎯 Focus session</b> <span id="ftimer" style="font-size:22px;font-weight:700;margin:0 12px">${mmss(rs.focusEnd - Date.now())}</span><button class="alt" data-act="fstop">Stop</button>`
-          : `<b>🎯 Focus timer</b><p class="sub" style="margin:4px 0 10px">25 minutes of focus earns +5 points. Your friends can see you're focusing.</p><button data-act="fstart">Start 25 min focus</button>`}
-      </div>
-
-      <div class="card">
-        <b>Backdrop</b>
-        ${bdPicker()}
-      </div>
-    `;
-
-    const vFriends = () => {
-      let res = "";
-      if (fres) {
-        if (fres.msg) res = `<div class="sub" style="margin-top:6px">${esc(fres.msg)}</div>`;
-        else {
-          const already = friends.some(f => f.uid === fres.uid);
-          res = `
-            <div class="row" style="margin-top:6px">
-              <b>👤 ${esc(fres.username)}</b>
-              ${already ? "<span>✅ Already friends</span>" : `<button data-act="freq" data-id="${esc(fres.uid)}">+ Send friend request</button>`}
-            </div>
-          `;
-        }
-      }
-
-      const rows = friends.map(f => `
-        <div class="card row">
-          <div style="display:flex;gap:12px;align-items:center">
-            <div class="pfp sm">${esc(f.emoji || "😀")}</div>
-            <div>
-              <b>${esc(f.username || "(unknown)")}</b>
-              <div class="sub">⭐ ${f.points || 0} · 🔥 ${liveStreak(f)} · Pet Lv ${lvl(f)}</div>
-            </div>
-          </div>
-          <div>
-            <button data-act="fview" data-id="${esc(f.uid)}">View profile</button>
-            <button class="alt" data-act="fremove" data-id="${esc(f.uid)}">Remove</button>
-          </div>
-        </div>
-      `).join("");
-
-      const pend = notifs.filter(n => n.type === "friend").length;
-
-      return `
-        <h2>Friends</h2>
-        <p class="sub">Search a username to send a friend request. Friends can see each other's profiles.</p>
-
-        <div class="card">
-          <div class="pair">
-            <input id="fs" placeholder="Search a username" maxlength="20" value="${esc(fsq)}" />
-            <button data-act="fsearch" style="white-space:nowrap">🔍 Search</button>
-          </div>
-          ${res}
-        </div>
-
-        ${pend ? `<div class="card row"><span>👥 You have ${pend} friend request${pend === 1 ? "" : "s"} waiting.</span><button data-go="notifs">Open 🔔</button></div>` : ""}
-
-        <h3>Your friends · ${friends.length}</h3>
-        ${rows || '<div class="empty">No friends yet. Search a username above to add one! 👥</div>'}
-      `;
-    };
-
-    const achTiles = (p) => AWARDS.map(a => {
-      const v = a.val(p);
-      const ok = v >= a.goal;
-      const pct = Math.min(100, Math.round(v / a.goal * 100));
-      return `
-        <div class="ach ${ok ? "got" : ""}">
-          <div class="ic">${ok ? a.icon : "🔒"}</div>
-          <b>${a.name}</b>
-          <div class="sub">${a.desc}</div>
-          <div class="bar"><i style="width:${pct}%"></i></div>
-          <div class="sub">${Math.min(v, a.goal)} / ${a.goal}</div>
-        </div>
-      `;
-    }).join("");
-
-    const vProfile = () => {
-      const p = prof;
-      if (!p) return `<h2>Profile</h2><div class="empty">Couldn't load this profile.</div><br /><button data-go="friends">Back</button>`;
-      const L = lvl(p);
-      const got = AWARDS.filter(a => a.val(p) >= a.goal).length;
-      const pet = L < 2 ? "🥚" : (p.pet && p.pet.species) || "🐱";
-      const S = (i, n, l) => `<div class="stat"><b>${i} ${n}</b><span>${l}</span></div>`;
-      return `
-        <button class="alt" data-go="friends">← Back to friends</button><br /><br />
-        <div class="card row">
-          <div style="display:flex;gap:16px;align-items:center">
-            <div class="pfp">${esc(p.emoji || "😀")}</div>
-            <div>
-              <h2 style="margin:0">${esc(p.username || "Student")}</h2>
-              <div class="sub">Your friend 👥</div>
-            </div>
-          </div>
-          <button class="alt" data-act="fremove" data-id="${esc(p.uid)}">Remove friend</button>
-        </div>
-
-        <div class="stats">
-          ${S("⭐", p.points || 0, "points")}
-          ${S("🔥", liveStreak(p), "day streak")}
-          ${S("🏁", bestStreak(p), "best streak")}
-          ${S(pet, L, "pet level")}
-          ${S("🐾", (p.pet && p.pet.name) || "Buddy", "pet name")}
-          ${S("📚", p.cardsStudied || 0, "cards studied")}
-          ${S("✅", p.tasksDone || 0, "tasks done")}
-          ${S("📝", p.quizzesTaken || 0, "quizzes finished")}
-          ${S("🏗️", p.decksMade || 0, "decks made")}
-          ${S("🎯", p.focusDone || 0, "focus sessions")}
-          ${S("🗓️", p.revisionDone || 0, "revision sessions")}
-          ${S("🏠", p.roomsJoined || 0, "rooms joined")}
-        </div>
-
-        <h3>🏆 Achievements · ${got} / ${AWARDS.length} unlocked</h3>
-        <div class="awards">${achTiles(p)}</div>
-      `;
-    };
-
-    const NI = { friend:"👥", invite:"🏠", reminder:"⏰", info:"🔔" };
-    const vNotifs = () => `
-      <h2>🔔 Notifications</h2>
-      <p class="sub">Friend requests, room invites and reminders.</p>
-      <br />
-      ${notifs.length
-        ? notifs.map(n => {
-            const when = new Date(n.at || 0).toLocaleString(undefined, { day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
-            const id = esc(n.id);
-            const btns =
-              n.type === "friend"
-                ? `<button class="green" data-act="nacc" data-id="${id}">Accept</button> <button class="alt" data-act="ndec" data-id="${id}">Decline</button>`
-                : n.type === "invite"
-                ? `<button class="green" data-act="njoin" data-id="${id}">Join room</button> <button class="alt" data-act="ndec" data-id="${id}">Decline</button>`
-                : `<button class="alt" data-act="ndec" data-id="${id}">Dismiss</button>`;
-            return `
-              <div class="card row">
-                <div>
-                  <div>${NI[n.type] || "🔔"} ${esc(n.text || "")}</div>
-                  <div class="sub">${esc(when)}</div>
-                </div>
-                <div>${btns}</div>
-              </div>
-            `;
-          }).join("")
-        : '<div class="empty">All caught up! Friend requests, invites and reminders will show up here 🔔</div>'}
-    `;
-
-    const vDecks = () => `
-      <h2>My Decks</h2>
-      <p class="sub">Flashcards you made.</p>
-      <button data-act="new">+ New deck</button>
-      <br /><br />
-      ${decks.length ? decks.map(d => `
-        <div class="card row">
-          <div>
-            <b>${esc(d.title)}</b>
-            <div class="sub">${d.cards.length} cards · ${d.isPublic ? "Public" : "Private"}</div>
-          </div>
-          <div>
-            <button data-act="study" data-id="${d.id}">Study</button>
-            <button class="alt" data-act="edit" data-id="${d.id}">Edit</button>
-            <button class="red" data-act="deldeck" data-id="${d.id}">Delete</button>
-          </div>
-        </div>
-      `).join("") : '<div class="empty">No decks yet. Make your first one!</div>'}
-    `;
-
-    const vEdit = () => `
-      <h2>${draft.id ? "Edit" : "New"} deck</h2>
-      <input id="dt" placeholder="Deck title" maxlength="60" value="${esc(draft.title)}" />
-      ${draft.cards.map((c, i) => `
-        <div class="card">
-          <input data-f="front" data-i="${i}" placeholder="Front (question)" maxlength="200" value="${esc(c.front)}" />
-          <input data-f="back" data-i="${i}" placeholder="Back (answer)" maxlength="200" value="${esc(c.back)}" />
-          <button class="alt" data-act="delcard" data-i="${i}">Remove card</button>
-        </div>
-      `).join("")}
-      <button class="alt" data-act="addcard">+ Add card</button>
-      <br /><br />
-      <label><input type="checkbox" id="dp" ${draft.isPublic ? "checked" : ""} /> Make public so other people can find it</label>
-      <p class="sub">Only share kind, safe stuff. Never put personal info in a public deck.</p>
-      <button data-act="savedeck">Save deck</button>
-      <button class="alt" data-go="decks">Cancel</button>
-    `;
-
-    const vStudy = () => {
-      const c = study.cards[study.i];
-      if (!c) return `
-        <h2>🎉 Deck complete!</h2>
-        <p>You got ${study.got} of ${study.cards.length}. Bonus +10 points!</p>
-        <button data-go="${study.from}">Back</button>
-      `;
-      return `
-        <h2>${esc(study.title)}</h2>
-        <p class="sub">Card ${study.i + 1} of ${study.cards.length}</p>
-        <div class="card big" data-act="flip">${esc(study.flip ? c.back : c.front)}<div class="sub">${study.flip ? "Answer" : "Tap to flip"}</div></div>
-        ${study.flip ? `<button data-act="got">Got it +1</button> <button class="alt" data-act="again">Again</button>` : ""}
-      `;
-    };
-
-    const vQuizzes = () => `
-      <h2>My Quizzes</h2>
-      <p class="sub">Multiple choice, true or false, and match.</p>
-      <button data-act="qnew">+ New quiz</button>
-      <br /><br />
-      ${quizzes.length ? quizzes.map(d => `
-        <div class="card row">
-          <div>
-            <b>${esc(d.title)}</b>
-            <div class="sub">${d.questions.length} questions · ${d.isPublic ? "Public" : "Private"}</div>
-          </div>
-          <div>
-            <button data-act="qtake" data-id="${d.id}">Take</button>
-            <button class="alt" data-act="qedit" data-id="${d.id}">Edit</button>
-            <button class="red" data-act="qdel" data-id="${d.id}">Delete</button>
-          </div>
-        </div>
-      `).join("") : '<div class="empty">No quizzes yet. Make your first one!</div>'}
-    `;
-
-    const qBody = (x, qi) => {
-      if (x.type === "tf") return `
-        <label class="tick"><input type="radio" name="tf${qi}" data-qf="tf" data-qi="${qi}" data-v="1" ${x.ans ? "checked" : ""} /> True</label>
-        <label class="tick"><input type="radio" name="tf${qi}" data-qf="tf" data-qi="${qi}" data-v="0" ${x.ans ? "" : "checked"} /> False</label>
-        <div class="sub">Pick whether the statement above is true or false.</div>
-      `;
-
-      if (x.type === "match") return `
-        ${x.pairs.map((p, pi) => `
-          <div class="pair">
-            <input data-qf="l" data-qi="${qi}" data-pi="${pi}" placeholder="Item ${pi + 1}" maxlength="80" value="${esc(p.l)}" />
-            <input data-qf="r" data-qi="${qi}" data-pi="${pi}" placeholder="Its match" maxlength="80" value="${esc(p.r)}" />
-          </div>
-        `).join("")}
-        <div class="sub">Fill in at least 2 pairs. They get shuffled when someone takes the quiz.</div>
-      `;
-
-      return `
-        ${x.opts.map((o, oi) => `
-          <div class="opt ${x.ans === oi ? "right" : ""}">
-            <label class="tick">
-              <input type="radio" name="ans${qi}" data-qf="ans" data-qi="${qi}" data-oi="${oi}" ${x.ans === oi ? "checked" : ""} />
-              ${x.ans === oi ? "✓ Correct" : "Mark correct"}
-            </label>
-            <input data-qf="opt" data-qi="${qi}" data-oi="${oi}" placeholder="Answer ${"ABCD"[oi]}" maxlength="120" value="${esc(o)}" />
-          </div>
-        `).join("")}
-        <div class="sub">Click “Mark correct” next to the right answer. The answers get shuffled when someone takes the quiz.</div>
-      `;
-    };
-
-    const vQEdit = () => `
-      <h2>${qdraft.id ? "Edit" : "New"} quiz</h2>
-      <input id="qt" placeholder="Quiz title" maxlength="60" value="${esc(qdraft.title)}" />
-      ${qdraft.questions.map((x, qi) => `
-        <div class="card">
-          <div class="row" style="margin-bottom:10px">
-            <b>Question ${qi + 1}</b>
-            <select data-qf="type" data-qi="${qi}">
-              <option value="mc" ${x.type === "mc" ? "selected" : ""}>Multiple choice</option>
-              <option value="tf" ${x.type === "tf" ? "selected" : ""}>True / False</option>
-              <option value="match" ${x.type === "match" ? "selected" : ""}>Match</option>
-            </select>
-          </div>
-          <input data-qf="q" data-qi="${qi}" placeholder="${x.type === "match" ? "Instructions (like: Match each country to its capital)" : x.type === "tf" ? "Statement (like: The sun is a star)" : "Question"}" maxlength="200" value="${esc(x.q)}" />
-          ${qBody(x, qi)}
-          ${qdraft.questions.length > 1 ? `<br /><button class="alt" data-act="qdelq" data-i="${qi}">Remove question</button>` : ""}
-        </div>
-      `).join("")}
-      <button class="alt" data-act="qaddq">+ Add question</button>
-      <br /><br />
-      <label><input type="checkbox" id="qp" ${qdraft.isPublic ? "checked" : ""} /> Make public so other people can find it</label>
-      <p class="sub">Only share kind, safe stuff. Never put personal info in a public quiz.</p>
-      <button data-act="qsave">Save quiz</button>
-      <button class="alt" data-go="quizzes">Cancel</button>
-    `;
-
-    const matchRows = (x) => x.pairs.map((p, k) => {
-      const options = qz.order.map(j => x.pairs[j].r).map(r => `<option value="${esc(r)}" ${qz.m[k] === r ? "selected" : ""}>${esc(r)}</option>`).join("");
-      const mark = qz.chk ? (qz.m[k] === p.r ? " ✅" : " ❌ " + esc(p.r)) : "";
-      return `
-        <div class="card row">
-          <b>${esc(p.l)}</b>
-          <span>
-            <select data-mi="${k}" ${qz.chk ? "disabled" : ""}>
-              <option value="">Choose...</option>
-              ${options}
-            </select>
-            ${mark}
-          </span>
-        </div>
-      `;
-    }).join("");
-
-    const vQTake = () => {
-      const x = qz.questions[qz.i];
-      if (!x) {
-        const pts = qz.correct * 2 + (qz.correct === qz.questions.length ? 10 : 0);
-        return `
-          <h2>🎉 Quiz complete!</h2>
-          <p>You got ${qz.correct} of ${qz.questions.length} right. +${pts} points!</p>
-          <button data-go="${qz.from}">Back</button>
-        `;
-      }
-
-      const t = x.type || "mc";
-      const head = `
-        <h2>${esc(qz.title)}</h2>
-        <p class="sub">Question ${qz.i + 1} of ${qz.questions.length} · ${t === "tf" ? "True or false" : t === "match" ? "Match" : "Multiple choice"}</p>
-        <div class="card"><b>${esc(x.q)}</b></div>
-      `;
-      let body = "", done = false, correct = false;
-
-      if (t === "tf") {
-        done = qz.sel !== null;
-        correct = qz.sel === x.ans;
-        body = [[true, "True"], [false, "False"]].map(([v, l]) =>
-          `<button class="choice ${done ? (v === x.ans ? "green" : v === qz.sel ? "red" : "alt") : "alt"}" data-act="pickTF" data-i="${v ? 1 : 0}" ${done ? "disabled" : ""}>${l}</button>`
-        ).join("");
-      } else if (t === "match") {
-        done = qz.chk;
-        correct = done && x.pairs.every((p, k) => qz.m[k] === p.r);
-        body = matchRows(x) + (done ? "" : `<button data-act="mcheck">Check answers</button>`);
-      } else {
-        done = qz.sel !== null;
-        correct = qz.sel === x.ans;
-        body = qz.order.map((oi, pos) =>
-          `<button class="choice ${done ? (oi === x.ans ? "green" : oi === qz.sel ? "red" : "alt") : "alt"}" data-act="pick" data-i="${oi}" ${done ? "disabled" : ""}>${"ABCD"[pos]}. ${esc(x.opts[oi])}</button>`
-        ).join("");
-      }
-
-      const msg = done ? `<p>${correct ? "✅ Correct!" : "❌ Not quite."}</p>` : "";
-      const next = done ? `<button data-act="qnext">${qz.i + 1 >= qz.questions.length ? "Finish" : "Next"}</button>` : "";
-
-      return head + body + msg + next;
-    };
-
-    const exploreList = () => {
-      const s = q.trim().toLowerCase();
-      const dl = pub.filter(d => d.title.toLowerCase().includes(s));
-      const ql = pubQ.filter(d => d.title.toLowerCase().includes(s));
-
-      return `
-        <h3>📚 Flashcard decks</h3>
-        ${dl.length ? dl.map(d => `
-          <div class="card row">
-            <div>
-              <b>${esc(d.title)}</b>
-              <div class="sub">by ${esc(d.ownerName)} · ${d.cards.length} cards</div>
-            </div>
-            <div>
-              <button data-act="study" data-id="${d.id}">Study</button>
-              <button class="alt" data-act="copy" data-id="${d.id}">Save copy</button>
-              <button class="alt" data-act="report" data-id="${d.id}">Report</button>
-            </div>
-          </div>
-        `).join("") : `<div class="empty">${s ? "No decks match your search." : "No public decks yet. Be the first to share one!"}</div>`}
-
-        <h3>📝 Quizzes</h3>
-        ${ql.length ? ql.map(d => `
-          <div class="card row">
-            <div>
-              <b>${esc(d.title)}</b>
-              <div class="sub">by ${esc(d.ownerName)} · ${d.questions.length} questions</div>
-            </div>
-            <div>
-              <button data-act="qtake" data-id="${d.id}">Take</button>
-              <button class="alt" data-act="qcopy" data-id="${d.id}">Save copy</button>
-              <button class="alt" data-act="qreport" data-id="${d.id}">Report</button>
-            </div>
-          </div>
-        `).join("") : `<div class="empty">${s ? "No quizzes match your search." : "No public quizzes yet. Be the first to share one!"}</div>`}
-      `;
-    };
-
-    const vExplore = () => `
-      <h2>Explore</h2>
-      <p class="sub">Decks and quizzes other people made public.</p>
-      <br />
-      <input id="sq" placeholder="🔍 Search by set name..." value="${esc(q)}" />
-      <div id="results">${exploreList()}</div>
-    `;
-
-    const vLeaders = () => {
-      const sl = streaks.filter(p => p.streak > 0);
-      const medal = i => ["🥇","🥈","🥉"][i] || "#" + (i + 1);
-      const rowHtml = (p, i, val) => `
-        <div class="card row ${p.id === user.uid ? "me" : ""}">
-          <div><b>${medal(i)} ${esc(p.username)}</b>${p.id === user.uid ? " (you)" : ""}</div>
-          <div><b>${val}</b></div>
-        </div>
-      `;
-      return `
-        <h2>Leaderboards</h2>
-        <p class="sub">Top 20 players.</p>
-        <div class="two">
-          <div>
-            <h3>⭐ Points</h3>
-            ${board.length ? board.map((p, i) => rowHtml(p, i, "⭐ " + p.points)).join("") : '<div class="empty">No one on the board yet.</div>'}
-          </div>
-          <div>
-            <h3>🔥 Streaks</h3>
-            ${sl.length ? sl.map((p, i) => rowHtml(p, i, "🔥 " + p.streak + " day" + (p.streak === 1 ? "" : "s"))).join("") : '<div class="empty">No streaks yet. Earn points to start yours!</div>'}
-          </div>
-        </div>
-      `;
-    };
-
-    const vAccount = () => {
-      const got = AWARDS.filter(a => a.val(P) >= a.goal).length;
-      return `
-        <h2>Account</h2>
-
-        <div class="card">
-          <div style="display:flex;gap:16px;align-items:center">
-            <div class="pfp">${esc(P.emoji || "😀")}</div>
-            <div>
-              <b>Profile picture</b>
-              <div class="sub">Pick an emoji. Friends and study rooms will see it.</div>
-            </div>
-          </div>
-          <div class="btns" style="margin-top:12px">
-            ${EMOJIS.map((e, i) => `<button class="alt ${((P.emoji || "😀") === e) ? "on" : ""}" style="font-size:22px" data-act="emoji" data-i="${i}">${e}</button>`).join("")}
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="sub">Username. 3 to 20 letters, numbers or underscores. Only one person can have each username, so friends can find you. Don't use your real name.</div>
-          <input id="un" maxlength="20" value="${esc(P.username)}" />
-          <button data-act="name">Save username</button>
-        </div>
-
-        <div class="stats">
-          <div class="stat"><b>⭐ ${P.points}</b><span>points</span></div>
-          <div class="stat"><b>🔥 ${liveStreak(P)}</b><span>day streak</span></div>
-          <div class="stat"><b>🏁 ${bestStreak(P)}</b><span>best streak</span></div>
-          <div class="stat"><b>${petEmoji()} ${lvl(P)}</b><span>pet level</span></div>
-          <div class="stat"><b>📚 ${P.cardsStudied}</b><span>cards studied</span></div>
-          <div class="stat"><b>✅ ${P.tasksDone}</b><span>tasks done</span></div>
-          <div class="stat"><b>📝 ${P.quizzesTaken}</b><span>quizzes finished</span></div>
-        </div>
-
-        <h3>🏆 Achievements · ${got} / ${AWARDS.length} unlocked</h3>
-        <div class="awards">${achTiles(P)}</div>
-      `;
-    };
-
-    const NAV = [
-      ["planner","📅","Planner"],
-      ["rev","🗓️","Revision"],
-      ["decks","📚","My Decks"],
-      ["quizzes","📝","My Quizzes"],
-      ["explore","🔍","Explore"],
-      ["rooms","🏠","Study Rooms"],
-      ["friends","👥","Friends"],
-      ["notifs","🔔","Notifications"],
-      ["pet","🐾","My Pet"],
-      ["leaders","🏆","Leaderboard"],
-      ["account","👤","Account"]
-    ];
-
-    function renderNav() {
-      if (!P) return;
-      const f = (view === "study" && study) ? study.from : (view === "qtake" && qz) ? qz.from : "";
-      const on = (k) => (
-        view === k ||
-        (k === "decks" && (view === "edit" || f === "decks")) ||
-        (k === "quizzes" && (view === "qedit" || f === "quizzes")) ||
-        (k === "explore" && f === "explore") ||
-        (k === "rooms" && view === "room") ||
-        (k === "friends" && view === "profile")
-      ) ? "on" : "";
-      $("nav").innerHTML = `
-
-        <div class="brand-wrap" style="margin-bottom:8px; width:100%">
-          <svg class="brand-svg" viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg" aria-label="DueDash logo">
-            <defs>
-              <linearGradient id="navLogoGrad" x1="0" x2="1">
-                <stop offset="0%" stop-color="#5d7d61"/>
-                <stop offset="100%" stop-color="#2c4d3d"/>
-              </linearGradient>
-            </defs>
-            <rect x="18" y="18" width="784" height="484" rx="98" fill="#efe8dd" stroke="#2d4738" stroke-width="18"/>
-            <g transform="translate(72 30)">
-              <g fill="url(#navLogoGrad)">
-                <path d="M265 160c0-29 23-52 52-52h68c86 0 142 63 142 146 0 82-56 146-142 146h-68c-29 0-52-23-52-52V160zm74 52v142c0 16 13 29 29 29h28c53 0 86-37 86-89 0-52-33-89-86-89h-28c-16 0-29 13-29 29z"/>
-              </g>
-              <g fill="#dfe8dc" opacity=".9">
-                <rect x="18" y="160" width="198" height="25" rx="12" transform="rotate(-20 18 160)"/>
-                <rect x="26" y="210" width="234" height="25" rx="12" transform="rotate(-20 26 210)"/>
-                <rect x="35" y="260" width="270" height="25" rx="12" transform="rotate(-20 35 260)"/>
-                <rect x="42" y="310" width="300" height="25" rx="12" transform="rotate(-20 42 310)"/>
-                <rect x="48" y="360" width="326" height="25" rx="12" transform="rotate(-20 48 360)"/>
-              </g>
-              <g fill="#ecf1e7">
-                <path d="M372 195L435 250L520 150L535 161L438 285L360 214Z" transform="rotate(10 372 195)"/>
-              </g>
-            </g>
-            <text x="410" y="420" text-anchor="middle" font-size="146" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#2d4738" letter-spacing="-7">DueDash</text>
-          </svg>
-        </div>
-
-        ${NAV.map(([k, ic, label]) => `
-          <button data-go="${k === "rooms" && room ? "room" : k}" class="${on(k)}">
-            <span>${ic}</span>
-            ${label}
-            ${k === "notifs" && notifs.length ? `<span class="badge">${notifs.length}</span>` : ""}
-          </button>
-        `).join("")}
-        <div class="chips">
-          <span class="chip">${esc(P.emoji || "😀")}</span>
-          <span class="chip">⭐ ${P.points}</span>
-          <span class="chip">🔥 ${liveStreak(P)}</span>
-          <span class="chip">${petEmoji()} Lv ${lvl(P)}</span>
-        </div>
-        <button class="alt" data-act="out">Log out</button>
-      `;
-    }
-
-    function render() {
-      renderNav();
-      const m = $("main");
-      m.classList.toggle("anim", view !== lastView);
-      lastView = view;
-
-      const list = {
+      const map = {
         planner: vPlanner,
         rev: vRev,
-        pet: vPet,
-        rooms: vRooms,
-        room: vRoom,
         decks: vDecks,
-        edit: vEdit,
+        edit: vEditDeck,
         study: vStudy,
         quizzes: vQuizzes,
         qedit: vQEdit,
         qtake: vQTake,
         explore: vExplore,
-        account: vAccount,
-        leaders: vLeaders,
         friends: vFriends,
         profile: vProfile,
-        notifs: vNotifs
+        notifs: vNotifs,
+        pet: vPet,
+        leaders: vLeaders,
+        account: vAccount,
+        rooms: vRooms
       };
 
-      m.innerHTML = (list[view] || vPlanner)();
-      if (view === "room") {
-        const el = $("chatlog");
-        if (el) el.scrollTop = el.scrollHeight;
+      main.innerHTML = (map[state.view] || vPlanner)();
+    };
+
+    const fetchData = async () => {
+      if (!state.user) return;
+      try {
+        const deckSnap = await getDocs(query(collection(db, "decks"), where("ownerId", "==", state.user.uid)));
+        state.decks = deckSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const pubDeckSnap = await getDocs(query(collection(db, "decks"), where("isPublic", "==", true), limit(100)));
+        state.pubDecks = pubDeckSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const quizSnap = await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", state.user.uid)));
+        state.quizes = quizSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const pubQuizSnap = await getDocs(query(collection(db, "quizzes"), where("isPublic", "==", true), limit(100)));
+        state.pubQuizes = pubQuizSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const boardSnap = await getDocs(query(collection(db, "leaderboard"), orderBy("points", "desc"), limit(20)));
+        state.leaderboard = boardSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const streakSnap = await getDocs(query(collection(db, "leaderboard"), orderBy("streak", "desc"), limit(20)));
+        state.streaks = streakSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (e) {
+        console.warn("fetchData", e);
+      }
+    };
+
+    async function go(view) {
+      state.view = view;
+      try {
+        if (view === "decks") await fetchData();
+        if (view === "quizzes") await fetchData();
+        if (view === "explore") {
+          state.search = "";
+          await fetchData();
+        }
+        if (view === "leaders") await fetchData();
+        if (view === "friends") {
+          state.searchUser = "";
+          state.searchResult = null;
+          const snap = await getDocs(query(collection(db, "friendships"), where("users", "array-contains", state.user.uid)));
+          const ids = snap.docs.map(d => (d.data().users || []).find(uid => uid !== state.user.uid)).filter(Boolean);
+          state.friends = [];
+          for (const id of ids) {
+            try {
+              const profileSnap = await getDoc(doc(db, "profiles", id));
+              state.friends.push(profileSnap.exists() ? { uid: id, ...profileSnap.data() } : { uid: id, username: "(unknown)" });
+            } catch (e) {}
+          }
+          state.friends.sort((a, b) => String(a.username).localeCompare(String(b.username)));
+        }
+      } catch (e) {
+        alert("Database error: " + (e.code || e.message));
+      }
+      renderNav();
+      renderMain();
+    }
+
+    const newQ = type => {
+      if (type === "tf") return { type: "tf", q: "", ans: true };
+      if (type === "match") return { type: "match", q: "Match each item with its partner.", pairs: [{ l:"", r:"" }, { l:"", r:"" }, { l:"", r:"" }, { l:"", r:"" }] };
+      return { type: "mc", q: "", opts: ["","","",""], ans: 0 };
+    };
+
+    const cleanQuestion = x => {
+      const type = x.type || "mc";
+      const text = (x.q || "").trim();
+      if (type === "tf") return text ? { type: "tf", q: text, ans: !!x.ans } : null;
+      if (type === "match") {
+        const pairs = (x.pairs || []).filter(p => (p.l || "").trim() && (p.r || "").trim()).map(p => ({ l: p.l.trim(), r: p.r.trim() }));
+        return pairs.length >= 2 ? { type: "match", q: text || "Match each item with its partner.", pairs } : null;
+      }
+      return text && (x.opts || []).every(opt => String(opt).trim()) ? { type: "mc", q: text, opts: (x.opts || []).map(o => String(o).trim()), ans: Number(x.ans || 0) } : null;
+    };
+
+    const prepQuiz = () => {
+      const qn = state.quizTake.questions[state.quizTake.i];
+      state.quizTake.sel = null;
+      state.quizTake.chk = false;
+      state.quizTake.m = [];
+      state.quizTake.order = [];
+      if (qn && qn.type === "match") {
+        state.quizTake.order = shuffle(qn.pairs.map((_, idx) => idx));
+      } else if (qn && (qn.type || "mc") === "mc") {
+        state.quizTake.order = shuffle(qn.opts.map((_, idx) => idx));
+      }
+    };
+
+    const finishQuiz = async () => {
+      const len = state.quizTake.questions.length;
+      const pts = state.quizTake.correct * 2 + (state.quizTake.correct === len ? 10 : 0);
+      const perfect = state.quizTake.correct === len && len >= 3;
+      await earn(pts, {
+        quizzesTaken: (state.profile.quizzesTaken || 0) + 1,
+        perfectQuizzes: (state.profile.perfectQuizzes || 0) + (perfect ? 1 : 0)
+      });
+    };
+
+    async function doDeckAction(type, id) {
+      const d = state.decks.find(x => x.id === id) || state.pubDecks.find(x => x.id === id);
+      if (!d) return;
+      if (type === "study") {
+        state.study = { title: d.title, cards: [...d.cards], i: 0, flip: false, got: 0, from: state.view };
+        state.view = "study";
+      }
+      if (type === "copydeck") {
+        await addDoc(collection(db, "decks"), {
+          ownerId: state.user.uid,
+          ownerName: state.profile.username,
+          title: d.title + " (copy)",
+          cards: d.cards,
+          isPublic: false,
+          updated: Date.now()
+        });
+        await save({ decksMade: (state.profile.decksMade || 0) + 1 });
+        alert("Saved to My Decks!");
+      }
+      if (type === "editdeck") {
+        state.currentDeckDraft = createDeckDraft(d);
+        state.view = "edit";
       }
     }
 
-    document.addEventListener("click", async (e) => {
-      const b = e.target.closest("[data-go],[data-act]");
-      if (!b || !P) return;
+    async function doQuizAction(type, id) {
+      const q = state.quizes.find(x => x.id === id) || state.pubQuizes.find(x => x.id === id);
+      if (!q) return;
+      if (type === "qtake") {
+        state.quizTake = { title: q.title, questions: q.questions, i: 0, correct: 0, from: state.view, sel: null, chk: false, m: [], order: [] };
+        prepQuiz();
+        state.view = "qtake";
+      }
+      if (type === "copyquiz") {
+        await addDoc(collection(db, "quizzes"), {
+          ownerId: state.user.uid,
+          ownerName: state.profile.username,
+          title: q.title + " (copy)",
+          questions: q.questions,
+          isPublic: false,
+          updated: Date.now()
+        });
+        await save({ quizzesMade: (state.profile.quizzesMade || 0) + 1 });
+        alert("Saved to My Quizzes!");
+      }
+      if (type === "qedit") {
+        state.currentQuizDraft = createQuizDraft(q);
+        state.view = "qedit";
+      }
+    }
 
-      if (b.dataset.go) return go(b.dataset.go);
+    const pickTF = value => {
+      if (!state.quizTake || state.quizTake.sel !== null) return;
+      state.quizTake.sel = Number(value);
+      if (Number(state.quizTake.sel) === Number(state.quizTake.questions[state.quizTake.i].ans ? 1 : 0)) state.quizTake.correct++;
+      renderMain();
+    };
 
-      const a = b.dataset.act;
-      const i = +b.dataset.i;
-      const id = b.dataset.id;
+    const pickMC = value => {
+      if (!state.quizTake || state.quizTake.sel !== null) return;
+      state.quizTake.sel = Number(value);
+      if (Number(value) === Number(state.quizTake.questions[state.quizTake.i].ans)) state.quizTake.correct++;
+      renderMain();
+    };
+
+    const qnext = async () => {
+      if (!state.quizTake) return;
+      state.quizTake.i++;
+      prepQuiz();
+      if (state.quizTake.i >= state.quizTake.questions.length) {
+        await finishQuiz();
+      }
+      renderMain();
+    };
+
+    const qcheck = () => {
+      if (!state.quizTake || state.quizTake.questions[state.quizTake.i].type !== "match") return;
+      const question = state.quizTake.questions[state.quizTake.i];
+      if (question.pairs.some((_, k) => !state.quizTake.m[k])) {
+        alert("Choose a match for every item first.");
+        return;
+      }
+      state.quizTake.chk = true;
+      if (question.pairs.every((pair, k) => state.quizTake.m[k] === pair.r)) state.quizTake.correct++;
+      renderMain();
+    };
+
+    document.addEventListener("click", async e => {
+      const btn = e.target.closest("[data-go]");
+      if (btn) return go(btn.dataset.go);
+
+      const actionBtn = e.target.closest("[data-act]");
+      if (!actionBtn || !state.profile) return;
+
+      const act = actionBtn.dataset.act;
+      const idx = Number(actionBtn.dataset.i || 0);
+      const id = actionBtn.dataset.id;
+      const key = actionBtn.dataset.k;
 
       try {
-        if (a === "out") {
-          await leaveRoom();
-          musicStop();
-          return signOut(auth);
+        if (act === "out") {
+          stopMusic();
+          await signOut(auth);
+          return;
         }
 
-        if (a === "mtoggle") {
+        if (act === "mtoggle") {
           $("mpanel").classList.toggle("hidden");
           return;
         }
-        if (a === "mplay") {
-          musicPlay(b.dataset.k);
+        if (act === "mplay") {
+          musicPlay(actionBtn.dataset.k);
           renderMusic();
           return;
         }
-        if (a === "mstop") {
-          musicStop();
+        if (act === "mstop") {
+          stopMusic();
           renderMusic();
           return;
         }
 
-        if (a === "addtask") {
+        if (act === "addtask") {
           const name = $("tk").value.trim();
           if (!name) return;
-          await save({ tasks:[...P.tasks, { name, due:$("td").value, done:false }] });
-          render();
-          checkReminders();
+          await save({
+            tasks: [...(state.profile.tasks || []), { name, due: $("td").value, done: false }]
+          });
+          renderMain();
         }
 
-        if (a === "done") {
-          await earn(5, { tasks:P.tasks.map((x, j) => j === i ? { ...x, done:true } : x), tasksDone:P.tasksDone + 1 });
-          render();
+        if (act === "done") {
+          const tasks = (state.profile.tasks || []).map((t, i) => i === idx ? { ...t, done: true } : t);
+          await earn(5, { tasks, tasksDone: (state.profile.tasksDone || 0) + 1 });
+          renderMain();
         }
 
-        if (a === "deltask") {
-          await save({ tasks:P.tasks.filter((_, j) => j !== i) });
-          render();
+        if (act === "deltask") {
+          await save({ tasks: (state.profile.tasks || []).filter((_, i) => i !== idx) });
+          renderMain();
         }
 
-        if (a === "xadd") {
-          const s = $("xs").value.trim();
-          const d = $("xd").value;
-          if (!s || !d) { alert("Add a subject and an exam date."); return; }
-          if (d < plus(0)) { alert("Pick a date that is today or later."); return; }
-          if ((P.exams || []).length >= 10) { alert("10 exams is the maximum."); return; }
-          await save({ exams:[...(P.exams || []), { subject:s, date:d }] });
-          render();
-          checkReminders();
+        if (act === "xadd") {
+          const subject = $("xs").value.trim();
+          const date = $("xd").value;
+          if (!subject || !date) { alert("Add a subject and an exam date."); return; }
+          if ((state.profile.exams || []).length >= 10) { alert("10 exams is the maximum."); return; }
+          await save({ exams: [...(state.profile.exams || []), { subject, date }] });
+          renderMain();
         }
 
-        if (a === "xdel") {
-          await save({ exams:P.exams.filter((_, j) => j !== i) });
-          render();
+        if (act === "xdel") {
+          await save({ exams: (state.profile.exams || []).filter((_, i) => i !== idx) });
+          renderMain();
         }
 
-        if (a === "rdone") {
-          const k = b.dataset.k;
-          if (P.revDone && P.revDone[k]) return;
-          const keep = Object.fromEntries(Object.entries(P.revDone || {}).filter(([x]) => x.slice(0, 10) >= plus(0)));
-          await earn(10, { revDone:{ ...keep, [k]: true }, revisionDone:(P.revisionDone || 0) + 1 });
-          render();
+        if (act === "rdone") {
+          const k = key;
+          const keep = Object.fromEntries(Object.entries(state.profile.revDone || {}).filter(([keyName]) => keyName.slice(0, 10) >= plus(0)));
+          if (state.profile.revDone && state.profile.revDone[k]) return;
+          await earn(10, {
+            revDone: { ...keep, [k]: true },
+            revisionDone: (state.profile.revisionDone || 0) + 1
+          });
+          renderMain();
         }
 
-        if (a === "petsp") {
-          await save({ pet:{ ...P.pet, species:PETS[i] } });
-          render();
+        if (act === "newdeck") {
+          state.currentDeckDraft = createDeckDraft({ title: "", cards: [{ front:"", back:"" }] });
+          state.view = "edit";
+          renderMain();
         }
-        if (a === "petname") {
-          const n = $("pn").value.trim().slice(0, 16);
-          if (!n) return;
-          await save({ pet:{ ...P.pet, name:n } });
-          toast("🐾 Pet renamed!");
-          render();
-        }
-
-        if (a === "av") {
-          await save({ avatar:{ ...P.avatar, [b.dataset.k]: i } });
-          render();
-          heartbeat();
-        }
-        if (a === "bd") {
-          await save({ backdrop:i });
-          render();
-        }
-
-        if (a === "rcreate") {
-          const name = $("rn").value.trim();
-          if (!name) { alert("Give your room a name."); return; }
-          const code = mkCode();
-          await setDoc(doc(db, "rooms", code), { name, ownerId:user.uid, createdAt:Date.now() });
-          await enterRoom(code, { name });
-        }
-
-        if (a === "rjoin") {
-          const code = $("rc").value.trim().toUpperCase();
-          if (!/^[A-Z0-9]{6}$/.test(code)) { alert("Room codes have 6 letters or numbers."); return; }
-          const snap = await getDoc(doc(db, "rooms", code));
-          if (!snap.exists()) { alert("Room not found. Check the code and try again."); return; }
-          await enterRoom(code, { name:snap.data().name });
-        }
-
-        if (a === "leave") { await leaveRoom(); go("rooms"); }
-        if (a === "copycode") {
-          try {
-            await navigator.clipboard.writeText(room.code);
-            toast("📋 Code copied: " + room.code);
-          } catch (err) {
-            alert("Your room code is " + room.code);
+        if (act === "editdeck") {
+          const d = state.decks.find(x => x.id === id);
+          if (d) {
+            state.currentDeckDraft = createDeckDraft(d);
+            state.view = "edit";
+            renderMain();
           }
         }
-
-        if (a === "rstatus") {
-          rs.status = b.dataset.k;
-          rs.focusEnd = 0;
-          heartbeat();
-          render();
+        if (act === "addcard") {
+          if (!state.currentDeckDraft) return;
+          if (state.currentDeckDraft.cards.length < 100) state.currentDeckDraft.cards.push({ front:"", back:"" });
+          renderMain();
         }
-
-        if (a === "emote") {
-          rs.emote = EMOTES[i];
-          rs.emoteAt = Date.now();
-          heartbeat();
+        if (act === "delcard") {
+          if (!state.currentDeckDraft) return;
+          state.currentDeckDraft.cards.splice(idx, 1);
+          renderMain();
         }
-        if (a === "fstart") {
-          rs.status = "focus";
-          rs.focusEnd = Date.now() + 25 * 60000;
-          heartbeat();
-          render();
-        }
-        if (a === "fstop") {
-          rs.status = "studying";
-          rs.focusEnd = 0;
-          heartbeat();
-          render();
-        }
-        if (a === "chatsend") {
-          await sendChat();
-          const c = $("chatin");
-          if (c) c.focus();
-        }
-        if (a === "invite") {
-          const f = friends.find(x => x.uid === id);
-          if (!f || !room) return;
-          await addDoc(collection(db, "notifications"), {
-            to:id,
-            from:user.uid,
-            fromName:P.username,
-            type:"invite",
-            text:(P.username + ' invited you to study in "' + room.name + '"').slice(0,200),
-            roomCode:room.code,
-            roomName:room.name,
-            at:Date.now()
-          });
-          toast("📨 Invite sent to " + f.username);
-        }
-
-        if (a === "fsearch") await searchFriend();
-        if (a === "freq") {
-          if (friends.some(f => f.uid === id)) return;
-          if (notifs.some(n => n.type === "friend" && n.from === id)) {
-            alert("They already sent you a request! Accept it in 🔔 Notifications.");
+        if (act === "savedeck") {
+          if (!state.currentDeckDraft) return;
+          const cards = state.currentDeckDraft.cards.filter(c => c.front.trim() && c.back.trim());
+          if (!state.currentDeckDraft.title.trim() || !cards.length) {
+            alert("Add a title and at least one full card.");
             return;
           }
-          try {
-            await setDoc(doc(db, "notifications", "fr_" + user.uid + "_" + id), {
-              to:id,
-              from:user.uid,
-              fromName:P.username,
-              type:"friend",
-              text:P.username + " sent you a friend request",
-              at:Date.now()
-            });
-            fres = { msg:"✅ Friend request sent!" };
-          } catch (err) {
-            fres = { msg:"Couldn't send the request. You might have already sent one." };
+          const payload = {
+            ownerId: state.user.uid,
+            ownerName: state.profile.username,
+            title: state.currentDeckDraft.title.trim(),
+            cards,
+            isPublic: !!document.getElementById("dp")?.checked,
+            updated: Date.now()
+          };
+          if (state.currentDeckDraft.id) {
+            await updateDoc(doc(db, "decks", state.currentDeckDraft.id), payload);
+          } else {
+            await addDoc(collection(db, "decks"), payload);
+            await save({ decksMade: (state.profile.decksMade || 0) + 1 });
           }
-          render();
+          await fetchData();
+          state.view = "decks";
+          renderNav();
+          renderMain();
+        }
+        if (act === "deldeck" && confirm("Delete this deck?")) {
+          await deleteDoc(doc(db, "decks", id));
+          await fetchData();
+          state.view = "decks";
+          renderNav();
+          renderMain();
+        }
+        if (act === "study") {
+          const deck = state.decks.find(x => x.id === id) || state.pubDecks.find(x => x.id === id);
+          if (!deck) return;
+          state.study = { title: deck.title, cards: [...deck.cards], i: 0, flip: false, got: 0, from: state.view };
+          state.view = "study";
+          renderMain();
+        }
+        if (act === "flip") {
+          if (state.study) {
+            state.study.flip = !state.study.flip;
+            renderMain();
+          }
+        }
+        if (act === "got" || act === "again") {
+          if (!state.study) return;
+          const n = act === "got" ? 1 : 0;
+          state.study.got += n;
+          state.study.i++;
+          state.study.flip = false;
+          const done = state.study.i >= state.study.cards.length;
+          const perfect = done && state.study.got === state.study.cards.length && state.study.cards.length >= 5;
+          await earn(n + (done ? 10 : 0), {
+            cardsStudied: (state.profile.cardsStudied || 0) + 1,
+            perfectDecks: (state.profile.perfectDecks || 0) + (perfect ? 1 : 0)
+          });
+          renderMain();
         }
 
-        if (a === "nacc") {
-          const n = notifs.find(x => x.id === id);
-          if (!n) return;
-          const users = [user.uid, n.from].sort();
+        if (act === "newquiz") {
+          state.currentQuizDraft = createQuizDraft({ title:"", questions:[newQ("mc")] });
+          state.view = "qedit";
+          renderMain();
+        }
+        if (act === "qedit") {
+          const q = state.quizes.find(x => x.id === id);
+          if (!q) return;
+          state.currentQuizDraft = createQuizDraft(q);
+          state.view = "qedit";
+          renderMain();
+        }
+        if (act === "qaddq") {
+          if (!state.currentQuizDraft) return;
+          if (state.currentQuizDraft.questions.length < 50) state.currentQuizDraft.questions.push(newQ("mc"));
+          renderMain();
+        }
+        if (act === "qdelq") {
+          if (!state.currentQuizDraft) return;
+          state.currentQuizDraft.questions.splice(idx, 1);
+          renderMain();
+        }
+        if (act === "qsave") {
+          if (!state.currentQuizDraft) return;
+          const questions = state.currentQuizDraft.questions.map(cleanQuestion).filter(Boolean);
+          if (!state.currentQuizDraft.title.trim() || !questions.length) {
+            alert("Add a title and at least one complete question.");
+            return;
+          }
+          const payload = {
+            ownerId: state.user.uid,
+            ownerName: state.profile.username,
+            title: state.currentQuizDraft.title.trim(),
+            questions,
+            isPublic: !!document.getElementById("qp")?.checked,
+            updated: Date.now()
+          };
+          if (state.currentQuizDraft.id) {
+            await updateDoc(doc(db, "quizzes", state.currentQuizDraft.id), payload);
+          } else {
+            await addDoc(collection(db, "quizzes"), payload);
+            await save({ quizzesMade: (state.profile.quizzesMade || 0) + 1 });
+          }
+          await fetchData();
+          state.view = "quizzes";
+          renderNav();
+          renderMain();
+        }
+        if (act === "qdel" && confirm("Delete this quiz?")) {
+          await deleteDoc(doc(db, "quizzes", id));
+          await fetchData();
+          state.view = "quizzes";
+          renderNav();
+          renderMain();
+        }
+        if (act === "qtake") {
+          const q = state.quizes.find(x => x.id === id) || state.pubQuizes.find(x => x.id === id);
+          if (!q) return;
+          state.quizTake = { title: q.title, questions: q.questions, i: 0, correct: 0, from: state.view, sel: null, chk: false, m: [], order: [] };
+          prepQuiz();
+          state.view = "qtake";
+          renderMain();
+        }
+        if (act === "pick") {
+          pickMC(actionBtn.dataset.i);
+        }
+        if (act === "pickTF") {
+          pickTF(actionBtn.dataset.i);
+        }
+        if (act === "mcheck") {
+          qcheck();
+        }
+        if (act === "qnext") {
+          await qnext();
+        }
+
+        if (act === "copydeck") {
+          const deck = state.pubDecks.find(x => x.id === id);
+          if (!deck) return;
+          await addDoc(collection(db, "decks"), {
+            ownerId: state.user.uid,
+            ownerName: state.profile.username,
+            title: deck.title + " (copy)",
+            cards: deck.cards,
+            isPublic: false,
+            updated: Date.now()
+          });
+          await save({ decksMade: (state.profile.decksMade || 0) + 1 });
+          alert("Saved to My Decks!");
+        }
+
+        if (act === "copyquiz") {
+          const quiz = state.pubQuizes.find(x => x.id === id);
+          if (!quiz) return;
+          await addDoc(collection(db, "quizzes"), {
+            ownerId: state.user.uid,
+            ownerName: state.profile.username,
+            title: quiz.title + " (copy)",
+            questions: quiz.questions,
+            isPublic: false,
+            updated: Date.now()
+          });
+          await save({ quizzesMade: (state.profile.quizzesMade || 0) + 1 });
+          alert("Saved to My Quizzes!");
+        }
+
+        if (act === "fsearch") {
+          state.searchUser = $("fs").value.trim();
+          if (!NAME_RE.test(state.searchUser)) {
+            state.searchResult = { msg: "Usernames are 3 to 20 letters, numbers or underscores." };
+          } else if (state.searchUser.toLowerCase() === state.profile.username.toLowerCase()) {
+            state.searchResult = { msg: "That's you! 😄" };
+          } else {
+            const ref = doc(db, "usernames", state.searchUser.toLowerCase());
+            const snap = await getDoc(ref);
+            state.searchResult = snap.exists()
+              ? { uid: snap.data().uid, username: snap.data().username }
+              : { msg: 'No one is called "' + state.searchUser + '". Check the spelling.' };
+          }
+          renderMain();
+        }
+
+        if (act === "freq") {
+          if (state.friends.some(f => f.uid === id)) return;
           try {
-            await setDoc(doc(db, "friendships", users.join("_")), { users, at:Date.now() });
-          } catch (err) {
+            await setDoc(doc(db, "notifications", "fr_" + state.user.uid + "_" + id), {
+              to: id,
+              from: state.user.uid,
+              fromName: state.profile.username,
+              type: "friend",
+              text: state.profile.username + " sent you a friend request",
+              at: Date.now()
+            });
+            state.searchResult = { msg: "✅ Friend request sent!" };
+          } catch (e) {
+            state.searchResult = { msg: "Couldn't send the request. You might have already sent one." };
+          }
+          renderMain();
+        }
+
+        if (act === "fview") {
+          state.profileView = state.friends.find(f => f.uid === id) || null;
+          state.view = "profile";
+          renderMain();
+        }
+
+        if (act === "fremove" && confirm("Remove this friend?")) {
+          await deleteDoc(doc(db, "friendships", [state.user.uid, id].sort().join("_")));
+          go("friends");
+        }
+
+        if (act === "nacc") {
+          const n = state.notify.find(x => x.id === id);
+          if (!n) return;
+          const pair = [state.user.uid, n.from].sort().join("_");
+          try {
+            await setDoc(doc(db, "friendships", pair), { users: [state.user.uid, n.from].sort(), at: Date.now() });
+          } catch (e) {
             await deleteDoc(doc(db, "notifications", id));
             alert("You may already be friends with this person.");
             return;
           }
           await deleteDoc(doc(db, "notifications", id));
-          try { await addDoc(collection(db, "notifications"), { to:n.from, from:user.uid, fromName:P.username, type:"info", text:P.username + " accepted your friend request 🎉", at:Date.now() }); } catch (err) {}
-          try { await loadFriends(); } catch (err) {}
-          toast("🎉 You're now friends with " + (n.fromName || "them") + "!");
-          render();
+          try { await addDoc(collection(db, "notifications"), { to: n.from, from: state.user.uid, fromName: state.profile.username, type: "info", text: state.profile.username + " accepted your friend request 🎉", at: Date.now() }); } catch (e) {}
+          go("friends");
         }
 
-        if (a === "ndec") await deleteDoc(doc(db, "notifications", id));
+        if (act === "ndec") {
+          await deleteDoc(doc(db, "notifications", id));
+          state.notify = state.notify.filter(n => n.id !== id);
+          renderMain();
+        }
 
-        if (a === "njoin") {
-          const n = notifs.find(x => x.id === id);
+        if (act === "njoin") {
+          const n = state.notify.find(x => x.id === id);
           if (!n) return;
           const snap = await getDoc(doc(db, "rooms", n.roomCode));
           await deleteDoc(doc(db, "notifications", id));
           if (!snap.exists()) { alert("That room doesn't exist any more."); return; }
-          await enterRoom(n.roomCode, { name:snap.data().name });
+          // join logic can be simplified if needed
+          toast("Room invite accepted.");
         }
 
-        if (a === "fview") {
-          try {
-            const s = await getDoc(doc(db, "profiles", id));
-            prof = s.exists() ? { uid:id, ...s.data() } : (friends.find(f => f.uid === id) || null);
-          } catch
+        if (act === "emoji") {
+          await save({ emoji: EMOJIS[idx] });
+          renderMain();
+        }
+
+        if (act === "petsp") {
+          await save({ pet: { ...(state.profile.pet || {}), species: PETS[idx] } });
+          renderMain();
+        }
+
+        if (act === "petname") {
+          const name = $("pn").value.trim().slice(0, 16);
+          if (!name) return;
+          await save({ pet: { ...(state.profile.pet || {}), name } });
+          toast("🐾 Pet renamed!");
+          renderMain();
+        }
+
+        if (act === "name") {
+          const n = $("un").value.trim();
+          if (!NAME_RE.test(n)) { alert("Usernames need 3 to 20 letters, numbers or underscores, with no spaces."); return; }
+          if (n === state.profile.username) return;
+          const oldKey = state.profile.username.toLowerCase();
+          const newKey = n.toLowerCase();
+          const batch = writeBatch(db);
+          batch.set(doc(db, "usernames", newKey), { uid: state.user.uid, username: n });
+          if (oldKey !== newKey) batch.delete(doc(db, "usernames", oldKey));
+          await batch.commit();
+          await save({ username: n });
+          toast("✅ Username saved!");
+          renderMain();
+        }
+
+        if (act === "rcreate") {
+          const roomName = $("rn").value.trim();
+          if (!roomName) { alert("Give your room a name."); return; }
+          const code = Array.from({length:6}, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random()*32)]).join("");
+          await setDoc(doc(db, "rooms", code), { name: roomName, ownerId: state.user.uid, createdAt: Date.now() });
+          state.room = { code, name: roomName };
+          state.view = "rooms";
+          renderMain();
+        }
+
+        if (act === "rjoin") {
+          const code = $("rc").value.trim().toUpperCase();
+          if (!/^[A-Z0-9]{6}$/.test(code)) { alert("Room codes have 6 letters or numbers."); return; }
+          const snap = await getDoc(doc(db, "rooms", code));
+          if (!snap.exists()) { alert("Room not found. Check the code and try again."); return; }
+          state.room = { code, name: snap.data().name };
+          state.view = "rooms";
+          renderMain();
+        }
+
+      } catch (err) {
+        alert("Something went wrong: " + (err.code || err.message));
+      }
+    });
+
+    document.addEventListener("input", e => {
+      const target = e.target;
+      if (target.id === "vol") {
+        music.volume = Number(target.value);
+        if (music.master) music.master.gain.value = music.volume;
+        return;
+      }
+
+      if (target.id === "sq") {
+        state.search = target.value;
+        renderMain();
+        return;
+      }
+
+      if (target.id === "fs") {
+        state.searchUser = target.value;
+      }
+
+      if (state.quizTake && state.quizTake.questions[state.quizTake.i]?.type === "match") {
+        const mi = Number(target.dataset.mi);
+        if (!Number.isNaN(mi) && target.value !== "") {
+          state.quizTake.m[mi] = target.value;
+        }
+      }
+    });
+
+    document.addEventListener("change", e => {
+      const target = e.target;
+      if (target.dataset.qf === "type" && state.currentQuizDraft) {
+        const qi = Number(target.dataset.qi);
+        const qType = target.value;
+        state.currentQuizDraft.questions[qi] = {
+          ...newQ(qType),
+          q: state.currentQuizDraft.questions[qi]?.q || "",
+          ans: state.currentQuizDraft.questions[qi]?.ans ?? true
+        };
+        renderMain();
+      }
+      if (target.dataset.qf === "tf" && state.currentQuizDraft) {
+        const qi = Number(target.dataset.qi);
+        state.currentQuizDraft.questions[qi].ans = target.dataset.v === "1";
+      }
+      if (target.dataset.qf === "ans" && state.currentQuizDraft) {
+        const qi = Number(target.dataset.qi);
+        const oi = Number(target.dataset.oi);
+        state.currentQuizDraft.questions[qi].ans = oi;
+      }
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter" && e.target.id === "sq") {
+        e.preventDefault();
+        renderMain();
+      }
+    });
+
+    const loadNotifications = () => {
+      if (!state.user) return;
+      onSnapshot(query(collection(db, "notifications"), where("to", "==", state.user.uid)), snap => {
+        state.notify = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.at || 0) - (a.at || 0));
+        renderNav();
+        if (state.view === "notifs") renderMain();
+      }, err => console.warn("notifications", err));
+    };
+
+    const startApp = async () => {
+      if (!state.user) return;
+      await fetchData();
+      renderNav();
+      renderMain();
+      loadNotifications();
+    };
+
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        state.user = user;
+        const ref = doc(db, "users", user.uid);
+        const profileSnap = await getDoc(ref);
+        state.profile = {
+          username: genName(),
+          emoji: "😀",
+          points: 0,
+          streak: 0,
+          bestStreak: 0,
+          lastDay: "",
+          tasksDone: 0,
+          cardsStudied: 0,
+          decksMade: 0,
+          published: 0,
+          quizzesMade: 0,
+          quizzesTaken: 0,
+          perfectQuizzes: 0,
+          perfectDecks: 0,
+          revisionDone: 0,
+          focusDone: 0,
+          roomsJoined: 0,
+          racesPlayed: 0,
+          racesWon: 0,
+          goalDay: "",
+          goalPts: 0,
+          goalDone: "",
+          exams: [],
+          revPer: 2,
+          revStart: "16:00",
+          studyMin: 45,
+          breakMin: 15,
+          revDone: {},
+          remSent: {},
+          pet: { name:"Buddy", species:"🐱" },
+          avatar: { skin:1, hair:0, hs:1, eye:0, fit:0, acc:0, look:0, top:0 },
+          backdrop: 0,
+          tasks: [],
+          ...(profileSnap.exists() ? profileSnap.data() : {})
+        };
+        if (!profileSnap.exists()) await setDoc(ref, state.profile);
+        await ensureUsername();
+        await syncProfile();
+        $("auth").classList.add("hidden");
+        $("shell").classList.remove("hidden");
+        await startApp();
+        renderMusic();
+        musicPlay("dream");
+      } else {
+        state.user = null;
+        renderAuth();
+      }
+    });
+  </script>
+</body>
+</html>

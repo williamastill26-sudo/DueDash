@@ -1131,6 +1131,136 @@
       mus.stops.push(() => clearInterval(id));
     };
 
+    const addWind = (ctx, out) => {
+      const n = noiseSrc(ctx, true);
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 380;
+      const g = ctx.createGain();
+      g.gain.value = 0.18;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.07;
+      const lg = ctx.createGain();
+      lg.gain.value = 0.12;
+      lfo.connect(lg);
+      lg.connect(g.gain);
+      n.connect(lp);
+      lp.connect(g);
+      g.connect(out);
+      lfo.start();
+      mus.stops.push(() => { n.stop(); lfo.stop(); });
+    };
+
+    const addFireplace = (ctx, out) => {
+      const n = noiseSrc(ctx, false);
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 650;
+      bp.Q.value = 0.7;
+      const g = ctx.createGain();
+      g.gain.value = 0.09;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 1.8;
+      const lg = ctx.createGain();
+      lg.gain.value = 0.035;
+      lfo.connect(lg);
+      lg.connect(g.gain);
+      n.connect(bp);
+      bp.connect(g);
+      g.connect(out);
+      lfo.start();
+      mus.stops.push(() => { n.stop(); lfo.stop(); });
+    };
+
+    const addBirdsong = (ctx, out) => {
+      const playChirp = () => {
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1700 + Math.random() * 900, t);
+        osc.frequency.exponentialRampToValueAtTime(1100 + Math.random() * 500, t + 0.16);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.035, t + 0.025);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+
+        osc.connect(g);
+        g.connect(out);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      };
+
+      playChirp();
+      const id = setInterval(() => {
+        if (Math.random() > 0.35) playChirp();
+        if (Math.random() > 0.75) setTimeout(playChirp, 180);
+      }, 850);
+
+      mus.stops.push(() => clearInterval(id));
+    };
+
+    const addForest = (ctx, out) => {
+      const n = noiseSrc(ctx, true);
+      const hp = ctx.createBiquadFilter();
+      hp.type = "highpass";
+      hp.frequency.value = 400;
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 1200;
+      const g = ctx.createGain();
+      g.gain.value = 0.11;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.18;
+      const lg = ctx.createGain();
+      lg.gain.value = 0.07;
+      lfo.connect(lg);
+      lg.connect(g.gain);
+
+      n.connect(hp);
+      hp.connect(lp);
+      lp.connect(g);
+      g.connect(out);
+
+      lfo.start();
+      mus.stops.push(() => { n.stop(); lfo.stop(); });
+    };
+
+    const addThunder = (ctx, out) => {
+      const base = ctx.createOscillator();
+      base.type = "sawtooth";
+      base.frequency.value = 90;
+      const g = ctx.createGain();
+      g.gain.value = 0.015;
+      base.connect(g);
+      g.connect(out);
+      base.start();
+
+      const burst = () => {
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(110, t);
+        osc.frequency.exponentialRampToValueAtTime(32, t + 0.45);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.08, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+
+        osc.connect(gain);
+        gain.connect(out);
+        osc.start(t);
+        osc.stop(t + 0.45);
+      };
+
+      const id = setInterval(() => {
+        if (Math.random() > 0.45) burst();
+      }, 2400);
+
+      mus.stops.push(() => { clearInterval(id); base.stop(); });
+    };
+
     const CH1 = [[220,261.63,329.63,392],[174.61,220,261.63,329.63],[261.63,329.63,392,493.88],[196,246.94,293.66,329.63]];
     const CH2 = [[146.83,174.61,220,261.63],[196,246.94,293.66,329.63],[130.81,164.81,196,246.94,293.66],[220,261.63,329.63,392]];
 
@@ -1149,6 +1279,11 @@
       if (k === "lofi") { addPad(ctx, out, CH2, 4); addRain(ctx, out, .12); }
       if (k === "rain") addRain(ctx, out, .45);
       if (k === "ocean") addOcean(ctx, out);
+      if (k === "wind") addWind(ctx, out);
+      if (k === "fire") addFireplace(ctx, out);
+      if (k === "birds") addBirdsong(ctx, out);
+      if (k === "forest") addForest(ctx, out);
+      if (k === "thunder") addThunder(ctx, out);
 
       mus.cur = k;
     };
@@ -1159,7 +1294,12 @@
       ["piano","🎹 Quiet piano"],
       ["lofi","☕ Lo-fi chill"],
       ["rain","🌧️ Soft rain"],
-      ["ocean","🌊 Ocean waves"]
+      ["ocean","🌊 Ocean waves"],
+      ["wind","🍃 Gentle wind"],
+      ["fire","🔥 Fireplace"],
+      ["birds","🐦 Morning birds"],
+      ["forest","🌲 Forest hush"],
+      ["thunder","⛈️ Distant thunder"]
     ];
 
     const renderMusic = () => {
@@ -1612,14 +1752,18 @@
     const questionUI = (total) => {
       const x = race.questions[myRace.i];
       const rev = myRace.sel !== null;
-      const items = x.type === "tf" ? [[true,"True"], [false,"False"]] : x.opts.map((o, k) => [`ABCD`[k] + ". " + o, k]);
+      const items = x.type === "tf"
+        ? [["True", 1], ["False", 0]]
+        : x.opts.map((o, k) => [`ABCD`[k] + ". " + o, k]);
       const ci = x.type === "tf" ? (x.ans ? 1 : 0) : x.ans;
+
       return `
         <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct}</p>
         <div class="card"><b>${esc(x.q)}</b></div>
-        ${items.map(([l, k]) => `
-          <button class="choice ${rev ? (k === ci ? "green" : k === myRace.sel ? "red" : "alt") : "alt"}" data-act="rpick" data-i="${k}" ${rev ? "disabled" : ""}>
-            ${esc(l)}
+        ${items.map(([label, index]) => `
+          <button class="choice ${rev ? (index === ci ? "green" : index === myRace.sel ? "red" : "alt") : "alt"}"
+            data-act="rpick" data-i="${index}" ${rev ? "disabled" : ""}>
+            ${esc(label)}
           </button>
         `).join("")}
       `;
@@ -3241,10 +3385,115 @@
 
     document.addEventListener("input", e => {
       const t = e.target;
+
       if (t.id === "vol") {
         mus.vol = +t.value;
         if (mus.master) mus.master.gain.value = mus.vol;
         return;
       }
 
-      if
+      if (t.id === "sq") {
+        q = t.value;
+        const root = $("results");
+        if (root) root.innerHTML = exploreList();
+        return;
+      }
+
+      if (t.id === "rsq") {
+        rsq = t.value;
+        const root = $("rres");
+        if (root) root.innerHTML = raceResults();
+        return;
+      }
+
+      if (t.matches("[data-qf='opt']")) {
+        const qi = +t.dataset.qi;
+        const oi = +t.dataset.oi;
+        if (qdraft && qdraft.questions[qi]) {
+          qdraft.questions[qi].opts[oi] = t.value;
+        }
+        return;
+      }
+
+      if (t.matches("[data-qf='q']")) {
+        const qi = +t.dataset.qi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].q = t.value;
+        return;
+      }
+
+      if (t.matches("[data-qf='l']")) {
+        const qi = +t.dataset.qi;
+        const pi = +t.dataset.pi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].pairs[pi].l = t.value;
+        return;
+      }
+
+      if (t.matches("[data-qf='r']")) {
+        const qi = +t.dataset.qi;
+        const pi = +t.dataset.pi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].pairs[pi].r = t.value;
+        return;
+      }
+
+      if (t.matches("[data-qf='tf']")) {
+        const qi = +t.dataset.qi;
+        const v = t.dataset.v === "1";
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].ans = v;
+        return;
+      }
+
+      if (t.matches("[data-qf='ans']")) {
+        const qi = +t.dataset.qi;
+        const oi = +t.dataset.oi;
+        if (qdraft && qdraft.questions[qi]) qdraft.questions[qi].ans = oi;
+        return;
+      }
+
+      if (t.matches("[data-qf='type']")) {
+        const qi = +t.dataset.qi;
+        if (qdraft && qdraft.questions[qi]) {
+          qdraft.questions[qi].type = t.value;
+          if (t.value === "tf") qdraft.questions[qi] = { type:"tf", q:qdraft.questions[qi].q || "", ans: true };
+          if (t.value === "match") qdraft.questions[qi] = { type:"match", q:qdraft.questions[qi].q || "Match each item with its partner.", pairs:[{l:"",r:""},{l:"",r:""}] };
+          if (t.value === "mc") qdraft.questions[qi] = { type:"mc", q:qdraft.questions[qi].q || "", opts:["","","",""], ans:0 };
+        }
+        return;
+      }
+
+      if (t.matches("[data-mi]")) {
+        const k = +t.dataset.mi;
+        if (qz && qz.m) qz.m[k] = t.value;
+        return;
+      }
+    });
+
+    document.addEventListener("change", e => {
+      const t = e.target;
+      if (t.id === "rp") {
+        if (P) save({ revPer: +t.value });
+      }
+      if (t.id === "rsm") {
+        if (P) save({ studyMin: +t.value });
+      }
+      if (t.id === "rbm") {
+        if (P) save({ breakMin: +t.value });
+      }
+      if (t.id === "rstart") {
+        if (P) save({ revStart: t.value });
+      }
+      if (t.id === "dp") {
+        if (draft) draft.isPublic = t.checked;
+      }
+      if (t.id === "qp") {
+        if (qdraft) qdraft.isPublic = t.checked;
+      }
+      if (t.id === "qt") {
+        if (qdraft) qdraft.title = t.value;
+      }
+      if (t.id === "dt") {
+        if (draft) draft.title = t.value;
+      }
+    });
+  </script>
+</body>
+</html>

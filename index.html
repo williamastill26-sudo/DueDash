@@ -3424,11 +3424,23 @@
         }
 
         if (a === "qsave") {
-          const qs = qdraft.questions.map(cleanQ).filter(Boolean);
-          if (!qdraft.title.trim() || !qs.length) {
-            alert("Add a title and at least one complete question. Multiple choice needs all 4 answers, and match needs all 4 pairs filled in.");
+          const qt = $("qt"); if (qt) qdraft.title = qt.value;
+          const qp = $("qp"); if (qp) qdraft.isPublic = qp.checked;
+          document.querySelectorAll("[data-qf]").forEach(el => {
+            const x = qdraft.questions[+el.dataset.qi];
+            if (!x) return;
+            const f = el.dataset.qf;
+            if (f === "q") x.q = el.value;
+            if (f === "opt") x.opts[+el.dataset.oi] = el.value;
+            if (f === "l" || f === "r") x.pairs[+el.dataset.pi][f] = el.value;
+          });
+          if (!qdraft.title.trim()) { alert("Give your quiz a title first (the box at the top)."); return; }
+          const bad = qdraft.questions.findIndex(x => !cleanQ(x));
+          if (bad !== -1) {
+            alert("Question " + (bad + 1) + " isn't finished yet. Multiple choice needs a question and all 4 answers, true/false needs a statement, and match needs all 4 pairs filled in.");
             return;
           }
+          const qs = qdraft.questions.map(cleanQ);
           const data = { ownerId:user.uid, ownerName:P.username, title:qdraft.title.trim(), questions:qs, isPublic:qdraft.isPublic, updated:Date.now() };
           if (qdraft.id) await updateDoc(doc(db, "quizzes", qdraft.id), data);
           else { await addDoc(collection(db, "quizzes"), data); await save({ quizzesMade:P.quizzesMade + 1 }); }
@@ -3675,5 +3687,5 @@
   }
 });
   </script>
-</body
+</body>
 </html>

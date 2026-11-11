@@ -1859,7 +1859,7 @@
       if (!any) return '<div class="sub">No quizzes are available yet. Make one in My Quizzes or share a public one in Explore. A race needs at least 2 questions.</div>';
       return `
         <div class="sub" style="margin:6px 0 10px">Search for one of your own quizzes or a public quiz. Questions are shuffled and only correct answers move you forward.</div>
-        <input id="rsq" placeholder="🔍 Search quizzes by name..." value="${esc(rsq)}" autocomplete="off" />
+        <div class="btns"><input id="rsq" placeholder="🔍 Search quizzes by name..." value="${esc(rsq)}" autocomplete="off" style="flex:1" /><button type="button" class="alt" data-act="rrefresh">↻ Refresh</button></div>
         <div id="rres">${raceResults()}</div>
       `;
     };
@@ -2147,9 +2147,15 @@
       try { await deleteDoc(doc(db, "rooms", code, "members", user.uid)); } catch (e) {}
     }
 
+    async function refreshQuizzes() {
+      try { quizzes = (await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() })); } catch (e) {}
+      try { pubQ = (await getDocs(query(collection(db, "quizzes"), where("isPublic", "==", true), limit(100)))).docs.map(d => ({ id:d.id, ...d.data() })); } catch (e) {}
+    }
+
     async function go(v) {
       if (v === "room" && !room) v = "rooms";
       view = v;
+      if (v === "room") await refreshQuizzes();
       try {
         if (v === "planner" || v === "rev") checkReminders();
         if (v === "decks") decks = (await getDocs(query(collection(db, "decks"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() }));
@@ -3324,6 +3330,14 @@
           await deleteDoc(doc(db, "friendships", pairId(user.uid, id)));
           await loadFriends();
           go("friends");
+        }
+
+        if (a === "rrefresh") {
+          await refreshQuizzes();
+          const root = $("rres");
+          if (root) root.innerHTML = raceResults();
+          toast("Quiz list refreshed");
+          return;
         }
 
         if (a === "rpost") {

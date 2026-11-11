@@ -128,6 +128,8 @@
     .imgpick{padding:8px;border:2px dashed var(--line);border-radius:14px;transition:background .15s,border-color .15s}
     .imgpick.drag{background:var(--green-soft);border-color:var(--green)}
     .dzhint{font-size:13px}
+    .tbar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0 4px}
+    .tbar i{display:block;height:100%;background:var(--green);transition:width .25s linear}
     .imgbtn{display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:600;font-size:14px}
     .btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
     .btns button.on,button.alt.on{background:var(--green-soft);border-color:var(--green);color:var(--green-2)}
@@ -853,8 +855,8 @@
       A("⏱️","Focus Fan","Finish 5 focus sessions",5,p=>p.focusDone||0),
       A("🐾","Pet Parent","Raise your pet to level 5",5,lvl),
       A("🧑‍🤝‍🧑","Study Buddy","Join a study room",1,p=>p.roomsJoined||0),
-      A("🏁","Racer","Join a racing game",1,p=>p.racesPlayed||0),
-      A("🏆","Race Champion","Win 3 racing games",3,p=>p.racesWon||0)
+      A("🏁","Competitor","Join a competition",1,p=>p.racesPlayed||0),
+      A("🏆","Champion","Win 3 competitions",3,p=>p.racesWon||0)
     ];
     const unlocked = (p) => AWARDS.filter(a => a.val(p) >= a.goal).map(a => a.name);
 
@@ -1644,6 +1646,9 @@
       const x = qz.questions[qz.i];
       qz.sel = null;
       qz.chk = false;
+      qz.start = Date.now();
+      qz.last = 0;
+      qz.timedOut = false;
       qz.m = [];
       qz.order = [];
       if (x && x.type === "match") qz.order = shuffle(x.pairs.map((_, k) => k));
@@ -1819,17 +1824,58 @@
     const tfAnswer = (value) => value === true || value === 1 || value === "1" || value === "true";
 
     const playable = (d) => (d.questions || []).filter(x => (x.type || "mc") !== "match" || (x.pairs || []).length >= 2);
-    const raceOver = () => !!race && (race.status === "done" || (race.status === "live" && racePlayers.length > 0 && racePlayers.every(p => p.finished)));
+    const QT = 20000, LBT = 6000;
+    const speedPts = (el) => Math.round(1000 * (1 - Math.min(1, Math.max(0, el) / QT) / 2));
+    const racePhase = () => {
+      const t = Date.now() - race.startAt;
+      const n = race.questions.length;
+      if (t < 0) return { ph:"wait", left:-t };
+      const k = Math.floor(t / (QT + LBT));
+      if (k >= n) return { ph:"over", k:n };
+      const r = t - k * (QT + LBT);
+      return r < QT ? { ph:"q", k, el:r, left:QT - r } : { ph:"lb", k, left:QT + LBT - r };
+    };
+    const newMyRace = (rid) => ({ rid, ans:{}, score:0, right:0, paid:false, mk:-1, m:[], order:[] });
+    const raceOver = () => !!race && (race.status === "done" || (race.status === "live" && Date.now() >= race.startAt + race.questions.length * (QT + LBT)));
     const standings = () => [...racePlayers].sort((a, b) => (b.correct || 0) - (a.correct || 0) || ((a.finished ? a.finishedAt : 9e15) - (b.finished ? b.finishedAt : 9e15)) || (b.answered || 0) - (a.answered || 0));
     const raceRef = () => doc(db, "rooms", room.code, "races", race.id);
-    const pushProgress = (answered, correct) => setDoc(doc(db, "rooms", room.code, "races", race.id, "players", user.uid), {
+    const pushProgress = (answered, correct, fin) => setDoc(doc(db, "rooms", room.code, "races", race.id, "players", user.uid), {
       username:P.username,
       emoji:P.emoji || "😀",
       correct,
       answered,
-      finished: answered >= race.questions.length,
-      finishedAt: answered >= race.questions.length ? Date.now() : 0
+      finished: !!fin,
+      finishedAt: fin ? Date.now() : 0
     });
+
+    let lastKey = "";
+    setInterval(() => {
+      if (view === "room" && race && race.status === "live") {
+        const ph = racePhase();
+        const key = race.id + ph.ph + (ph.k ?? "") + (ph.ph === "wait" ? Math.ceil(ph.left / 1000) : "");
+        if (key !== lastKey) {
+          lastKey = key;
+          paintRace();
+          if (ph.ph === "over") { finishMyRace(); maybeWin(); }
+        } else if (ph.ph === "q" || ph.ph === "lb") {
+          const tl = $("tleft"); if (tl) tl.textContent = Math.ceil(ph.left / 1000) + "s";
+          const tb = $("tbar"); if (tb) tb.style.width = Math.round(ph.left / (ph.ph === "q" ? QT : LBT) * 100) + "%";
+        }
+      }
+      if (view === "qtake" && qz && qz.questions[qz.i]) {
+        const x = qz.questions[qz.i];
+        const isM = x.type === "match";
+        const done = isM ? qz.chk : qz.sel !== null;
+        if (!done) {
+          const el = Date.now() - qz.start;
+          if (el >= QT) { qz.timedOut = true; if (isM) qz.chk = true; else qz.sel = -1; render(); }
+          else {
+            const tl = $("qleft"); if (tl) tl.textContent = Math.ceil((QT - el) / 1000) + "s";
+            const tb = $("qbar"); if (tb) tb.style.width = Math.round((QT - el) / QT * 100) + "%";
+          }
+        }
+      }
+    }, 250);
 
     const paintRace = () => {
       const el = $("racebox");
@@ -1846,11 +1892,11 @@
             <b>${esc(d.title)}</b>
             <div class="sub">${by ? "Public · by " + esc(d.ownerName || "someone") : "Your quiz"} · ${playable(d).length} questions</div>
           </div>
-          <button data-act="rpost" data-id="${esc(d.id)}">🏁 Post race</button>
+          <button data-act="rpost" data-id="${esc(d.id)}">🏁 Post competition</button>
         </div>
       `;
       const short = quizzes.filter(d => playable(d).length < 2 && String(d.title).toLowerCase().includes(t))
-        .map(d => `<div class="card"><b>${esc(d.title)}</b><div class="sub">Your quiz · needs at least 2 questions to race (has ${playable(d).length})</div></div>`);
+        .map(d => `<div class="card"><b>${esc(d.title)}</b><div class="sub">Your quiz · needs at least 2 questions for a competition (has ${playable(d).length})</div></div>`);
       const all = [...mine.map(d => row(d, false)), ...others.map(d => row(d, true)), ...short];
       if (!all.length) return `<div class="empty">${t ? "No quizzes match your search." : "No public quizzes yet."}</div>`;
       return all.slice(0, 20).join("") + (all.length > 20 ? '<div class="sub">Showing the first 20. Type to narrow it down.</div>' : "");
@@ -1858,9 +1904,9 @@
 
     const postForm = () => {
       const any = quizzes.some(d => playable(d).length >= 2) || pubQ.some(d => d.ownerId !== user.uid && playable(d).length >= 2);
-      if (!any) return '<div class="sub">No quizzes are available yet. Make one in My Quizzes or share a public one in Explore. A race needs at least 2 questions.</div>';
+      if (!any) return '<div class="sub">No quizzes are available yet. Make one in My Quizzes or share a public one in Explore. A competition needs at least 2 questions.</div>';
       return `
-        <div class="sub" style="margin:6px 0 10px">Search for one of your own quizzes or a public quiz. Questions are shuffled and only correct answers move you forward.</div>
+        <div class="sub" style="margin:6px 0 10px">Search for one of your own quizzes or a public quiz. Answer fast: the quicker you get it right, the more points you earn (up to 1000). Wrong or late answers score nothing, and a leaderboard shows between questions.</div>
         <div class="btns"><input id="rsq" placeholder="🔍 Search quizzes by name..." value="${esc(rsq)}" autocomplete="off" style="flex:1" /><button type="button" class="alt" data-act="rrefresh">↻ Refresh</button></div>
         <div class="sub" id="rinfo">${quizErr ? "⚠️ Couldn't load " + esc(quizErr) : "Loaded " + quizzes.length + " of your quizzes and " + pubQ.length + " public quizzes."}</div>
         <div id="rres">${raceResults()}</div>
@@ -1886,46 +1932,63 @@
       }).join("");
     };
 
-    const questionUI = (total) => {
-      const x = race.questions[myRace.i];
-      if (x.type === "match") {
-        if (myRace.oi !== myRace.i) { myRace.order = shuffle(x.pairs.map((_, k) => k)); myRace.oi = myRace.i; myRace.m = []; }
-        const done = myRace.sel !== null;
-        const choices = myRace.order.map(j => x.pairs[j].r);
-        return `
-          <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct} · match them up</p>
-          <div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>
-          ${x.pairs.map((p, k) => `
-            <div class="card row">
-              <b>${esc(p.l)}</b>
-              <span>
-                <select data-rmi="${k}" ${done ? "disabled" : ""}>
-                  <option value="">Choose...</option>
-                  ${choices.map(r => `<option value="${esc(r)}" ${myRace.m[k] === r ? "selected" : ""}>${esc(r)}</option>`).join("")}
-                </select>
-                ${done ? (myRace.m[k] === p.r ? " ✅" : " ❌ " + esc(p.r)) : ""}
-              </span>
-            </div>
-          `).join("")}
-          ${done ? "" : `<button data-act="rmcheck">Check answers</button>`}
-        `;
+    const scoreboard = (limit) => {
+      const st = standings();
+      const medal = i => ["🥇","🥈","🥉"][i] || "#" + (i + 1);
+      const rows = st.slice(0, limit).map((p, i) => `
+        <div class="card row ${p.id === user.uid ? "me" : ""}">
+          <b>${medal(i)} ${esc(p.emoji || "😀")} ${esc(p.username)}${p.id === user.uid ? " (you)" : ""}</b>
+          <span>${p.correct || 0} pts</span>
+        </div>`);
+      const myI = st.findIndex(p => p.id === user.uid);
+      if (myI >= limit) rows.push(`<div class="sub" style="text-align:center">…</div><div class="card row me"><b>${medal(myI)} You</b><span>${st[myI].correct || 0} pts</span></div>`);
+      return rows.join("");
+    };
+
+    const raceQuestion = (ph, total) => {
+      const k = ph.k, x = race.questions[k], my = myRace.ans[k];
+      const inQ = ph.ph === "q";
+      const head = `<p class="sub">Question ${k + 1} of ${total} · Score ${myRace.score}</p>`;
+      const qcard = `<div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>`;
+      const timer = `<div class="tbar"><i id="tbar" style="width:${Math.round(ph.left / (inQ ? QT : LBT) * 100)}%"></i></div>`;
+
+      if (!inQ) {
+        const verdict = my ? (my.right ? `✅ Correct! +${my.pts} pts` : "❌ Wrong · +0 pts") : "⏰ Too slow · +0 pts";
+        let ans;
+        if (x.type === "match") ans = x.pairs.map(p => `${esc(p.l)} → ${esc(p.r)}`).join("<br>");
+        else if (x.type === "tf") ans = tfAnswer(x.ans) ? "True" : "False";
+        else ans = esc(x.opts[x.ans]);
+        return head + qcard + `
+          <div class="card" style="text-align:center"><b>${verdict}</b><div class="sub">Answer: ${ans}</div></div>
+          <h3>🏆 Leaderboard</h3>${scoreboard(5)}
+          ${timer}
+          <div class="sub" style="text-align:center">${k + 1 >= total ? "Final results in" : "Next question in"} <b id="tleft">${Math.ceil(ph.left / 1000)}s</b></div>`;
       }
-      const rev = myRace.sel !== null;
+
+      const clock = `${timer}<div class="sub" style="text-align:right"><b id="tleft">${Math.ceil(ph.left / 1000)}s</b> left · answer fast for more points</div>`;
+      const locked = `<p class="sub" style="text-align:center">🔒 Answer locked in! Waiting for the timer…</p>`;
+
+      if (x.type === "match") {
+        if (myRace.mk !== k) { myRace.mk = k; myRace.order = shuffle(x.pairs.map((_, j) => j)); myRace.m = []; }
+        const choices = myRace.order.map(j => x.pairs[j].r);
+        return head + clock + qcard + x.pairs.map((p, j) => `
+          <div class="card row">
+            <b>${esc(p.l)}</b>
+            <span>
+              <select data-rmi="${j}" ${my ? "disabled" : ""}>
+                <option value="">Choose...</option>
+                ${choices.map(r => `<option value="${esc(r)}" ${myRace.m[j] === r ? "selected" : ""}>${esc(r)}</option>`).join("")}
+              </select>
+            </span>
+          </div>`).join("") + (my ? locked : `<button data-act="rmcheck">Lock in answers</button>`);
+      }
+
       const items = x.type === "tf"
         ? [["True", 1], ["False", 0]]
-        : x.opts.map((o, k) => [`ABCD`[k] + ". " + o, k]);
-      const ci = x.type === "tf" ? (tfAnswer(x.ans) ? 1 : 0) : x.ans;
-
-      return `
-        <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct}</p>
-        <div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>
-        ${items.map(([label, index]) => `
-          <button class="choice ${rev ? (index === ci ? "green" : index === myRace.sel ? "red" : "alt") : "alt"}"
-            data-act="rpick" data-i="${index}" ${rev ? "disabled" : ""}>
-            ${esc(label)}
-          </button>
-        `).join("")}
-      `;
+        : x.opts.map((o, j) => [`ABCD`[j] + ". " + o, j]);
+      return head + clock + qcard + items.map(([label, index]) => `
+        <button class="choice alt ${my && my.sel === index ? "on" : ""}" data-act="rpick" data-i="${index}" ${my ? "disabled" : ""}>${esc(label)}</button>
+      `).join("") + (my ? locked : "");
     };
 
     const raceHTML = () => {
@@ -1947,14 +2010,14 @@
         const w = st[0];
         const medal = i => ["🥇","🥈","🥉"][i] || "#" + (i + 1);
 
-        return head + (w ? `<div class="card" style="margin:10px 0;text-align:center"><div style="font-size:34px">🏆</div><b>${esc(w.emoji || "")} ${esc(w.username)} wins with ${w.correct || 0} / ${total}!</b></div>` : "") +
+        return head + (w ? `<div class="card" style="margin:10px 0;text-align:center"><div style="font-size:34px">🏆</div><b>${esc(w.emoji || "")} ${esc(w.username)} wins with ${w.correct || 0} points!</b></div>` : "") +
           st.map((p, i) => `
             <div class="card row ${p.id === user.uid ? "me" : ""}">
               <b>${medal(i)} ${esc(p.emoji || "😀")} ${esc(p.username)}${p.id === user.uid ? " (you)" : ""}</b>
-              <span>${p.correct || 0} / ${total} correct</span>
+              <span>${p.correct || 0} pts</span>
             </div>
           `).join("") +
-          `<h3>Race again?</h3>${postForm()}`;
+          `<h3>Play again?</h3>${postForm()}`;
       }
 
       if (race.status === "open") {
@@ -1963,25 +2026,23 @@
           <div class="sub" style="margin:8px 0">Waiting for players to join…</div>
           <div class="btns">${chips || '<span class="sub">No one yet</span>'}</div>
           <div class="btns" style="margin-top:10px">
-            ${mine ? "<span class='sub'>✅ You're in!</span>" : `<button data-act="rjoinrace">Join race</button>`}
-            ${host ? ` <button class="green" data-act="rstart">▶ Start race (${racePlayers.length} player${racePlayers.length === 1 ? "" : "s"})</button> <button class="alt" data-act="rend">Cancel</button>` : ""}
+            ${mine ? "<span class='sub'>✅ You're in!</span>" : `<button data-act="rjoinrace">Join competition</button>`}
+            ${host ? ` <button class="green" data-act="rstart">▶ Start competition (${racePlayers.length} player${racePlayers.length === 1 ? "" : "s"})</button> <button class="alt" data-act="rend">Cancel</button>` : ""}
           </div>
         `;
       }
 
-      const left = race.startAt - Date.now();
+      const ph = racePhase();
       let mid = "";
-      if (left > 0) {
-        mid = `<div class="cd">${Math.max(1, Math.ceil(left / 1000))}</div><div class="sub" style="text-align:center">Get ready…</div>`;
-      } else if (mine && myRace && myRace.i < total) {
-        mid = questionUI(total);
-      } else if (mine) {
-        mid = `<div class="card" style="text-align:center">🏁 You finished with <b>${myRace ? myRace.correct : (mine.correct || 0)} / ${total}</b>. Waiting for the others…</div>`;
+      if (ph.ph === "wait") {
+        mid = `<div class="cd">${Math.max(1, Math.ceil(ph.left / 1000))}</div><div class="sub" style="text-align:center">Get ready… faster correct answers earn more points!</div>`;
+      } else if (mine && myRace) {
+        mid = raceQuestion(ph, total);
       } else {
-        mid = `<div class="sub">The race has started. You can watch from here.</div>`;
+        mid = `<div class="sub">The competition has started (question ${Math.min(ph.k + 1, total)} of ${total}). You can watch from here.</div><h3>🏆 Leaderboard</h3>${scoreboard(8)}`;
       }
 
-      return head + mid + `<div style="margin-top:10px">${lanes()}</div>` + (host ? `<button class="alt" data-act="rend" style="margin-top:8px">End race now</button>` : "");
+      return head + mid + (host ? `<button class="alt" data-act="rend" style="margin-top:8px">End competition now</button>` : "");
     };
 
     function watchPlayers() {
@@ -1990,20 +2051,18 @@
       psub = onSnapshot(collection(db, "rooms", room.code, "races", race.id, "players"), snap => {
         racePlayers = snap.docs.map(d => ({ id:d.id, ...d.data() }));
         const mine = racePlayers.find(p => p.id === user.uid);
-        if (mine && myRace && myRace.rid === race.id && myRace.sel === null && myRace.i < (mine.answered || 0)) {
-          myRace.i = mine.answered;
-          myRace.correct = mine.correct || 0;
-        }
+        if (mine && myRace && myRace.rid === race.id && (mine.correct || 0) > myRace.score) myRace.score = mine.correct;
         paintRace();
         maybeWin();
       }, err => console.warn("race players", err));
     }
 
     function raceAnswer(i) {
-      if (!race || !myRace || myRace.rid !== race.id || myRace.sel !== null) return;
-      if (race.status !== "live" || Date.now() < race.startAt) return;
-      const x = race.questions[myRace.i];
-      if (!x) return;
+      if (!race || !myRace || myRace.rid !== race.id || race.status !== "live") return;
+      const ph = racePhase();
+      if (ph.ph !== "q") return;
+      const x = race.questions[ph.k];
+      if (!x || myRace.ans[ph.k]) return;
       if (!racePlayers.some(p => p.id === user.uid)) return;
 
       const right = x.type === "match"
@@ -2011,26 +2070,20 @@
         : x.type === "tf"
         ? i === (tfAnswer(x.ans) ? 1 : 0)
         : i === x.ans;
-      myRace.sel = x.type === "match" ? 1 : i;
-      if (right) myRace.correct++;
-      pushProgress(myRace.i + 1, myRace.correct).catch(() => {});
+      const pts = right ? speedPts(ph.el) : 0;
+      myRace.ans[ph.k] = { sel:i, right, pts };
+      myRace.score += pts;
+      if (right) myRace.right++;
+      pushProgress(Object.keys(myRace.ans).length, myRace.score, false).catch(() => {});
       paintRace();
-
-      const rid = race.id;
-      setTimeout(() => {
-        if (!race || race.id !== rid || !myRace) return;
-        myRace.i++;
-        myRace.sel = null;
-        if (myRace.i >= race.questions.length) finishMyRace();
-        paintRace();
-      }, 700);
     }
 
     async function finishMyRace() {
       if (!myRace || myRace.paid || !race || P.lastRaceDone === race.id) return;
+      if (!Object.keys(myRace.ans).length) return;
       myRace.paid = true;
       const total = race.questions.length;
-      const c = myRace.correct;
+      const c = myRace.right;
       const pts = c * 2 + (c === total ? 10 : 0);
       try {
         await earn(pts, { racesPlayed:(P.racesPlayed || 0) + 1, lastRaceDone: race.id });
@@ -2045,7 +2098,7 @@
       winBusy = true;
       try {
         await earn(15, { racesWon:(P.racesWon || 0) + 1, lastWonRace: race.id });
-        toast("🏆 You won the race! +15 points");
+        toast("🏆 You won the competition! +15 points");
       } catch (e) {}
       winBusy = false;
     }
@@ -2108,11 +2161,11 @@
         race = nr;
         if (changed) {
           racePlayers = [];
-          myRace = nr ? { rid:nr.id, i:0, correct:0, sel:null, paid:false } : null;
+          myRace = nr ? newMyRace(nr.id) : null;
           watchPlayers();
-          if (!firstRace && nr && nr.hostId !== user.uid && nr.status === "open") toast("🏁 A racing game was posted in your room!");
+          if (!firstRace && nr && nr.hostId !== user.uid && nr.status === "open") toast("🏁 A competition was posted in your room!");
         } else if (nr && was === "open" && nr.status === "live" && !firstRace) {
-          toast("🏁 The race is starting!");
+          toast("🏁 The competition is starting!");
         }
         firstRace = false;
         paintRace();
@@ -2477,17 +2530,17 @@
       <div id="scene" class="scene" style="background:${bd().bg};margin-top:14px">${sceneHTML()}</div>
 
       <div class="card">
-        <b>🏁 Racing game</b>
-        <div id="racebox" style="margin-top:8px">${raceHTML()}</div>
-      </div>
-
-      <div class="card">
         <b>💬 Chat</b>
         <div id="chatlog" style="margin-top:8px">${chatHTML()}</div>
         <div class="chatrow">
           <input id="chatin" placeholder="Type a message..." maxlength="100" autocomplete="off" />
           <button data-act="chatsend">Send</button>
         </div>
+      </div>
+
+      <div class="card">
+        <b>🏁 Competition</b>
+        <div id="racebox" style="margin-top:8px">${raceHTML()}</div>
       </div>
 
       <div class="card">
@@ -2816,7 +2869,7 @@
         const pts = qz.correct * 2 + (qz.correct === qz.questions.length ? 10 : 0);
         return `
           <h2>🎉 Quiz complete!</h2>
-          <p>You got ${qz.correct} of ${qz.questions.length} right. +${pts} points!</p>
+          <p>You got ${qz.correct} of ${qz.questions.length} right.</p><p><b>Speed score: ${qz.score || 0}</b> · +${pts} points!</p>
           <button data-go="${qz.from}">Back</button>
         `;
       }
@@ -2824,7 +2877,7 @@
       const t = x.type || "mc";
       const head = `
         <h2>${esc(qz.title)}</h2>
-        <p class="sub">Question ${qz.i + 1} of ${qz.questions.length} · ${t === "tf" ? "True or false" : t === "match" ? "Match" : "Multiple choice"}</p>
+        <p class="sub">Question ${qz.i + 1} of ${qz.questions.length} · ${t === "tf" ? "True or false" : t === "match" ? "Match" : "Multiple choice"} · Score ${qz.score || 0}</p>
         <div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>
       `;
       let body = "", done = false, correct = false;
@@ -2847,10 +2900,12 @@
         ).join("");
       }
 
-      const msg = done ? `<p>${correct ? "✅ Correct!" : "❌ Not quite."}</p>` : "";
+      const ok = correct && !qz.timedOut;
+      const msg = done ? `<p>${ok ? "✅ Correct! +" + qz.last + " pts" : qz.timedOut ? "⏰ Time's up! 0 pts" : "❌ Not quite. 0 pts"}</p>` : "";
+      const clock = done ? "" : `<div class="tbar"><i id="qbar" style="width:${Math.max(0, Math.round((QT - (Date.now() - qz.start)) / QT * 100))}%"></i></div><div class="sub" style="text-align:right"><b id="qleft">${Math.max(0, Math.ceil((QT - (Date.now() - qz.start)) / 1000))}s</b> left · answer fast for more points</div>`;
       const next = done ? `<button data-act="qnext">${qz.i + 1 >= qz.questions.length ? "Finish" : "Next"}</button>` : "";
 
-      return head + body + msg + next;
+      return head + clock + body + msg + next;
     };
 
     const exploreList = () => {
@@ -3362,10 +3417,10 @@
           let sz = JSON.stringify(qs).length;
           if (sz > 900000) {
             qs.forEach(q => { if (sz > 900000 && q.img) { sz -= q.img.length; delete q.img; } });
-            toast("Some images were left out to keep the race small.");
+            toast("Some images were left out to keep the competition small.");
           }
 
-          if (qs.length < 2) { alert("Races need at least 2 questions."); return; }
+          if (qs.length < 2) { alert("Competitions need at least 2 questions."); return; }
           const ref = await addDoc(collection(db, "rooms", room.code, "races"), {
             hostId:user.uid,
             title:d.title.slice(0, 60),
@@ -3376,13 +3431,13 @@
             createdAt:Date.now()
           });
           await setDoc(doc(db, "rooms", room.code, "races", ref.id, "players", user.uid), { username:P.username, emoji:P.emoji || "😀", correct:0, answered:0, finished:false, finishedAt:0 });
-          toast("🏁 Race posted! Wait for friends to join, then press Start.");
+          toast("🏁 Competition posted! Wait for friends to join, then press Start.");
         }
 
         if (a === "rjoinrace") {
           if (!race || race.status !== "open") return;
           await pushProgress(0, 0);
-          myRace = { rid:race.id, i:0, correct:0, sel:null, paid:false };
+          myRace = newMyRace(race.id);
           paintRace();
         }
 
@@ -3396,7 +3451,10 @@
 
         if (a === "rpick") raceAnswer(i);
         if (a === "rmcheck") {
-          const x = race && myRace ? race.questions[myRace.i] : null;
+          if (!race || !myRace) return;
+          const ph = racePhase();
+          if (ph.ph !== "q") return;
+          const x = race.questions[ph.k];
           if (!x || x.type !== "match") return;
           if (x.pairs.some((_, k) => !(myRace.m || [])[k])) { alert("Choose a match for every item first."); return; }
           raceAnswer(0);
@@ -3557,7 +3615,7 @@
 
         if (a === "qtake") {
           const d = getQuiz(id);
-          qz = { title:d.title, questions:d.questions, i:0, correct:0, from:view };
+          qz = { title:d.title, questions:d.questions, i:0, correct:0, score:0, from:view };
           prep();
           view = "qtake";
           render();
@@ -3566,7 +3624,7 @@
         if (a === "pick") {
           if (qz.sel === null) {
             qz.sel = i;
-            if (i === qz.questions[qz.i].ans) qz.correct++;
+            if (i === qz.questions[qz.i].ans) { qz.correct++; qz.last = speedPts(Date.now() - qz.start); qz.score += qz.last; }
             render();
           }
         }
@@ -3574,7 +3632,7 @@
         if (a === "pickTF") {
           if (qz.sel === null) {
             qz.sel = (i === 1);
-            if (qz.sel === qz.questions[qz.i].ans) qz.correct++;
+            if (qz.sel === qz.questions[qz.i].ans) { qz.correct++; qz.last = speedPts(Date.now() - qz.start); qz.score += qz.last; }
             render();
           }
         }
@@ -3586,7 +3644,7 @@
             return;
           }
           qz.chk = true;
-          if (x.pairs.every((p, k) => qz.m[k] === p.r)) qz.correct++;
+          if (x.pairs.every((p, k) => qz.m[k] === p.r)) { qz.correct++; qz.last = speedPts(Date.now() - qz.start); qz.score += qz.last; }
           render();
         }
 
@@ -3830,4 +3888,3 @@
   </script>
 </body>
 </html>
-          

@@ -1261,6 +1261,86 @@
       mus.stops.push(() => { clearInterval(id); base.stop(); });
     };
 
+    const addFan = (ctx, out) => {
+      const n = noiseSrc(ctx, true);
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 650;
+      const g = ctx.createGain();
+      g.gain.value = 0.12;
+      n.connect(lp);
+      lp.connect(g);
+      g.connect(out);
+      mus.stops.push(() => n.stop());
+    };
+
+    const addCrickets = (ctx, out) => {
+      const chirp = () => {
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(4200, t);
+        osc.frequency.exponentialRampToValueAtTime(3000, t + 0.09);
+
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.025, t + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+
+        osc.connect(g);
+        g.connect(out);
+        osc.start(t);
+        osc.stop(t + 0.11);
+      };
+
+      chirp();
+      const id = setInterval(() => {
+        if (Math.random() > 0.35) chirp();
+        if (Math.random() > 0.65) setTimeout(chirp, 120);
+      }, 700);
+
+      mus.stops.push(() => clearInterval(id));
+    };
+
+    const addCafe = (ctx, out) => {
+      const n = noiseSrc(ctx, false);
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 500;
+      const g = ctx.createGain();
+      g.gain.value = 0.045;
+      n.connect(lp);
+      lp.connect(g);
+      g.connect(out);
+
+      const clink = () => {
+        const t = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const bell = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.value = 900 + Math.random() * 900;
+        bell.gain.setValueAtTime(0.0001, t);
+        bell.gain.exponentialRampToValueAtTime(0.012, t + 0.01);
+        bell.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+
+        osc.connect(bell);
+        bell.connect(out);
+        osc.start(t);
+        osc.stop(t + 0.2);
+      };
+
+      const id = setInterval(() => {
+        if (Math.random() > 0.55) clink();
+      }, 1200);
+
+      mus.stops.push(() => {
+        clearInterval(id);
+        n.stop();
+      });
+    };
+
     const CH1 = [[220,261.63,329.63,392],[174.61,220,261.63,329.63],[261.63,329.63,392,493.88],[196,246.94,293.66,329.63]];
     const CH2 = [[146.83,174.61,220,261.63],[196,246.94,293.66,329.63],[130.81,164.81,196,246.94,293.66],[220,261.63,329.63,392]];
 
@@ -1284,6 +1364,9 @@
       if (k === "birds") addBirdsong(ctx, out);
       if (k === "forest") addForest(ctx, out);
       if (k === "thunder") addThunder(ctx, out);
+      if (k === "fan") addFan(ctx, out);
+      if (k === "crickets") addCrickets(ctx, out);
+      if (k === "cafe") addCafe(ctx, out);
 
       mus.cur = k;
     };
@@ -1299,7 +1382,10 @@
       ["fire","🔥 Fireplace"],
       ["birds","🐦 Morning birds"],
       ["forest","🌲 Forest hush"],
-      ["thunder","⛈️ Distant thunder"]
+      ["thunder","⛈️ Distant thunder"],
+      ["fan","🌀 Soft fan"],
+      ["crickets","🌙 Night crickets"],
+      ["cafe","☕ Quiet café"]
     ];
 
     const renderMusic = () => {
@@ -1684,6 +1770,8 @@
       }
     }
 
+    const tfAnswer = (value) => value === true || value === 1 || value === "1" || value === "true";
+
     const playable = (d) => (d.questions || []).filter(x => (x.type || "mc") !== "match");
     const raceOver = () => !!race && (race.status === "done" || (race.status === "live" && racePlayers.length > 0 && racePlayers.every(p => p.finished)));
     const standings = () => [...racePlayers].sort((a, b) => (b.correct || 0) - (a.correct || 0) || ((a.finished ? a.finishedAt : 9e15) - (b.finished ? b.finishedAt : 9e15)) || (b.answered || 0) - (a.answered || 0));
@@ -1755,7 +1843,7 @@
       const items = x.type === "tf"
         ? [["True", 1], ["False", 0]]
         : x.opts.map((o, k) => [`ABCD`[k] + ". " + o, k]);
-      const ci = x.type === "tf" ? (x.ans ? 1 : 0) : x.ans;
+      const ci = x.type === "tf" ? (tfAnswer(x.ans) ? 1 : 0) : x.ans;
 
       return `
         <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct}</p>
@@ -1847,7 +1935,9 @@
       if (!x) return;
       if (!racePlayers.some(p => p.id === user.uid)) return;
 
-      const right = x.type === "tf" ? ((i === 1) === !!x.ans) : i === x.ans;
+      const right = x.type === "tf"
+        ? i === (tfAnswer(x.ans) ? 1 : 0)
+        : i === x.ans;
       myRace.sel = i;
       if (right) myRace.correct++;
       pushProgress(myRace.i + 1, myRace.correct).catch(() => {});
@@ -3135,7 +3225,7 @@
           const d = getQuiz(id);
           if (!d || !room) return;
           const qs = shuffle(playable(d)).slice(0, 30).map(x => {
-            if ((x.type || "mc") === "tf") return { type:"tf", q:x.q, ans:!!x.ans };
+            if ((x.type || "mc") === "tf") return { type:"tf", q:x.q, ans:tfAnswer(x.ans) };
             const order = shuffle(x.opts.map((_, k) => k));
             return { type:"mc", q:x.q, opts:order.map(k => x.opts[k]), ans:order.indexOf(x.ans) };
           });

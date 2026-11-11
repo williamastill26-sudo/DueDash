@@ -1596,7 +1596,7 @@
       if (t === "tf") return text ? { type:"tf", q:text, ans: !!x.ans } : null;
       if (t === "match") {
         const pairs = (x.pairs || []).filter(p => (p.l || "").trim() && (p.r || "").trim()).map(p => ({ l:p.l.trim(), r:p.r.trim() }));
-        return pairs.length >= 2 ? { type:"match", q:text || "Match each item with its partner.", pairs } : null;
+        return pairs.length === 4 ? { type:"match", q:text || "Match each item with its partner.", pairs } : null;
       }
       return text && (x.opts || []).every(o => String(o).trim()) ? { type:"mc", q:text, opts:(x.opts||[]).map(o => String(o).trim()), ans:x.ans } : null;
     };
@@ -1779,7 +1779,7 @@
 
     const tfAnswer = (value) => value === true || value === 1 || value === "1" || value === "true";
 
-    const playable = (d) => (d.questions || []).filter(x => (x.type || "mc") !== "match");
+    const playable = (d) => (d.questions || []).filter(x => (x.type || "mc") !== "match" || (x.pairs || []).length >= 2);
     const raceOver = () => !!race && (race.status === "done" || (race.status === "live" && racePlayers.length > 0 && racePlayers.every(p => p.finished)));
     const standings = () => [...racePlayers].sort((a, b) => (b.correct || 0) - (a.correct || 0) || ((a.finished ? a.finishedAt : 9e15) - (b.finished ? b.finishedAt : 9e15)) || (b.answered || 0) - (a.answered || 0));
     const raceRef = () => doc(db, "rooms", room.code, "races", race.id);
@@ -1817,7 +1817,7 @@
 
     const postForm = () => {
       const any = quizzes.some(d => playable(d).length >= 2) || pubQ.some(d => d.ownerId !== user.uid && playable(d).length >= 2);
-      if (!any) return '<div class="sub">No quizzes are available yet. Make one in My Quizzes or share a public one in Explore. A race needs at least 2 multiple-choice or true/false questions.</div>';
+      if (!any) return '<div class="sub">No quizzes are available yet. Make one in My Quizzes or share a public one in Explore. A race needs at least 2 questions.</div>';
       return `
         <div class="sub" style="margin:6px 0 10px">Search for one of your own quizzes or a public quiz. Questions are shuffled and only correct answers move you forward.</div>
         <input id="rsq" placeholder="🔍 Search quizzes by name..." value="${esc(rsq)}" autocomplete="off" />
@@ -1846,6 +1846,28 @@
 
     const questionUI = (total) => {
       const x = race.questions[myRace.i];
+      if (x.type === "match") {
+        if (myRace.oi !== myRace.i) { myRace.order = shuffle(x.pairs.map((_, k) => k)); myRace.oi = myRace.i; myRace.m = []; }
+        const done = myRace.sel !== null;
+        const choices = myRace.order.map(j => x.pairs[j].r);
+        return `
+          <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct} · match them up</p>
+          <div class="card"><b>${esc(x.q)}</b></div>
+          ${x.pairs.map((p, k) => `
+            <div class="card row">
+              <b>${esc(p.l)}</b>
+              <span>
+                <select data-rmi="${k}" ${done ? "disabled" : ""}>
+                  <option value="">Choose...</option>
+                  ${choices.map(r => `<option value="${esc(r)}" ${myRace.m[k] === r ? "selected" : ""}>${esc(r)}</option>`).join("")}
+                </select>
+                ${done ? (myRace.m[k] === p.r ? " ✅" : " ❌ " + esc(p.r)) : ""}
+              </span>
+            </div>
+          `).join("")}
+          ${done ? "" : `<button data-act="rmcheck">Check answers</button>`}
+        `;
+      }
       const rev = myRace.sel !== null;
       const items = x.type === "tf"
         ? [["True", 1], ["False", 0]]
@@ -1942,10 +1964,12 @@
       if (!x) return;
       if (!racePlayers.some(p => p.id === user.uid)) return;
 
-      const right = x.type === "tf"
+      const right = x.type === "match"
+        ? x.pairs.every((p, k) => (myRace.m || [])[k] === p.r)
+        : x.type === "tf"
         ? i === (tfAnswer(x.ans) ? 1 : 0)
         : i === x.ans;
-      myRace.sel = i;
+      myRace.sel = x.type === "match" ? 1 : i;
       if (right) myRace.correct++;
       pushProgress(myRace.i + 1, myRace.correct).catch(() => {});
       paintRace();
@@ -2671,7 +2695,7 @@
             <input data-qf="r" data-qi="${qi}" data-pi="${pi}" placeholder="Its match" maxlength="80" value="${esc(p.r)}" />
           </div>
         `).join("")}
-        <div class="sub">Fill in at least 2 pairs. They get shuffled when someone takes the quiz.</div>
+        <div class="sub">Fill in all 4 pairs. They get shuffled when someone takes the quiz.</div>
       `;
 
       return `
@@ -2992,6 +3016,16 @@
       }
     }
 
+    const syncDraft = () => {
+      if (!draft) return;
+      const t = $("dt"); if (t) draft.title = t.value;
+      document.querySelectorAll("[data-f]").forEach(el => {
+        const c = draft.cards[+el.dataset.i];
+        if (c) c[el.dataset.f] = el.value;
+      });
+      const p = $("dp"); if (p) draft.isPublic = p.checked;
+    };
+
     document.addEventListener("click", async (e) => {
       const b = e.target.closest("[data-go],[data-act]");
       if (!b || !P) return;
@@ -3232,12 +3266,13 @@
           const d = getQuiz(id);
           if (!d || !room) return;
           const qs = shuffle(playable(d)).slice(0, 30).map(x => {
+            if (x.type === "match") return { type:"match", q:x.q, pairs:x.pairs.map(p => ({ l:p.l, r:p.r })) };
             if ((x.type || "mc") === "tf") return { type:"tf", q:x.q, ans:tfAnswer(x.ans) };
             const order = shuffle(x.opts.map((_, k) => k));
             return { type:"mc", q:x.q, opts:order.map(k => x.opts[k]), ans:order.indexOf(x.ans) };
           });
 
-          if (qs.length < 2) { alert("Races need at least 2 multiple choice or true/false questions."); return; }
+          if (qs.length < 2) { alert("Races need at least 2 questions."); return; }
           const ref = await addDoc(collection(db, "rooms", room.code, "races"), {
             hostId:user.uid,
             title:d.title.slice(0, 60),
@@ -3267,6 +3302,12 @@
         }
 
         if (a === "rpick") raceAnswer(i);
+        if (a === "rmcheck") {
+          const x = race && myRace ? race.questions[myRace.i] : null;
+          if (!x || x.type !== "match") return;
+          if (x.pairs.some((_, k) => !(myRace.m || [])[k])) { alert("Choose a match for every item first."); return; }
+          raceAnswer(0);
+        }
         if (a === "preset") {
           await save({ avatar:{ ...PRESETS[i].v } });
           render();
@@ -3293,16 +3334,19 @@
         }
 
         if (a === "addcard") {
+          syncDraft();
           if (draft.cards.length < 100) draft.cards.push({ front:"", back:"" });
           render();
         }
 
         if (a === "delcard") {
+          syncDraft();
           draft.cards.splice(i, 1);
           render();
         }
 
         if (a === "savedeck") {
+          syncDraft();
           const cards = draft.cards.filter(c => c.front.trim() && c.back.trim());
           if (!draft.title.trim() || !cards.length) { alert("Add a title and at least one full card."); return; }
           const data = { ownerId:user.uid, ownerName:P.username, title:draft.title.trim(), cards, isPublic:draft.isPublic, updated:Date.now() };
@@ -3382,7 +3426,7 @@
         if (a === "qsave") {
           const qs = qdraft.questions.map(cleanQ).filter(Boolean);
           if (!qdraft.title.trim() || !qs.length) {
-            alert("Add a title and at least one complete question. Multiple choice needs all 4 answers, and match needs at least 2 complete pairs.");
+            alert("Add a title and at least one complete question. Multiple choice needs all 4 answers, and match needs all 4 pairs filled in.");
             return;
           }
           const data = { ownerId:user.uid, ownerName:P.username, title:qdraft.title.trim(), questions:qs, isPublic:qdraft.isPublic, updated:Date.now() };
@@ -3503,6 +3547,10 @@
         return;
       }
 
+      if (t.matches("[data-rmi]")) {
+        if (myRace && myRace.m) myRace.m[+t.dataset.rmi] = t.value;
+        return;
+      }
       if (t.dataset.f && draft && draft.cards[+t.dataset.i]) {
         draft.cards[+t.dataset.i][t.dataset.f] = t.value;
         return;
@@ -3557,7 +3605,7 @@
         if (qdraft && qdraft.questions[qi]) {
           qdraft.questions[qi].type = t.value;
           if (t.value === "tf") qdraft.questions[qi] = { type:"tf", q:qdraft.questions[qi].q || "", ans: true };
-          if (t.value === "match") qdraft.questions[qi] = { type:"match", q:qdraft.questions[qi].q || "Match each item with its partner.", pairs:[{l:"",r:""},{l:"",r:""}] };
+          if (t.value === "match") qdraft.questions[qi] = { type:"match", q:qdraft.questions[qi].q || "Match each item with its partner.", pairs:[{l:"",r:""},{l:"",r:""},{l:"",r:""},{l:"",r:""}] };
           if (t.value === "mc") qdraft.questions[qi] = { type:"mc", q:qdraft.questions[qi].q || "", opts:["","","",""], ans:0 };
         }
         return;
@@ -3586,7 +3634,7 @@
       qdraft.questions[qi] = {
         type:"match",
         q:text || "Match each item with its partner.",
-        pairs:[{ l:"", r:"" }, { l:"", r:"" }]
+        pairs:[{ l:"", r:"" }, { l:"", r:"" }, { l:"", r:"" }, { l:"", r:"" }]
       };
     } else {
       qdraft.questions[qi] = {
@@ -3627,5 +3675,5 @@
   }
 });
   </script>
-</body>
+</body
 </html>

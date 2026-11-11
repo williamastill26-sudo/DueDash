@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DueDash</title>
-  <link rel="icon" href="logo.png" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E" />
   <style>
     :root{
       --bg:#f5f1ea;
@@ -122,6 +122,13 @@
     }
 
     .hidden{display:none!important}
+    .btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .btns button.on,button.alt.on{background:var(--green-soft);border-color:var(--green);color:var(--green-2)}
+    .sw{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+    .sw.on{box-shadow:0 0 0 3px var(--green)}
+    .prev{width:160px;flex:none}
+    .prev svg{width:100%;height:auto}
+    .card.me{border-color:var(--green);background:var(--green-soft)}
     .sub{font-size:13px;color:var(--muted)}
     .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
     .two{display:flex;gap:14px;flex-wrap:wrap}
@@ -762,7 +769,7 @@
     const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
     }[c]));
-    const day = (o = 0) => new Date(Date.now() - o * 864e5).toISOString().slice(0, 10);
+    const day = (o = 0) => { const d = new Date(); d.setDate(d.getDate() - o); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
     const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     const plus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return ymd(d); };
     const shuffle = (a) => { const x = [...a]; for (let k = x.length -1; k > 0; k--) { const j = Math.floor(Math.random()*(k+1)); [x[k], x[j]] = [x[j], x[k]]; } return x; };
@@ -3496,6 +3503,12 @@
         return;
       }
 
+      if (t.dataset.f && draft && draft.cards[+t.dataset.i]) {
+        draft.cards[+t.dataset.i][t.dataset.f] = t.value;
+        return;
+      }
+      if (t.id === "dt") { if (draft) draft.title = t.value; return; }
+      if (t.id === "qt") { if (qdraft) qdraft.title = t.value; return; }
       if (t.matches("[data-qf='opt']")) {
         const qi = +t.dataset.qi;
         const oi = +t.dataset.oi;

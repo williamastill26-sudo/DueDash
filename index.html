@@ -1849,7 +1849,9 @@
           <button data-act="rpost" data-id="${esc(d.id)}">🏁 Post race</button>
         </div>
       `;
-      const all = [...mine.map(d => row(d, false)), ...others.map(d => row(d, true))];
+      const short = quizzes.filter(d => playable(d).length < 2 && String(d.title).toLowerCase().includes(t))
+        .map(d => `<div class="card"><b>${esc(d.title)}</b><div class="sub">Your quiz · needs at least 2 questions to race (has ${playable(d).length})</div></div>`);
+      const all = [...mine.map(d => row(d, false)), ...others.map(d => row(d, true)), ...short];
       if (!all.length) return `<div class="empty">${t ? "No quizzes match your search." : "No public quizzes yet."}</div>`;
       return all.slice(0, 20).join("") + (all.length > 20 ? '<div class="sub">Showing the first 20. Type to narrow it down.</div>' : "");
     };
@@ -1860,6 +1862,7 @@
       return `
         <div class="sub" style="margin:6px 0 10px">Search for one of your own quizzes or a public quiz. Questions are shuffled and only correct answers move you forward.</div>
         <div class="btns"><input id="rsq" placeholder="🔍 Search quizzes by name..." value="${esc(rsq)}" autocomplete="off" style="flex:1" /><button type="button" class="alt" data-act="rrefresh">↻ Refresh</button></div>
+        <div class="sub" id="rinfo">${quizErr ? "⚠️ Couldn't load " + esc(quizErr) : "Loaded " + quizzes.length + " of your quizzes and " + pubQ.length + " public quizzes."}</div>
         <div id="rres">${raceResults()}</div>
       `;
     };
@@ -2147,9 +2150,13 @@
       try { await deleteDoc(doc(db, "rooms", code, "members", user.uid)); } catch (e) {}
     }
 
+    let quizErr = "";
     async function refreshQuizzes() {
-      try { quizzes = (await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() })); } catch (e) {}
-      try { pubQ = (await getDocs(query(collection(db, "quizzes"), where("isPublic", "==", true), limit(100)))).docs.map(d => ({ id:d.id, ...d.data() })); } catch (e) {}
+      quizErr = "";
+      try { quizzes = (await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() })); }
+      catch (e) { quizErr = "your quizzes: " + (e.code || e.message); }
+      try { pubQ = (await getDocs(query(collection(db, "quizzes"), where("isPublic", "==", true), limit(100)))).docs.map(d => ({ id:d.id, ...d.data() })); }
+      catch (e) { quizErr += (quizErr ? " / " : "") + "public quizzes: " + (e.code || e.message); }
     }
 
     async function go(v) {
@@ -3336,7 +3343,9 @@
           await refreshQuizzes();
           const root = $("rres");
           if (root) root.innerHTML = raceResults();
-          toast("Quiz list refreshed");
+          const inf = $("rinfo");
+          if (inf) inf.textContent = quizErr ? "⚠️ Couldn't load " + quizErr : "Loaded " + quizzes.length + " of your quizzes and " + pubQ.length + " public quizzes.";
+          toast(quizErr ? "Couldn't load quizzes" : "Quiz list refreshed");
           return;
         }
 
@@ -3821,3 +3830,4 @@
   </script>
 </body>
 </html>
+          

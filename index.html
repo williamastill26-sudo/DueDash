@@ -3558,32 +3558,61 @@
     });
 
     document.addEventListener("change", e => {
-      const t = e.target;
-      if (t.id === "rp") {
-        if (P) save({ revPer: +t.value });
-      }
-      if (t.id === "rsm") {
-        if (P) save({ studyMin: +t.value });
-      }
-      if (t.id === "rbm") {
-        if (P) save({ breakMin: +t.value });
-      }
-      if (t.id === "rstart") {
-        if (P) save({ revStart: t.value });
-      }
-      if (t.id === "dp") {
-        if (draft) draft.isPublic = t.checked;
-      }
-      if (t.id === "qp") {
-        if (qdraft) qdraft.isPublic = t.checked;
-      }
-      if (t.id === "qt") {
-        if (qdraft) qdraft.title = t.value;
-      }
-      if (t.id === "dt") {
-        if (draft) draft.title = t.value;
-      }
-    });
+  const t = e.target;
+
+  if (t.matches("[data-qf='type']")) {
+    const qi = +t.dataset.qi;
+    const current = qdraft?.questions[qi];
+    if (!current) return;
+
+    const text = current.q || "";
+
+    if (t.value === "tf") {
+      qdraft.questions[qi] = { type:"tf", q:text, ans:true };
+    } else if (t.value === "match") {
+      qdraft.questions[qi] = {
+        type:"match",
+        q:text || "Match each item with its partner.",
+        pairs:[{ l:"", r:"" }, { l:"", r:"" }]
+      };
+    } else {
+      qdraft.questions[qi] = {
+        type:"mc",
+        q:text,
+        opts:["","","",""],
+        ans:0
+      };
+    }
+
+    render();
+    return;
+  }
+
+  if (t.id === "rp") {
+    if (P) save({ revPer: +t.value });
+  }
+  if (t.id === "rsm") {
+    if (P) save({ studyMin: +t.value });
+  }
+  if (t.id === "rbm") {
+    if (P) save({ breakMin: +t.value });
+  }
+  if (t.id === "rstart") {
+    if (P) save({ revStart: t.value });
+  }
+  if (t.id === "dp") {
+    if (draft) draft.isPublic = t.checked;
+  }
+  if (t.id === "qp") {
+    if (qdraft) qdraft.isPublic = t.checked;
+  }
+  if (t.id === "qt") {
+    if (qdraft) qdraft.title = t.value;
+  }
+  if (t.id === "dt") {
+    if (draft) draft.title = t.value;
+  }
+});
   </script>
 </body>
 </html>

@@ -122,6 +122,13 @@
     }
 
     .hidden{display:none!important}
+    .qimg{display:block;max-width:100%;max-height:240px;margin:10px auto 4px;border-radius:12px;object-fit:contain}
+    .imgpick{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 12px}
+    .imgpick .qimg{margin:0;max-height:90px}
+    .imgpick{padding:8px;border:2px dashed var(--line);border-radius:14px;transition:background .15s,border-color .15s}
+    .imgpick.drag{background:var(--green-soft);border-color:var(--green)}
+    .dzhint{font-size:13px}
+    .imgbtn{display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:600;font-size:14px}
     .btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
     .btns button.on,button.alt.on{background:var(--green-soft);border-color:var(--green);color:var(--green-2)}
     .sw{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
@@ -772,6 +779,37 @@
     const day = (o = 0) => { const d = new Date(); d.setDate(d.getDate() - o); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
     const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     const plus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return ymd(d); };
+    const isImg = (s) => typeof s === "string" && s.startsWith("data:image/");
+    const imgTag = (s) => isImg(s) ? `<img class="qimg" src="${s}" alt="" />` : "";
+    const compressImage = (file) => new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith("image/")) return reject(new Error("Please choose an image file."));
+      const url = URL.createObjectURL(file);
+      const im = new Image();
+      im.onload = () => {
+        URL.revokeObjectURL(url);
+        for (const [max, q] of [[420, .7], [360, .6], [300, .5], [240, .45], [180, .4]]) {
+          const sc = Math.min(1, max / Math.max(im.width, im.height));
+          const c = document.createElement("canvas");
+          c.width = Math.max(1, Math.round(im.width * sc));
+          c.height = Math.max(1, Math.round(im.height * sc));
+          const g = c.getContext("2d");
+          g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);
+          g.drawImage(im, 0, 0, c.width, c.height);
+          const out = c.toDataURL("image/jpeg", q);
+          if (out.length <= 30000) return resolve(out);
+        }
+        reject(new Error("That image is too detailed. Try a simpler or smaller one."));
+      };
+      im.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Couldn't read that image.")); };
+      im.src = url;
+    });
+    const imgPick = (kind, i, cur) => `
+      <div class="imgpick" data-dk="${kind}" data-di="${i}">
+        ${imgTag(cur)}
+        <label class="imgbtn">${cur ? "🖼️ Change image" : "🖼️ Add image"}<input type="file" accept="image/*" data-img="${kind}" data-i="${i}" hidden /></label>
+        <span class="sub dzhint">or drag a picture here</span>
+        ${cur ? `<button type="button" class="alt" data-act="rmimg" data-kind="${kind}" data-i="${i}">Remove image</button>` : ""}
+      </div>`;
     const shuffle = (a) => { const x = [...a]; for (let k = x.length -1; k > 0; k--) { const j = Math.floor(Math.random()*(k+1)); [x[k], x[j]] = [x[j], x[k]]; } return x; };
     const ix = (arr, i) => arr[Math.abs(Math.trunc(+i || 0)) % arr.length];
 
@@ -1593,12 +1631,13 @@
     const cleanQ = (x) => {
       const t = x.type || "mc";
       const text = x.q.trim();
-      if (t === "tf") return text ? { type:"tf", q:text, ans: !!x.ans } : null;
+      const im = isImg(x.img) ? { img:x.img } : {};
+      if (t === "tf") return text ? { type:"tf", q:text, ans: !!x.ans, ...im } : null;
       if (t === "match") {
         const pairs = (x.pairs || []).filter(p => (p.l || "").trim() && (p.r || "").trim()).map(p => ({ l:p.l.trim(), r:p.r.trim() }));
-        return pairs.length === 4 ? { type:"match", q:text || "Match each item with its partner.", pairs } : null;
+        return pairs.length === 4 ? { type:"match", q:text || "Match each item with its partner.", pairs, ...im } : null;
       }
-      return text && (x.opts || []).every(o => String(o).trim()) ? { type:"mc", q:text, opts:(x.opts||[]).map(o => String(o).trim()), ans:x.ans } : null;
+      return text && (x.opts || []).every(o => String(o).trim()) ? { type:"mc", q:text, opts:(x.opts||[]).map(o => String(o).trim()), ans:x.ans, ...im } : null;
     };
 
     const prep = () => {
@@ -1852,7 +1891,7 @@
         const choices = myRace.order.map(j => x.pairs[j].r);
         return `
           <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct} · match them up</p>
-          <div class="card"><b>${esc(x.q)}</b></div>
+          <div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>
           ${x.pairs.map((p, k) => `
             <div class="card row">
               <b>${esc(p.l)}</b>
@@ -1876,7 +1915,7 @@
 
       return `
         <p class="sub">Question ${myRace.i + 1} of ${total} · score ${myRace.correct}</p>
-        <div class="card"><b>${esc(x.q)}</b></div>
+        <div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>
         ${items.map(([label, index]) => `
           <button class="choice ${rev ? (index === ci ? "green" : index === myRace.sel ? "red" : "alt") : "alt"}"
             data-act="rpick" data-i="${index}" ${rev ? "disabled" : ""}>
@@ -2634,7 +2673,9 @@
       ${draft.cards.map((c, i) => `
         <div class="card">
           <input data-f="front" data-i="${i}" placeholder="Front (question)" maxlength="200" value="${esc(c.front)}" />
+          ${imgPick("df", i, c.fImg)}
           <input data-f="back" data-i="${i}" placeholder="Back (answer)" maxlength="200" value="${esc(c.back)}" />
+          ${imgPick("db", i, c.bImg)}
           <button class="alt" data-act="delcard" data-i="${i}">Remove card</button>
         </div>
       `).join("")}
@@ -2656,7 +2697,7 @@
       return `
         <h2>${esc(study.title)}</h2>
         <p class="sub">Card ${study.i + 1} of ${study.cards.length}</p>
-        <div class="card big" data-act="flip">${esc(study.flip ? c.back : c.front)}<div class="sub">${study.flip ? "Answer" : "Tap to flip"}</div></div>
+        <div class="card big" data-act="flip">${esc(study.flip ? c.back : c.front)}${imgTag(study.flip ? c.bImg : c.fImg)}<div class="sub">${study.flip ? "Answer" : "Tap to flip"}</div></div>
         ${study.flip ? `<button data-act="got">Got it +1</button> <button class="alt" data-act="again">Again</button>` : ""}
       `;
     };
@@ -2726,6 +2767,7 @@
             </select>
           </div>
           <input data-qf="q" data-qi="${qi}" placeholder="${x.type === "match" ? "Instructions (like: Match each country to its capital)" : x.type === "tf" ? "Statement (like: The sun is a star)" : "Question"}" maxlength="200" value="${esc(x.q)}" />
+          ${imgPick("q", qi, x.img)}
           ${qBody(x, qi)}
           ${qdraft.questions.length > 1 ? `<br /><button class="alt" data-act="qdelq" data-i="${qi}">Remove question</button>` : ""}
         </div>
@@ -2770,7 +2812,7 @@
       const head = `
         <h2>${esc(qz.title)}</h2>
         <p class="sub">Question ${qz.i + 1} of ${qz.questions.length} · ${t === "tf" ? "True or false" : t === "match" ? "Match" : "Multiple choice"}</p>
-        <div class="card"><b>${esc(x.q)}</b></div>
+        <div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>
       `;
       let body = "", done = false, correct = false;
 
@@ -3026,6 +3068,20 @@
       const p = $("dp"); if (p) draft.isPublic = p.checked;
     };
 
+    const syncQ = () => {
+      if (!qdraft) return;
+      const qt = $("qt"); if (qt) qdraft.title = qt.value;
+      const qp = $("qp"); if (qp) qdraft.isPublic = qp.checked;
+      document.querySelectorAll("[data-qf]").forEach(el => {
+        const x = qdraft.questions[+el.dataset.qi];
+        if (!x) return;
+        const f = el.dataset.qf;
+        if (f === "q") x.q = el.value;
+        if (f === "opt" && x.opts) x.opts[+el.dataset.oi] = el.value;
+        if ((f === "l" || f === "r") && x.pairs) x.pairs[+el.dataset.pi][f] = el.value;
+      });
+    };
+
     document.addEventListener("click", async (e) => {
       const b = e.target.closest("[data-go],[data-act]");
       if (!b || !P) return;
@@ -3041,6 +3097,14 @@
           await leaveRoom();
           musicStop();
           return signOut(auth);
+        }
+
+        if (a === "rmimg") {
+          const kind = b.dataset.kind;
+          if (kind === "q") { syncQ(); if (qdraft.questions[i]) delete qdraft.questions[i].img; }
+          else { syncDraft(); if (draft.cards[i]) delete draft.cards[i][kind === "df" ? "fImg" : "bImg"]; }
+          render();
+          return;
         }
 
         if (a === "mtoggle") {
@@ -3266,11 +3330,17 @@
           const d = getQuiz(id);
           if (!d || !room) return;
           const qs = shuffle(playable(d)).slice(0, 30).map(x => {
-            if (x.type === "match") return { type:"match", q:x.q, pairs:x.pairs.map(p => ({ l:p.l, r:p.r })) };
-            if ((x.type || "mc") === "tf") return { type:"tf", q:x.q, ans:tfAnswer(x.ans) };
+            const im = isImg(x.img) ? { img:x.img } : {};
+            if (x.type === "match") return { type:"match", q:x.q, pairs:x.pairs.map(p => ({ l:p.l, r:p.r })), ...im };
+            if ((x.type || "mc") === "tf") return { type:"tf", q:x.q, ans:tfAnswer(x.ans), ...im };
             const order = shuffle(x.opts.map((_, k) => k));
-            return { type:"mc", q:x.q, opts:order.map(k => x.opts[k]), ans:order.indexOf(x.ans) };
+            return { type:"mc", q:x.q, opts:order.map(k => x.opts[k]), ans:order.indexOf(x.ans), ...im };
           });
+          let sz = JSON.stringify(qs).length;
+          if (sz > 900000) {
+            qs.forEach(q => { if (sz > 900000 && q.img) { sz -= q.img.length; delete q.img; } });
+            toast("Some images were left out to keep the race small.");
+          }
 
           if (qs.length < 2) { alert("Races need at least 2 questions."); return; }
           const ref = await addDoc(collection(db, "rooms", room.code, "races"), {
@@ -3347,8 +3417,16 @@
 
         if (a === "savedeck") {
           syncDraft();
-          const cards = draft.cards.filter(c => c.front.trim() && c.back.trim());
-          if (!draft.title.trim() || !cards.length) { alert("Add a title and at least one full card."); return; }
+          const cards = draft.cards
+            .filter(c => (c.front.trim() || isImg(c.fImg)) && (c.back.trim() || isImg(c.bImg)))
+            .map(c => {
+              const o = { front:c.front.trim(), back:c.back.trim() };
+              if (isImg(c.fImg)) o.fImg = c.fImg;
+              if (isImg(c.bImg)) o.bImg = c.bImg;
+              return o;
+            });
+          if (!draft.title.trim() || !cards.length) { alert("Add a title and at least one full card (each side needs text or an image)."); return; }
+          if (JSON.stringify(cards).length > 900000) { alert("This deck is too big because of the images. Remove a few images or split it into two decks."); return; }
           const data = { ownerId:user.uid, ownerName:P.username, title:draft.title.trim(), cards, isPublic:draft.isPublic, updated:Date.now() };
           if (draft.id) await updateDoc(doc(db, "decks", draft.id), data);
           else { await addDoc(collection(db, "decks"), data); await save({ decksMade:P.decksMade + 1 }); }
@@ -3441,6 +3519,7 @@
             return;
           }
           const qs = qdraft.questions.map(cleanQ);
+          if (JSON.stringify(qs).length > 900000) { alert("This quiz is too big because of the images. Remove a few images or split it into two quizzes."); return; }
           const data = { ownerId:user.uid, ownerName:P.username, title:qdraft.title.trim(), questions:qs, isPublic:qdraft.isPublic, updated:Date.now() };
           if (qdraft.id) await updateDoc(doc(db, "quizzes", qdraft.id), data);
           else { await addDoc(collection(db, "quizzes"), data); await save({ quizzesMade:P.quizzesMade + 1 }); }
@@ -3534,6 +3613,37 @@
       } catch (err) {
         alert("Something went wrong: " + (err.code || err.message));
       }
+    });
+
+    const attachImage = (kind, i, file) => {
+      if (kind === "q") syncQ(); else syncDraft();
+      compressImage(file).then(data => {
+        if (kind === "q") { if (qdraft && qdraft.questions[i]) qdraft.questions[i].img = data; }
+        else if (draft && draft.cards[i]) draft.cards[i][kind === "df" ? "fImg" : "bImg"] = data;
+        render();
+      }).catch(err => alert(err.message));
+    };
+    const dropZone = (e) => e.target.closest ? e.target.closest(".imgpick") : null;
+    const hasFiles = (e) => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+    document.addEventListener("dragover", e => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      document.querySelectorAll(".imgpick.drag").forEach(z => z.classList.remove("drag"));
+      const z = dropZone(e);
+      if (z) z.classList.add("drag");
+    });
+    document.addEventListener("dragleave", e => {
+      if (!e.relatedTarget) document.querySelectorAll(".imgpick.drag").forEach(z => z.classList.remove("drag"));
+    });
+    document.addEventListener("drop", e => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      document.querySelectorAll(".imgpick.drag").forEach(z => z.classList.remove("drag"));
+      const z = dropZone(e);
+      if (!z) return;
+      const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith("image/"));
+      if (!file) { alert("Drop an image file (JPG, PNG, etc.)."); return; }
+      attachImage(z.dataset.dk, +z.dataset.di, file);
     });
 
     document.addEventListener("input", e => {
@@ -3633,6 +3743,13 @@
     document.addEventListener("change", e => {
   const t = e.target;
 
+  if (t.matches && t.matches("[data-img]")) {
+    const file = t.files && t.files[0];
+    if (file) attachImage(t.dataset.img, +t.dataset.i, file);
+    t.value = "";
+    return;
+  }
+
   if (t.matches("[data-qf='type']")) {
     const qi = +t.dataset.qi;
     const current = qdraft?.questions[qi];
@@ -3657,6 +3774,7 @@
       };
     }
 
+    if (current.img) qdraft.questions[qi].img = current.img;
     render();
     return;
   }

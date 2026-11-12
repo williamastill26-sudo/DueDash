@@ -659,6 +659,43 @@
   </style>
 </head>
 <body>
+  <div id="boot" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;font-family:system-ui,sans-serif;color:#44503f;background:#f1eee6;z-index:100">
+    <div style="font-size:42px">📚</div>
+    <div id="boottxt" style="font-weight:600">Loading DueDash…</div>
+    <div id="booterr" style="font-size:13px;max-width:520px;color:#8a3b3b;white-space:pre-wrap"></div>
+    <button id="bootbtn" onclick="location.reload()" style="display:none;padding:10px 18px;border-radius:12px;border:1px solid #bbb;background:#fff;font-size:15px;cursor:pointer">Reload</button>
+  </div>
+  <script>
+    (function () {
+      var errs = [];
+      function show(msg) {
+        var b = document.getElementById("boot");
+        if (!b || window.__ddReadyFlag) return;
+        b.style.display = "flex";
+        document.getElementById("boottxt").textContent = msg;
+        document.getElementById("booterr").textContent = errs.slice(0, 4).join("\n");
+        document.getElementById("bootbtn").style.display = "inline-block";
+      }
+      window.addEventListener("error", function (e) {
+        errs.push((e.message || "Error") + (e.filename ? " (" + e.filename.split("/").pop() + ":" + e.lineno + ")" : ""));
+        show("Something went wrong while loading.");
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        errs.push("Promise: " + ((e.reason && e.reason.message) || e.reason));
+        show("Something went wrong while loading.");
+      });
+      window.__ddReady = function () {
+        window.__ddReadyFlag = true;
+        var b = document.getElementById("boot");
+        if (b) b.style.display = "none";
+      };
+      setTimeout(function () {
+        show(window.__ddStarted
+          ? "Still loading… your internet or the database may be slow."
+          : "The app didn't start. The file may not have uploaded fully, or your browser is blocking it.");
+      }, 10000);
+    })();
+  </script>
   <div id="auth" class="hidden">
     <div class="brand-wrap">
       <svg class="brand-svg" viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg" aria-label="DueDash logo">
@@ -1082,7 +1119,10 @@
       }
     }
 
+    const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("The database didn't answer in time. Check your internet and reload.")), ms))]);
+
     onAuthStateChanged(auth, async (u) => {
+      window.__ddStarted = true;
       user = u;
       if (!u) {
         clearInterval(hb); clearInterval(rt);
@@ -1093,12 +1133,13 @@
         $("shell").classList.add("hidden");
         $("auth").classList.remove("hidden");
         $("pw").value = "";
+        if (window.__ddReady) window.__ddReady();
         return;
       }
 
       try {
         const ref = doc(db, "users", u.uid);
-        const s = await getDoc(ref);
+        const s = await withTimeout(getDoc(ref), 15000);
         P = {
           username: genName(),
           emoji: "😀",
@@ -1148,6 +1189,7 @@
 
       $("auth").classList.add("hidden");
       $("shell").classList.remove("hidden");
+      if (window.__ddReady) window.__ddReady();
       renderMusic();
       startNotifs();
       go("planner");
@@ -3453,7 +3495,7 @@
   if (t.id === "dt") {
     if (draft) draft.title = t.value;
   }
-}
+});
   </script>
 </body>
 </html>

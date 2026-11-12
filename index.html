@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -226,6 +226,17 @@
       margin:0 auto 12px;
     }
 
+    nav .nav-label{
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding:14px 12px 0;
+      margin-top:4px;
+      border-top:1px solid var(--line);
+    }
+    nav .brand-wrap + .nav-label{border-top:none;margin-top:0;padding-top:4px}
     nav button{
       background:none;
       box-shadow:none;
@@ -657,6 +668,7 @@
         align-items:center;
       }
       nav .brand-svg{max-width:110px; margin:0 8px 0 0}
+      nav .nav-label{display:none}
       nav button{padding:8px 10px;font-size:13px}
       .chips{margin:8px 0 0;width:100%;padding-top:0;border-top:none}
       .cal{grid-template-columns:1fr}
@@ -2629,10 +2641,16 @@
       ["explore","🔍","Explore"],
       ["rooms","🏠","Study Rooms"],
       ["friends","👥","Friends"],
-      ["notifs","🔔","Notifications"],
       ["pet","🐾","My Pet"],
       ["leaders","🏆","Leaderboard"],
-      ["account","👤","Account"]
+      ["account","👤","Account"],
+      ["notifs","🔔","Notifications"]
+    ];
+    const NAV_SECTIONS = [
+      ["Planning",           ["planner","rev"]],
+      ["Study Library",      ["decks","quizzes","explore"]],
+      ["Community",          ["rooms","friends","pet"]],
+      ["Progress & Profile", ["leaders","account","notifs"]]
     ];
 
     function renderNav() {
@@ -2652,12 +2670,17 @@
           <img class="brand-svg" src="${window.DD_LOGO}" alt="DueDash logo" />
         </div>
 
-        ${NAV.map(([k, ic, label]) => `
+        ${NAV_SECTIONS.map(([title, keys]) => `
+          <div class="nav-label">${title}</div>
+          ${keys.map((key) => {
+            const [k, ic, label] = NAV.find((n) => n[0] === key);
+            return `
           <button data-go="${k === "rooms" && room ? "room" : k}" class="${on(k)}">
             <span>${ic}</span>
             ${label}
             ${k === "notifs" && notifs.length ? `<span class="badge">${notifs.length}</span>` : ""}
-          </button>
+          </button>`;
+          }).join("")}
         `).join("")}
         <div class="chips">
           <span class="chip">${esc(P.emoji || "😀")}</span>

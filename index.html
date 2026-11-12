@@ -1041,7 +1041,8 @@
         if (!buf) {
           mus.loading = k;
           renderMusic();
-          const res = await fetch("music/" + k + ".mp3");
+          let res = await fetch("music/" + k + ".mp3");
+          if (!res.ok) res = await fetch(k + ".mp3");
           if (!res.ok) throw new Error("missing");
           buf = await ctx.decodeAudioData(await res.arrayBuffer());
           mus.cache[k] = buf;
@@ -1055,7 +1056,7 @@
         mus.cur = k;
         mus.err = "";
       } catch (e) {
-        mus.err = "Couldn't load that track. Make sure the music folder is uploaded next to index.html.";
+        mus.err = "Couldn't load that track. Make sure the mp3 files are uploaded next to index.html.";
       }
       mus.loading = null;
       mus.busy = false;

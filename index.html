@@ -418,7 +418,7 @@
       align-items:flex-end;
       justify-content:center;
       gap:18px;
-      padding:120px 16px 16px;
+      padding:70px 16px 16px;
       flex-wrap:wrap;
       background:#dfe6d8;
       margin-bottom:12px;
@@ -435,10 +435,7 @@
       text-align:center;
       width:120px;
     }
-    .who svg{
-      width:110px;height:auto;display:block;margin:0 auto;
-      filter:drop-shadow(0 12px 18px rgba(0,0,0,.08));
-    }
+    .who .stu{width:100%;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 10px 14px rgba(0,0,0,.14))}
     .who .wn{
       display:inline-block;
       margin-top:7px;
@@ -675,6 +672,94 @@
       .cal-w,.cal-e{display:none}
       .cal-d{min-height:0}
     }
+
+    /* ===== themes ===== */
+    :root{--surf:#fff;--surf2:#f3efe9;--inp:rgba(255,255,255,.8);--pnl:rgba(255,255,255,.95);--okbg:#eaf4eb;--badbg:#f6e4e1}
+    button.alt,.choice.alt,.imgbtn{background:var(--surf)}
+    button.alt:hover,nav button:hover,.chip{background:var(--surf2)}
+    input,select{background:var(--inp)}
+    #mpanel,#tpanel{background:var(--pnl)}
+    .choice.green{background:var(--okbg)}.choice.red{background:var(--badbg)}
+    nav{background:var(--navbg,rgba(255,255,255,.66))}
+    .bar,.tbar{background:var(--surf2)}
+    .big{background:linear-gradient(145deg,var(--surf2),var(--green-soft))}
+    .cal-d,.ach{background:var(--card)}
+    html[data-theme=ocean]{--bg:#e8f2f8;--bg-2:#d6e8f2;--line:#c4dae7;--text:#1b2f3b;--muted:#5a7484;--green:#3f86b0;--green-2:#2b6488;--green-soft:#e0eff8;--surf2:#e9f2f8}
+    html[data-theme=sunset]{--bg:#fbefe6;--bg-2:#f6dfd0;--line:#ecd2c0;--text:#3a2622;--muted:#85655a;--green:#e07a4f;--green-2:#c25a34;--green-soft:#fbe7dc;--surf2:#f8ece3}
+    html[data-theme=lavender]{--bg:#f1edf8;--bg-2:#e4ddf2;--line:#d6cce8;--text:#2a2440;--muted:#6f6890;--green:#7c63c4;--green-2:#5f47a6;--green-soft:#ebe5f7;--surf2:#efeaf8}
+    html[data-theme=rose]{--bg:#fbeef2;--bg-2:#f6dce5;--line:#ecc8d6;--text:#3a2230;--muted:#8a5f72;--green:#d6638b;--green-2:#b94670;--green-soft:#fbe3ec;--surf2:#f9e9ef}
+    html[data-theme=midnight]{color-scheme:dark;--bg:#151a22;--bg-2:#10141b;--line:#2b3442;--text:#e6ebf2;--muted:#93a0b3;--green:#5fa37a;--green-2:#3f7d5a;--green-soft:#1f3a2e;--card:rgba(34,42,54,.82);--surf:#222a36;--surf2:#2b3442;--inp:rgba(34,42,54,.9);--pnl:rgba(30,37,48,.97);--okbg:#1f3a2e;--badbg:#44262a;--navbg:rgba(26,32,42,.85)}
+    html[data-theme=midnight] .ach.got{background:linear-gradient(180deg,#3a3320,#2f2a1c)}
+    html[data-theme=midnight] input::placeholder{color:#7d8899}
+    #theme{position:fixed;right:80px;bottom:18px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+    #tbtn{width:52px;height:52px;border-radius:50%;padding:0;font-size:22px;box-shadow:var(--shadow)}
+    #tpanel{width:210px;padding:12px;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+    #tpanel button{width:100%;text-align:left;margin-top:6px;display:flex;align-items:center;gap:9px}
+    #tpanel i{width:16px;height:16px;border-radius:50%;display:inline-block;box-shadow:0 0 0 2px #fff,0 0 0 3px var(--line)}
+    /* ===== animations: cards, quiz, race ===== */
+    @keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.06)}100%{transform:none;opacity:1}}
+    @keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(14px)}}
+    @keyframes slideRow{from{opacity:0;transform:translateX(-26px)}}
+    .big{transition:box-shadow .2s;perspective:900px}.big:hover{box-shadow:0 14px 34px rgba(30,34,28,.14)}
+    .big.fout{animation:fout .16s ease-in forwards}@keyframes fout{to{transform:perspective(900px) rotateY(90deg);opacity:.4}}
+    .big.fin{animation:fin .24s ease-out}@keyframes fin{from{transform:perspective(900px) rotateY(-90deg);opacity:.4}}
+    .big.next{animation:cnext .38s cubic-bezier(.2,.8,.3,1)}@keyframes cnext{from{transform:translateX(70px) rotate(4deg);opacity:0}}
+    .big.again{animation:shake .4s}
+    .choice{transition:transform .12s,background .2s,border-color .2s}.choice:not(:disabled):hover{transform:translateX(4px)}
+    .choice.green{animation:pop .4s}.choice.red{animation:shake .4s}
+    .newq .card,.newq .choice{animation:slideUp .35s both}
+    .newq .choice:nth-of-type(2){animation-delay:.06s}.newq .choice:nth-of-type(3){animation-delay:.12s}.newq .choice:nth-of-type(4){animation-delay:.18s}
+    .newq .card.row{animation:slideRow .4s both;animation-delay:calc(var(--i,0)*80ms)}
+    .newq .card.verdict{animation:pop .5s both .1s}
+    .cd{animation:pop .5s}
+    #qcard,.qpop{animation:slideUp .3s both}
+    .track i,.tbar i{transition:width .35s ease}
+    /* ===== pets & avatars ===== */
+    .pet{position:relative;display:block;perspective:600px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .pet svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 8px 10px rgba(60,40,30,.18))}
+    .pb,.pt-head,.pt-tail,.pt-eyes,.pt-ear,.pt-wing,.pt-egg,.av-eyes,.av-hair{transform-box:fill-box}
+    .pb{animation:breathe 3.4s ease-in-out infinite;transform-origin:50% 100%}@keyframes breathe{50%{transform:scale(1.03,.97)}}
+    .pt-head{animation:nod 4.6s ease-in-out infinite;transform-origin:50% 95%}@keyframes nod{0%,100%{transform:rotate(-1.8deg)}50%{transform:rotate(1.8deg)}}
+    .pt-tail{animation:wag 1.5s ease-in-out infinite;transform-origin:0% 100%}@keyframes wag{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(10deg)}}
+    .pt-eyes,.av-eyes{animation:blink 4.4s infinite;transform-origin:50% 55%}@keyframes blink{0%,94%,100%{transform:scaleY(1)}96.5%{transform:scaleY(.08)}}
+    .pt-ear{animation:ear 5s ease-in-out infinite;transform-origin:50% 100%}@keyframes ear{0%,88%,100%{transform:rotate(0)}92%{transform:rotate(-7deg)}96%{transform:rotate(3deg)}}
+    .pt-wing{animation:flap 1.8s ease-in-out infinite;transform-origin:100% 60%}@keyframes flap{50%{transform:rotate(-12deg)}}
+    .pt-egg{animation:rock 2.6s ease-in-out infinite;transform-origin:50% 100%}@keyframes rock{0%,60%,100%{transform:rotate(0)}68%{transform:rotate(-7deg)}76%{transform:rotate(7deg)}84%{transform:rotate(-4deg)}}
+    .tr-jump .pj{animation:tJump .9s cubic-bezier(.3,.7,.4,1)}@keyframes tJump{0%{transform:scale(1.08,.86)}35%{transform:translateY(-36%) scale(.94,1.08)}72%{transform:translateY(0) scale(1.08,.88)}100%{transform:none}}
+    .tr-spin .pj{animation:tSpin 1s ease-in-out}@keyframes tSpin{0%{transform:rotateY(0)}40%{transform:translateY(-22%) rotateY(360deg)}100%{transform:rotateY(720deg)}}
+    .tr-flip .pj{animation:tFlip 1.1s ease-in-out}@keyframes tFlip{0%{transform:scale(1.06,.9)}45%{transform:translateY(-42%) rotate(-200deg)}100%{transform:rotate(-360deg)}}
+    .tr-bow .pj{animation:tBow 1.3s ease-in-out;transform-origin:50% 100%}@keyframes tBow{25%,70%{transform:rotate(16deg) translateX(5%)}100%{transform:none}}
+    .tr-hop .pj{animation:tHop 1.2s}@keyframes tHop{15%,55%{transform:translateY(-16%)}35%,75%{transform:translateY(0)}}
+    .pet::after{content:attr(data-fx);position:absolute;left:50%;top:0;font-size:20px;opacity:0;pointer-events:none}
+    .pet.fx::after{animation:fxUp 1.3s ease-out}@keyframes fxUp{0%{opacity:0;transform:translate(-50%,10px)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-48px)}}
+    .av-sw{transform-box:view-box;transform-origin:50% 100%;animation:sway 4.8s ease-in-out infinite}@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+    .av-hair{transform-origin:50% 25%;animation:hsway 3.6s ease-in-out infinite}@keyframes hsway{0%,100%{transform:rotate(2.2deg)}50%{transform:rotate(-2.2deg)}}
+    .who .av-sw,.who .av-hair,.who .pb,.who .pt-tail,.who .pt-head,.who .pt-eyes,.who .av-eyes{animation-delay:var(--d,0s)}
+    .who{width:236px;flex:none}
+    .who .wp{position:absolute;right:4px;bottom:34px;width:66px;z-index:4;font-size:0}
+    .who .bub{bottom:calc(100% - 50px);left:56%}
+    .prev{width:250px}.prev .stu{filter:drop-shadow(0 6px 8px rgba(0,0,0,.12))}
+    .stu-up{transform-box:view-box;transform-origin:90px 186px;animation:stup 4.2s ease-in-out infinite}@keyframes stup{0%,100%{transform:rotate(-.8deg)}50%{transform:rotate(.9deg)}}
+    .stu-head{transform-box:view-box;transform-origin:118px 108px;animation:sthead 5.6s ease-in-out infinite}@keyframes sthead{0%,100%{transform:rotate(-1.5deg)}45%{transform:rotate(2.2deg)}}
+    .stu-hair{transform-box:view-box;transform-origin:100px 50px;animation:sthair 3.4s ease-in-out infinite}@keyframes sthair{0%,100%{transform:rotate(2deg)}50%{transform:rotate(-3deg)}}
+    .stu-arm{animation:starm 1.8s ease-in-out infinite}@keyframes starm{0%,100%{transform:translateX(0)}25%{transform:translateX(3px) translateY(1px)}50%{transform:translateX(5px)}75%{transform:translateX(2px) translateY(1px)}}
+    .stu-eye{transform-box:fill-box;transform-origin:50% 50%;animation:blink 4.2s infinite}
+    .who .stu-up,.who .stu-head,.who .stu-hair,.who .stu-arm{animation-delay:var(--d,0s)}
+        .steam{animation:steam 2.4s ease-in-out infinite}@keyframes steam{0%{opacity:0;transform:translateY(3px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-7px)}}
+    .bgart{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+    .scene .who{z-index:2}.scene .bub{z-index:6}
+    .fx{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}.fx i{position:absolute}
+    .fx.petal i{top:-6%;width:10px;height:7px;border-radius:70% 0 70% 0;background:#ffb7cf;animation:petal 7s linear infinite}
+    @keyframes petal{to{transform:translate(-90px,520px) rotate(540deg)}}
+    .fx.star i{width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff;animation:tw 3s ease-in-out infinite}
+    @keyframes tw{50%{opacity:.15;transform:scale(.5)}}
+    .rn{animation:rn .7s linear infinite}@keyframes rn{from{transform:translateY(-60px)}to{transform:none}}
+    .glow{animation:glow 5s ease-in-out infinite}@keyframes glow{50%{opacity:.7}}
+    .wv{animation:wv 3s ease-in-out infinite}@keyframes wv{50%{transform:translateX(-14px)}}
+    .petstage{margin:0 auto 6px;filter:drop-shadow(0 14px 12px rgba(0,0,0,.08))}
+    .petstage .pet{overflow:visible}
+    .petmini{display:inline-block;width:38px;vertical-align:middle;pointer-events:none}
   </style>
 </head>
 <body>
@@ -740,6 +825,33 @@
     <button id="mbtn" data-act="mtoggle" aria-label="Study music">🎵</button>
   </div>
   <div id="toast"></div>
+  <div id="theme"><div id="tpanel" class="hidden"></div><button id="tbtn" aria-label="Change theme">🎨</button></div>
+  <script>
+    (function () {
+      var T = [["sage","🌿 Sage","#5d7d61","#2d4738"],["ocean","🌊 Ocean","#3f86b0","#2b6488"],["sunset","🌇 Sunset","#e07a4f","#c25a34"],["lavender","🪻 Lavender","#7c63c4","#5f47a6"],["rose","🌸 Rose","#d6638b","#b94670"],["midnight","🌙 Midnight","#2b3442","#151a22"]];
+      var cur = "sage", panel = document.getElementById("tpanel");
+      try { cur = localStorage.getItem("dd_theme") || "sage"; } catch (e) {}
+      function draw() {
+        panel.innerHTML = "<b>🎨 Colour theme</b>" + T.map(function (t) {
+          return '<button class="' + (t[0] === cur ? "" : "alt") + '" data-th="' + t[0] + '"><i style="background:linear-gradient(135deg,' + t[2] + ',' + t[3] + ')"></i>' + t[1] + '</button>';
+        }).join("");
+      }
+      function set(t) {
+        cur = t; document.documentElement.setAttribute("data-theme", t);
+        try { localStorage.setItem("dd_theme", t); } catch (e) {}
+        var m = document.querySelector('meta[name=theme-color]');
+        for (var i = 0; i < T.length; i++) if (T[i][0] === t && m) m.setAttribute("content", T[i][3]);
+        draw();
+      }
+      set(cur);
+      document.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-th]");
+        if (b) return set(b.getAttribute("data-th"));
+        if (e.target.closest && e.target.closest("#tbtn")) return panel.classList.toggle("hidden");
+        if (!e.target.closest || !e.target.closest("#tpanel")) panel.classList.add("hidden");
+      });
+    })();
+  </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -896,20 +1008,17 @@
       {n:"🌟 Curly boy", v:{skin:4,hair:0,hs:9,eye:5,fit:4,acc:0,look:0,top:0}}
     ];
 
-    const avatar = (a = {}) => {
-      const sk = ix(SK, a.skin);
-      const hr = ix(HR, a.hair);
-      const ey = ix(EY, a.eye);
-      const ft = ix(FT, a.fit);
+    let _u = 0;
+    const mixc = (c, t, p) => { const f = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16)); const a = f(c), b = f(t); return "#" + a.map((v, i) => Math.round(v + (b[i] - v) * p).toString(16).padStart(2, "0")).join(""); };
 
+    const avatar = (a = {}) => {
+      const sk = ix(SK, a.skin), hr0 = ix(HR, a.hair), ey = ix(EY, a.eye), ft = ix(FT, a.fit);
+      const u = "a" + (++_u), hr = `url(#${u}h)`, skg = `url(#${u}s)`;
       const n = (v, m) => Math.abs(Math.trunc(+v || 0)) % m;
-      const hs = n(a.hs, 12);
-      const ac = n(a.acc, 8);
-      const tp = n(a.top, 4);
-      const lk = n(a.look, 2);
+      const hs = n(a.hs, 12), ac = n(a.acc, 8), tp = n(a.top, 4), lk = n(a.look, 2);
 
       const C = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hr}"/>`;
-      const P_ = (d) => `<path d="${d}" fill="${hr}"/>`;
+      const P_ = (d) => `<path d="${d}" fill="${hr}" stroke="rgba(40,20,20,.22)" stroke-width="1"/>`;
       const GEN = P_("M22 62 Q18 14 60 12 Q102 14 98 62 Q92 40 80 34 Q70 50 58 36 Q44 48 38 34 Q27 42 22 62 Z");
       const SHORT = P_("M24 58 Q20 18 60 14 Q100 18 96 58 Q90 38 78 32 Q60 40 42 32 Q30 38 24 58 Z");
       const BACKS = [
@@ -928,68 +1037,259 @@
         SHORT,
         P_("M23 60 Q18 16 58 12 Q100 12 98 60 Q94 36 84 30 Q66 26 46 40 Q36 36 28 46 Q24 52 23 60 Z"),
         P_("M22 62 Q14 24 34 14 L40 26 L50 8 L58 26 L70 6 L76 26 L90 12 Q104 28 98 62 Q92 44 82 38 L74 48 L64 36 L54 48 L44 36 Q30 44 22 62 Z"),
-        `<path d="M26 54 Q24 22 60 20 Q96 22 94 54 Q88 36 60 34 Q32 36 26 54 Z" fill="${hr}" opacity=".85"/>`,
-        `<path d="M27 52 Q26 28 60 26 Q94 28 93 52 Q86 38 60 36 Q34 38 27 52 Z" fill="${hr}" opacity=".8"/>`+P_("M48 32 Q46 6 60 2 Q74 6 72 32 Q60 26 48 32 Z"),
+        `<path d="M26 54 Q24 22 60 20 Q96 22 94 54 Q88 36 60 34 Q32 36 26 54 Z" fill="${hr}" opacity=".9"/>`,
+        `<path d="M27 52 Q26 28 60 26 Q94 28 93 52 Q86 38 60 36 Q34 38 27 52 Z" fill="${hr}" opacity=".85"/>`+P_("M48 32 Q46 6 60 2 Q74 6 72 32 Q60 26 48 32 Z"),
         C(30,36,13)+C(46,25,14)+C(62,21,14)+C(78,25,14)+C(92,36,13)+C(25,52,9)+C(95,52,9),
         P_("M22 60 Q16 14 60 10 Q104 14 98 60 Q96 34 80 26 Q60 20 40 26 Q24 34 22 60 Z"),
         SHORT
       ];
       const ties = hs === 2 ? `<circle cx="15" cy="60" r="5" fill="#ff7eb6"/><circle cx="105" cy="60" r="5" fill="#ff7eb6"/>` : "";
-      const eye = (cx) => `
-        <ellipse cx="${cx}" cy="64" rx="9" ry="11.5" fill="#1a1a2e"/>
-        <ellipse cx="${cx}" cy="65" rx="7.4" ry="10" fill="${ey}"/>
-        <ellipse cx="${cx}" cy="67" rx="3.8" ry="5.2" fill="#1a1a2e" opacity=".55"/>
-        <circle cx="${cx-3}" cy="59.5" r="3.2" fill="#fff"/>
-        <circle cx="${cx+4}" cy="70" r="1.7" fill="#fff"/>
-        <path d="M${cx-10} 57 Q${cx} 49 ${cx+10} 57" stroke="#1a1a2e" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-      `;
+      const eye = (cx, f) => `
+        <path d="M${cx-10} 62 Q${cx-9} 51 ${cx} 51 Q${cx+9} 51 ${cx+10} 62 Q${cx+9} 77 ${cx} 77 Q${cx-9} 77 ${cx-10} 62Z" fill="#fff"/>
+        <ellipse cx="${cx}" cy="65" rx="7.8" ry="10.4" fill="url(#${u}e)"/>
+        <ellipse cx="${cx}" cy="66" rx="3.6" ry="5.4" fill="#1a1a2e"/>
+        <path d="M${cx-10.5} 60 Q${cx} 46 ${cx+10.5} 60" stroke="#1a1a2e" stroke-width="${lk ? 2 : 3.4}" fill="none" stroke-linecap="round"/>
+        ${lk ? "" : `<path d="M${cx+f*10} 58 L${cx+f*14.5} 54" stroke="#1a1a2e" stroke-width="2.4" stroke-linecap="round"/>`}
+        <circle cx="${cx-3.2}" cy="60.5" r="3.5" fill="#fff"/><circle cx="${cx+3.6}" cy="71" r="1.8" fill="#fff" opacity=".9"/>`;
       const ACS = [
         "",
-        `<circle cx="44" cy="64" r="14" fill="none" stroke="#2b2b3a" stroke-width="2.6"/><circle cx="76" cy="64" r="14" fill="none" stroke="#2b2b3a" stroke-width="2.6"/><path d="M58 64 L62 64" stroke="#2b2b3a" stroke-width="2.6"/>`,
+        `<circle cx="44" cy="64" r="14" fill="rgba(200,230,255,.18)" stroke="#2b2b3a" stroke-width="2.6"/><circle cx="76" cy="64" r="14" fill="rgba(200,230,255,.18)" stroke="#2b2b3a" stroke-width="2.6"/><path d="M58 64 L62 64" stroke="#2b2b3a" stroke-width="2.6"/>`,
         `<path d="M20 60 Q18 8 60 8 Q102 8 100 60" fill="none" stroke="#2b2b3a" stroke-width="5"/><rect x="11" y="52" width="13" height="26" rx="6" fill="#ff5c8a"/><rect x="96" y="52" width="13" height="26" rx="6" fill="#ff5c8a"/>`,
         `<path d="M24 34 L28 4 L50 22 Z" fill="${hr}"/><path d="M96 34 L92 4 L70 22 Z" fill="${hr}"/><path d="M30 28 L32 12 L43 22 Z" fill="#ffb3c7"/><path d="M90 28 L88 12 L77 22 Z" fill="#ffb3c7"/>`,
         `<path d="M84 20 L106 10 L106 34 Z" fill="#ff5c8a"/><path d="M84 20 L62 10 L62 34 Z" fill="#ff5c8a"/><circle cx="84" cy="21" r="5" fill="#ff3d73"/>`,
         `<path d="M22 46 Q22 8 60 8 Q98 8 98 46 Q60 38 22 46 Z" fill="${ft}"/><path d="M62 42 L112 46 Q110 56 64 50 Z" fill="${ft}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>`,
         `<path d="M22 48 Q20 4 60 4 Q100 4 98 48 Z" fill="${ft}"/><rect x="19" y="40" width="82" height="13" rx="6" fill="${ft}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/><circle cx="60" cy="4" r="7" fill="#fff"/>`,
-        `<rect x="29" y="55" width="30" height="18" rx="7" fill="#111"/><rect x="61" y="55" width="30" height="18" rx="7" fill="#111"/><path d="M59 62 L61 62" stroke="#111" stroke-width="3"/>`
+        `<rect x="29" y="55" width="30" height="18" rx="7" fill="#111"/><rect x="61" y="55" width="30" height="18" rx="7" fill="#111"/><path d="M59 62 L61 62" stroke="#111" stroke-width="3"/><path d="M33 59 L42 59" stroke="#fff" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>`
       ];
       const TOPS = [
-        `<path d="M48 103 L60 119 L72 103 Z" fill="#fff"/>`,
+        `<path d="M48 103 L60 119 L72 103 Z" fill="#fff"/><path d="M60 119 L56 126 L60 132 L64 126Z" fill="#ef4444"/>`,
         `<path d="M38 106 Q60 128 82 106 Q60 114 38 106 Z" fill="rgba(0,0,0,.25)"/><path d="M54 113 L53 130 M66 113 L67 130" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`,
-        `<path d="M46 103 Q60 120 74 103 Z" fill="${sk}"/>`,
+        `<path d="M46 103 Q60 120 74 103 Z" fill="${skg}"/>`,
         `<path d="M48 103 L60 124 L72 103 Z" fill="#fff"/><path d="M57 108 L63 108 L64 128 L60 133 L56 128 Z" fill="#ef4444"/><path d="M48 103 L56 140 M72 103 L64 140" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`
       ];
-      const head = lk ? `<path d="M23 54 Q23 18 60 18 Q97 18 97 54 L96 70 Q94 96 60 98 Q26 96 24 70 Z" fill="${sk}"/>` : `<ellipse cx="60" cy="58" rx="37" ry="39" fill="${sk}"/>`;
-      const bw = lk ? 3.8 : 2.4;
-      const bo = lk ? .18 : .45;
+      const head = lk ? `<path d="M23 54 Q23 18 60 18 Q97 18 97 54 L96 70 Q94 96 60 98 Q26 96 24 70 Z" fill="${skg}" stroke="rgba(90,40,30,.22)" stroke-width="1"/>` : `<ellipse cx="60" cy="58" rx="37" ry="39" fill="${skg}" stroke="rgba(90,40,30,.22)" stroke-width="1"/>`;
+      const bw = lk ? 3.8 : 2.4, bo = lk ? .22 : .5;
       const brows = lk
-        ? `<path d="M33 50 L52 46" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/><path d="M68 46 L87 50" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/>`
-        : `<path d="M34 49 Q43 44 52 47" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/><path d="M68 47 Q77 44 86 49" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/>`;
-
+        ? `<path d="M33 49 L52 45" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/><path d="M68 45 L87 49" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/>`
+        : `<path d="M34 48 Q43 43 52 46" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/><path d="M68 46 Q77 43 86 48" stroke="${hr}" stroke-width="${bw}" fill="none" stroke-linecap="round"/>`;
+      const hl = mixc(hr0, "#ffffff", .38), hd = mixc(hr0, "#000000", .3);
       return `
         <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
-          ${BACKS[hs]}
-          <path d="M22 140 Q24 106 60 102 Q96 106 98 140 Z" fill="${ft}"/>
-          <rect x="52" y="88" width="16" height="18" rx="7" fill="${sk}"/>
-          ${TOPS[tp]}
-          ${head}
-          <ellipse cx="35" cy="78" rx="7" ry="4" fill="#ff8aa0" opacity="${bo}"/>
-          <ellipse cx="85" cy="78" rx="7" ry="4" fill="#ff8aa0" opacity="${bo}"/>
-          ${eye(44)}${eye(76)}
-          ${brows}
-          <path d="M54 84 Q60 89 66 84" stroke="#b5485d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-          ${FRS[hs]}${ties}${ACS[ac]}
+          <defs>
+            <linearGradient id="${u}h" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="130"><stop offset="0" stop-color="${hl}"/><stop offset=".45" stop-color="${hr0}"/><stop offset="1" stop-color="${hd}"/></linearGradient>
+            <radialGradient id="${u}s" cx=".4" cy=".3" r=".85"><stop offset="0" stop-color="${mixc(sk, "#ffffff", .38)}"/><stop offset=".6" stop-color="${sk}"/><stop offset="1" stop-color="${mixc(sk, "#b05a50", .3)}"/></radialGradient>
+            <linearGradient id="${u}e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mixc(ey, "#000000", .45)}"/><stop offset=".55" stop-color="${ey}"/><stop offset="1" stop-color="${mixc(ey, "#ffffff", .5)}"/></linearGradient>
+            <linearGradient id="${u}f" gradientUnits="userSpaceOnUse" x1="0" y1="100" x2="0" y2="140"><stop offset="0" stop-color="${mixc(ft, "#ffffff", .25)}"/><stop offset="1" stop-color="${mixc(ft, "#000000", .25)}"/></linearGradient>
+          </defs>
+          <g class="av-sw">
+            <g class="av-hair">${BACKS[hs]}${ties}</g>
+            <path d="M22 140 Q24 106 60 102 Q96 106 98 140 Z" fill="url(#${u}f)"/>
+            <path d="M28 128 Q30 112 44 106" stroke="#fff" stroke-opacity=".25" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <rect x="52" y="88" width="16" height="18" rx="7" fill="${skg}"/>
+            <ellipse cx="60" cy="97" rx="9" ry="4" fill="#b05a50" opacity=".18"/>
+            ${TOPS[tp]}
+            <ellipse cx="23" cy="66" rx="5" ry="7.5" fill="${skg}"/><ellipse cx="97" cy="66" rx="5" ry="7.5" fill="${skg}"/>
+            ${head}
+            <ellipse cx="60" cy="44" rx="33" ry="9" fill="#b0605a" opacity=".13"/>
+            <ellipse cx="34" cy="79" rx="8" ry="4.6" fill="#ff7f9a" opacity="${lk ? .08 : bo + .15}"/><ellipse cx="86" cy="79" rx="8" ry="4.6" fill="#ff7f9a" opacity="${lk ? .08 : bo + .15}"/>
+            <g class="av-eyes">${eye(44, -1)}${eye(76, 1)}</g>
+            ${brows}
+            <path d="M59 77 Q60 79 61.5 77" stroke="#c0706a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            <path d="M53 84 Q60 91 67 84 Q60 87 53 84Z" fill="#c4505f" stroke="#b5485d" stroke-width="1.6" stroke-linejoin="round"/>
+            ${FRS[hs]}
+            <path d="M36 30 Q60 19 84 30" stroke="#fff" stroke-opacity=".4" stroke-width="5" fill="none" stroke-linecap="round"/>
+            ${ACS[ac]}
+          </g>
         </svg>
       `;
     };
 
+    const studier = (a = {}) => {
+      const sk = ix(SK, a.skin), hr0 = ix(HR, a.hair), ey = ix(EY, a.eye), ft = ix(FT, a.fit);
+      const u = "s" + (++_u), n = (v, m) => Math.abs(Math.trunc(+v || 0)) % m;
+      const hs = n(a.hs, 12), ac = n(a.acc, 8), tp = n(a.top, 4), boy = n(a.look, 2) === 1;
+      const hr = `url(#${u}h)`, skg = `url(#${u}s)`, sw = `url(#${u}f)`;
+      const dk = "#2a2030", sd = mixc(ft, "#000000", .28), OL = 'stroke="rgba(50,25,25,.35)" stroke-width="1.2" stroke-linejoin="round"';
+      const CAP = "M89 84 Q82 40 120 37 Q153 37 150 68 Q142 50 126 53 Q108 58 100 74 Q98 88 101 102 Q90 100 89 84Z", FR = "M124 52 Q144 50 150 70 Q140 62 130 62 Q124 60 124 52Z";
+      const H = (d, x = "") => `<path d="${d}" fill="${hr}" ${OL} ${x}/>`;
+      const Cc = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hr}" ${OL}/>`;
+      const TIE = (x, y) => `<circle cx="${x}" cy="${y}" r="4.8" fill="#ff5c8a" stroke="rgba(50,25,25,.3)"/>`;
+      const THIN = `<path d="M91 74 Q91 48 118 45 Q144 45 147 66 Q134 55 118 57 Q102 59 97 78Z" fill="${hr}" opacity=".88"/>`;
+      const HR_ = [
+        { b:"", t:H("M94 58 L84 36 L104 46 L102 22 L118 42 L130 22 L136 46 L152 38 L146 62Z") + H(CAP) + H("M124 52 L152 62 L138 66 L148 80 L130 66Z") },
+        { b:H("M96 54 Q68 92 74 150 Q80 168 104 162 Q124 150 114 100Z"), t:H(CAP) + H(FR) + H("M104 62 Q96 100 102 136 Q116 122 112 88Z") },
+        { b:H("M98 56 Q58 66 62 120 Q64 152 78 172 Q90 142 84 112 Q96 84 108 66Z"), t:H(CAP) + H(FR) + TIE(102, 60) + H("M108 64 Q92 80 98 112 Q104 142 118 152 Q112 122 118 98Z") },
+        { b:"", t:Cc(106, 32, 15) + H(CAP) + H(FR) + `<path d="M94 44 Q106 51 118 44" stroke="#ff7eb6" stroke-width="4.5" fill="none" stroke-linecap="round"/>` },
+        { b:H("M91 80 Q84 102 96 120 L112 112 Q102 100 102 78Z"), t:H(CAP) + H(FR) },
+        { b:"", t:H(CAP) + H("M118 40 Q154 42 152 80 Q148 64 134 60 Q118 56 104 68Z") + `<path d="M118 41 Q120 52 112 62" stroke="rgba(0,0,0,.25)" stroke-width="1.5" fill="none"/>` },
+        { b:"", t:H("M96 56 L82 46 L98 46 L88 32 L106 40 L108 22 L120 38 L134 24 L134 42 L152 34 L148 58Z") + H(CAP) + H("M122 52 L150 58 L136 62 L152 74 L130 64Z") + H("M92 80 L80 92 L98 92Z") },
+        { b:"", t:THIN },
+        { b:"", t:THIN + H("M100 58 L96 22 L108 40 L110 14 L122 36 L128 12 L134 36 L146 30 L142 56 Q120 44 100 58Z") },
+        { b:Cc(94, 70, 11) + Cc(96, 90, 10) + Cc(105, 102, 8), t:H(CAP) + Cc(100, 50, 13) + Cc(114, 38, 14) + Cc(132, 40, 12) + Cc(146, 54, 9) + Cc(138, 58, 7) + Cc(127, 54, 7) },
+        { b:H("M91 84 Q78 96 86 118 Q100 112 101 90Z"), t:H("M92 84 Q84 42 122 38 Q150 40 148 62 Q130 46 112 56 Q100 66 101 92Z") + `<path d="M110 46 Q128 42 142 54 M104 56 Q120 50 134 58" stroke="#fff" stroke-opacity=".3" stroke-width="2" fill="none" stroke-linecap="round"/>` },
+        { b:H("M98 52 Q62 44 60 86 Q58 116 76 138 Q86 110 82 86 Q92 72 106 62Z"), t:H(CAP) + H(FR) + TIE(97, 54) }
+      ];
+      const jaw = boy ? "Q147 103 144 108 L136 113 Q126 115 118 111" : "Q148 104 141 109 Q130 115 118 111";
+      const ACS = [
+        "",
+        `<circle cx="137" cy="77" r="10.5" fill="rgba(200,230,255,.2)" stroke="${dk}" stroke-width="2.4"/><path d="M126.5 76 L110 80" stroke="${dk}" stroke-width="2.4"/>`,
+        `<path d="M94 80 Q92 36 122 38 Q142 40 146 60" fill="none" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><ellipse cx="110" cy="86" rx="9" ry="12" fill="#ff5c8a" stroke="${dk}" stroke-width="2.5"/><ellipse cx="108" cy="83" rx="3" ry="5" fill="#fff" opacity=".3"/>`,
+        `<path d="M100 44 L98 22 L118 38Z" fill="${hr}" ${OL}/><path d="M124 38 L138 22 L142 46Z" fill="${hr}" ${OL}/><path d="M102 38 L101 28 L111 36Z M128 36 L136 28 L138 40Z" fill="#ffb3c7"/>`,
+        `<path d="M104 40 L88 30 L88 52Z M104 40 L120 30 L120 52Z" fill="#ff5c8a"/><circle cx="104" cy="41" r="5" fill="#ff3d73"/>`,
+        `<path d="M90 64 Q96 36 124 38 Q146 40 148 58Z" fill="${ft}" ${OL}/><path d="M140 56 L170 60 Q168 67 142 63Z" fill="${sd}"/>`,
+        `<path d="M88 66 Q90 30 120 30 Q148 32 150 62 Q120 52 88 66Z" fill="${ft}" ${OL}/><circle cx="120" cy="28" r="7" fill="#fff"/>`,
+        `<rect x="126" y="70" width="22" height="13" rx="5" fill="#111"/><path d="M126 74 L110 78" stroke="#111" stroke-width="3"/>`
+      ];
+      const er = boy ? 5.2 : 6.6, ery = boy ? 6.8 : 8.2;
+      const eye = `<g class="stu-eye"><ellipse cx="136" cy="76" rx="${er}" ry="${ery}" fill="#fff"/><ellipse cx="138" cy="77.5" rx="${er - 1.4}" ry="${ery - 1.4}" fill="url(#${u}e)"/><ellipse cx="138.4" cy="78" rx="2.4" ry="3.6" fill="#1a1a2e"/><circle cx="136.2" cy="74.4" r="2.4" fill="#fff"/><circle cx="140" cy="81" r="1.2" fill="#fff" opacity=".9"/><path d="M129 70 Q136 ${boy ? 66.5 : 65} 143 71" stroke="${dk}" stroke-width="${boy ? 2 : 3}" fill="none" stroke-linecap="round"/>${boy ? "" : `<path d="M129 70 L125 68.5" stroke="${dk}" stroke-width="2" stroke-linecap="round"/>`}</g>`;
+      const brow = `<path d="M127 ${boy ? 62 : 63} Q135 ${boy ? 58 : 60} 144 ${boy ? 63 : 64}" stroke="${hr}" stroke-width="${boy ? 3.8 : 2.2}" fill="none" stroke-linecap="round"/>`;
+      const topx = [`<path d="M104 106 L114 120 L124 108Z" fill="#fff"/>`, `<ellipse cx="98" cy="104" rx="15" ry="10" fill="${sd}"/>`, "", `<path d="M106 108 L116 124 L124 108Z" fill="#fff"/><path d="M114 112 L118 112 L119 134 L116 138 L113 134Z" fill="#ef4444"/>`][tp];
+      const foreC = tp === 2 ? skg : sw;
+      const g = (id, x1, y1, x2, y2, c1, c2) => `<linearGradient id="${u}${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>`;
+      return `<svg class="stu" viewBox="0 0 260 230" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="${u}h" gradientUnits="userSpaceOnUse" x1="0" y1="30" x2="0" y2="140"><stop offset="0" stop-color="${mixc(hr0, "#ffffff", .38)}"/><stop offset=".45" stop-color="${hr0}"/><stop offset="1" stop-color="${mixc(hr0, "#000000", .3)}"/></linearGradient>
+          <radialGradient id="${u}s" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="${mixc(sk, "#ffffff", .35)}"/><stop offset=".6" stop-color="${sk}"/><stop offset="1" stop-color="${mixc(sk, "#b05a50", .3)}"/></radialGradient>
+          ${g("f", 0, 100, 0, 190, mixc(ft, "#ffffff", .22), mixc(ft, "#000000", .25))}
+          <linearGradient id="${u}e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mixc(ey, "#000000", .45)}"/><stop offset=".55" stop-color="${ey}"/><stop offset="1" stop-color="${mixc(ey, "#ffffff", .5)}"/></linearGradient>
+          <radialGradient id="${u}g"><stop offset="0" stop-color="#ffd58a" stop-opacity=".7"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="110" cy="224" rx="92" ry="6" fill="#000" opacity=".16"/>
+        <ellipse class="glow" cx="215" cy="112" rx="70" ry="64" fill="url(#${u}g)"/>
+        <path d="M46 100 Q38 104 40 150 L44 196" stroke="#5a3d34" stroke-width="11" stroke-linecap="round" fill="none"/>
+        <rect x="42" y="172" width="90" height="12" rx="6" fill="#6b4a40"/><path d="M88 184 V212 M54 214 H122" stroke="#3a2a28" stroke-width="5" stroke-linecap="round"/>
+        <path d="M60 168 Q100 158 142 164 L144 184 Q100 186 60 184Z" fill="#8b93a8" ${OL}/>
+        <path d="M126 166 L148 166 L144 212 L124 212Z" fill="#7d859b" ${OL}/><path d="M118 210 Q122 202 144 204 L158 210 Q160 220 148 220 H120Z" fill="#f5f2ed" ${OL}/>
+        <g class="stu-up">
+          <path d="M58 184 Q48 140 72 108 Q92 92 112 98 L126 128 Q121 150 119 168 L119 186Z" fill="${sw}" ${OL}/>
+          ${topx.includes("ellipse") ? topx : ""}
+          <g class="stu-hair">${HR_[hs].b}</g>
+          <path d="M104 90 L124 88 L128 108 L106 110Z" fill="${skg}"/>
+          ${tp !== 1 ? topx : ""}
+          <g class="stu-head">
+            <ellipse cx="112" cy="85" rx="5" ry="8" fill="${skg}" ${OL}/>
+            <path d="M92 76 Q90 48 118 44 Q144 44 146 70 Q147 76 151 84 Q154 88 147 89 Q148 94 146 98 ${jaw} Q96 104 92 76Z" fill="${skg}" ${OL}/>
+            ${boy ? "" : `<ellipse cx="136" cy="93" rx="6.5" ry="3.6" fill="#ff7f9a" opacity=".5"/>`}
+            ${eye}${brow}
+            <path d="M143 100 Q146 101.5 148.5 99" stroke="#b5485d" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+            ${HR_[hs].t}${ACS[ac]}
+          </g>
+        </g>
+        <rect x="156" y="158" width="110" height="80" fill="#b98558" ${OL}/><path d="M170 176 H250 M170 200 H250" stroke="#a2724a" stroke-width="3"/>
+        <rect x="146" y="150" width="130" height="9" rx="3" fill="#dcae7c" ${OL}/>
+        <path d="M160 150 L160 137 Q178 130 196 137 L196 150Z" fill="#fff8ea" stroke="#b9a07a"/><path d="M196 137 Q214 130 232 137 L232 150Z" fill="#fffdf4" stroke="#b9a07a"/>
+        <path d="M166 140 H190 M166 144 H190 M202 139 H226 M202 143 H226" stroke="#cdbb98" stroke-width="1"/>
+        <rect x="238" y="132" width="16" height="18" rx="4" fill="#f6efe4" stroke="#c9b894"/><path d="M254 137 q8 1 0 9" fill="none" stroke="#c9b894" stroke-width="2.5"/>
+        <path class="steam" d="M243 128 q-4 -6 0 -11 M249 128 q4 -6 0 -11" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="228" cy="150" rx="14" ry="3" fill="#7a5230"/><path d="M228 150 L222 116 L204 100" stroke="#7a5230" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M190 96 L222 84 L228 106 L196 112Z" fill="#e8a24a" ${OL}/>
+        <g class="stu-arm">
+          <path d="M100 114 Q112 140 134 150" stroke="${sd}" stroke-width="22" stroke-linecap="round" fill="none"/>
+          <path d="M100 114 Q112 140 134 150" stroke="${sw}" stroke-width="19" stroke-linecap="round" fill="none"/>
+          <path d="M132 150 L166 146" stroke="${tp === 2 ? "rgba(90,40,30,.3)" : sd}" stroke-width="17" stroke-linecap="round"/>
+          <path d="M132 150 L166 146" stroke="${foreC}" stroke-width="14" stroke-linecap="round"/>
+          <ellipse cx="172" cy="146" rx="8" ry="6" fill="${skg}" ${OL}/>
+          <path d="M172 146 L186 136" stroke="#f2c14e" stroke-width="3.4" stroke-linecap="round"/><path d="M184 137.5 L187 135" stroke="#3a2a28" stroke-width="3" stroke-linecap="round"/>
+        </g>
+      </svg>`;
+    };
+
+    /* ----- anime chibi pets ----- */
+    const PD = {
+      "🐱":["#fffaf4","#ecd8c6","#f2c9a0","cat","#6fb6ea"], "🐶":["#f2b66c","#d9904d","#fff0d4","dog","#7a4a2a"],
+      "🦊":["#f6954b","#d97035","#fff4e4","fox","#e0a030"], "🐰":["#fffafc","#f2d4df","#ffbfd2","bun","#e86a8a"],
+      "🐼":["#fefefc","#e2e6e4","#34343f","pan","#4a3a3a"], "🐲":["#86dcb8","#52b592","#fff1bd","dra","#f0b030"]
+    };
+    const petSVG = (sp, L = 3) => {
+      const [c1, c2, c3, k, ec] = PD[sp] || PD["🐱"], u = "p" + (++_u);
+      const O = 'stroke="#6b4a3c" stroke-opacity=".55" stroke-width="1.6" stroke-linejoin="round"';
+      const W = `<svg viewBox="-8 0 136 128" xmlns="http://www.w3.org/2000/svg">`;
+      if (L < 2) return W + `<g class="pt-egg"><ellipse cx="60" cy="116" rx="26" ry="5" fill="#000" opacity=".1"/><path d="M60 22 Q94 30 94 80 Q94 114 60 114 Q26 114 26 80 Q26 30 60 22Z" fill="#fff6e6" ${O}/><path d="M60 22 Q94 30 94 80 Q94 96 86 106 Q70 114 60 114 Q50 114 42 108 Q60 60 60 22Z" fill="${c2}" opacity=".3"/><circle cx="46" cy="60" r="6" fill="${c3}" opacity=".8"/><circle cx="74" cy="84" r="8" fill="${c3}" opacity=".8"/><circle cx="52" cy="92" r="4" fill="${c3}" opacity=".8"/><path d="M42 50 L50 58 L56 48 L64 58 L70 49 L78 57" fill="none" stroke="#6b4a3c" stroke-opacity=".5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="46" cy="40" rx="6" ry="9" fill="#fff" opacity=".6" transform="rotate(22 46 40)"/></g></svg>`;
+      const T = (d, w, col = c1) => `<path d="${d}" fill="none" stroke="#6b4a3c" stroke-opacity=".5" stroke-width="${w + 3}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
+      const tail = {
+        cat: T("M80 108 Q112 108 105 76", 9) + `<path d="M105 82 Q108 78 105 76" stroke="${c3}" stroke-width="9" stroke-linecap="round" fill="none"/>`,
+        dog: T("M82 106 Q110 108 101 84 Q96 78 90 85", 10, c2),
+        fox: `<path d="M80 112 Q120 112 114 74 Q102 80 98 94 Q92 108 80 112Z" fill="${c1}" ${O}/><path d="M114 74 Q102 80 99 92 Q110 92 114 74Z" fill="#fff"/>`,
+        bun: `<circle cx="88" cy="112" r="9" fill="#fff" ${O}/>`, pan: `<circle cx="86" cy="110" r="7" fill="${c3}"/>`,
+        dra: T("M80 110 Q110 118 110 90", 8) + `<path d="M110 92 L104 82 L117 82Z" fill="${c3}" ${O}/>`
+      }[k];
+      const bx = (s) => `${s}<g transform="translate(120 0) scale(-1 1)">${s}</g>`;
+      const ear = {
+        cat: `<path d="M27 46 L29 14 Q30 10 34 13 L52 29 Z" fill="${c1}" ${O}/><path d="M32 38 L33 20 L45 30 Z" fill="${c3}" opacity=".75"/>`,
+        dog: `<path d="M25 48 L24 18 Q25 13 30 16 L50 30 Z" fill="${c2}" ${O}/><path d="M30 40 L30 24 L42 32 Z" fill="${c3}"/>`,
+        fox: `<path d="M24 46 L26 8 Q28 5 31 8 L52 28 Z" fill="${c1}" ${O}/><path d="M26 22 L26 9 L33 14 Z" fill="#4b3030"/><path d="M31 38 L31 22 L43 30 Z" fill="${c3}"/>`,
+        bun: `<g transform="rotate(-10 41 40)"><ellipse cx="41" cy="20" rx="9" ry="23" fill="${c1}" ${O}/><ellipse cx="41" cy="22" rx="4.6" ry="16" fill="${c3}" opacity=".8"/></g>`,
+        pan: `<circle cx="31" cy="31" r="11" fill="${c3}"/>`,
+        dra: `<path d="M36 36 L30 8 Q32 6 34 9 L50 28 Z" fill="${c3}" ${O}/><path d="M22 54 Q6 48 10 62 Q18 62 26 62Z" fill="${c2}" ${O}/>`
+      }[k];
+      const wings = k === "dra" ? bx(`<path class="pt-wing" d="M42 94 Q10 66 6 98 Q22 90 32 104Z" fill="${c2}" ${O}/>`) : "";
+      const bl = (k === "dog" || k === "fox" || k === "dra") ? c3 : "#fff";
+      const pawc = k === "pan" ? c3 : c1;
+      const body = `<ellipse cx="60" cy="100" rx="25" ry="20" fill="url(#${u}b)" ${O}/><ellipse cx="60" cy="104" rx="14" ry="13" fill="${bl}" opacity=".92"/><ellipse cx="44" cy="117" rx="11" ry="6.5" fill="${pawc}" ${O}/><ellipse cx="76" cy="117" rx="11" ry="6.5" fill="${pawc}" ${O}/><ellipse cx="42" cy="104" rx="7" ry="9" fill="${pawc}" ${O} transform="rotate(14 42 104)"/><ellipse cx="78" cy="104" rx="7" ry="9" fill="${pawc}" ${O} transform="rotate(-14 78 104)"/>`;
+      const eye = (x) => `<ellipse cx="${x}" cy="62" rx="6.6" ry="8" fill="#2f2124"/><ellipse cx="${x}" cy="64" rx="5" ry="6" fill="${ec}"/><ellipse cx="${x}" cy="65" rx="2.6" ry="3.8" fill="#241619"/><circle cx="${x - 2.3}" cy="59.6" r="2.8" fill="#fff"/><circle cx="${x + 2.6}" cy="66.5" r="1.3" fill="#fff" opacity=".9"/>`;
+      const mark = {
+        cat: `<path d="M60 25 L60 34 M52 27 L53 34 M68 27 L67 34" stroke="${c3}" stroke-width="2.8" stroke-linecap="round"/>`,
+        dog: `<circle cx="46" cy="49" r="3.6" fill="${c3}"/><circle cx="74" cy="49" r="3.6" fill="${c3}"/><ellipse cx="60" cy="74" rx="17" ry="12" fill="${c3}"/>`,
+        fox: `<path d="M21 62 Q40 60 60 80 Q80 60 99 62 Q96 88 60 94 Q24 88 21 62Z" fill="${c3}"/>`,
+        bun: `<ellipse cx="60" cy="74" rx="12" ry="8" fill="#fff" opacity=".85"/>`,
+        pan: "", dra: `<path d="M44 26 L48 14 L54 25 L60 11 L66 25 L72 14 L76 26Z" fill="${c3}" ${O}/>`
+      }[k];
+      const patch = k === "pan" ? `<ellipse cx="46" cy="62" rx="9" ry="11" fill="${c3}" transform="rotate(20 46 62)"/><ellipse cx="74" cy="62" rx="9" ry="11" fill="${c3}" transform="rotate(-20 74 62)"/>` : "";
+      const whisk = (k === "cat" || k === "fox") ? `<path d="M30 69 L15 66 M30 73 L15 76 M90 69 L105 66 M90 73 L105 76" stroke="#9a7a6a" stroke-width="1.2" stroke-linecap="round"/>` : "";
+      const nose = `<path d="M57.5 69 Q60 72 62.5 69 Q60 67 57.5 69Z" fill="${k === "dog" || k === "fox" ? "#4a3030" : "#d77a80"}"/>`;
+      const mouth = `<path d="M60 71.5 L60 74 M60 74 Q56.5 78.5 53 74 M60 74 Q63.5 78.5 67 74" stroke="#7a4a44" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+      const hat = L >= 10 ? `<path d="M42 30 L46 12 L54 24 L60 6 L66 24 L74 12 L78 30Z" fill="#ffd35a" ${O}/><circle cx="60" cy="14" r="2.6" fill="#ff5c8a"/><circle cx="48" cy="24" r="2" fill="#5ac8ff"/><circle cx="72" cy="24" r="2" fill="#5ac8ff"/>` : L >= 5 ? `<path d="M46 31 V40 Q60 46 74 40 V31" fill="#3b4a5e"/><path d="M34 28 L60 17 L86 28 L60 39Z" fill="#2d3a4a" ${O}/><path d="M86 28 V42" stroke="#ffd35a" stroke-width="2"/><circle cx="86" cy="44" r="3" fill="#ffd35a"/>` : "";
+      const sparkle = L >= 10 ? `<g class="pt-ear" fill="#ffe27a"><path d="M8 30 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z"/><path d="M110 50 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z"/></g>` : "";
+      return W + `
+        <defs>
+          <radialGradient id="${u}h" cx=".38" cy=".28" r=".9"><stop offset="0" stop-color="${mixc(c1, "#ffffff", .5)}"/><stop offset=".55" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></radialGradient>
+          <linearGradient id="${u}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>
+        </defs>
+        <ellipse cx="60" cy="121" rx="34" ry="5" fill="#000" opacity=".12"/>
+        ${wings}<g class="pt-tail">${tail}</g>
+        <g class="pb">${body}
+          <g class="pt-head">
+            <g class="pt-ear">${bx(ear)}</g>
+            <ellipse cx="60" cy="58" rx="39" ry="34" fill="url(#${u}h)" ${O}/>
+            ${k === "dog" || k === "fox" ? `<path d="M22 66 L15 72 L24 74Z M98 66 L105 72 L96 74Z" fill="${c1}" ${O}/>` : ""}
+            ${mark}${patch}
+            <ellipse cx="34" cy="73" rx="6.8" ry="4.2" fill="#ff8f9f" opacity=".55"/><ellipse cx="86" cy="73" rx="6.8" ry="4.2" fill="#ff8f9f" opacity=".55"/>
+            <g class="pt-eyes">${eye(46)}${eye(74)}</g>
+            ${whisk}${nose}${mouth}${hat}
+          </g>
+        </g>${sparkle}
+      </svg>`;
+    };
+    const petHTML = (sp, L, cls = "") => `<div class="pet ${cls}"><div class="pj">${petSVG(sp, L)}</div></div>`;
+    const TRICKS = [["jump","⭐"],["spin","✨"],["flip","💫"],["bow","💖"],["hop","🎵"]];
+    const doTrick = (el) => {
+      if (!el || el.dataset.busy) return;
+      const t = TRICKS[Math.floor(Math.random() * TRICKS.length)];
+      el.dataset.busy = 1; el.dataset.fx = t[1]; el.classList.add("tr-" + t[0], "fx");
+      setTimeout(() => { el.classList.remove("tr-" + t[0], "fx"); delete el.dataset.busy; }, 1400);
+    };
+    setInterval(() => {
+      const ps = [...document.querySelectorAll(".pet.auto")];
+      if (ps.length && Math.random() < .75) doTrick(ps[Math.floor(Math.random() * ps.length)]);
+    }, 3200);
+    document.addEventListener("click", (e) => {
+      const t = e.target.closest && e.target.closest("[data-act=trick]");
+      const p = t ? document.querySelector(".petstage .pet") : (e.target.closest && e.target.closest(".pet"));
+      if (p) doTrick(p);
+    });
+
+    const fxl = (k, n) => `<div class="fx ${k}">${Array.from({ length:n }, (_, i) => `<i style="left:${(i * 37 + 9) % 100}%;${k === "star" ? "top:" + ((i * 29) % 58) + "%;" : ""}animation-delay:-${(i * 13 % 10) / 2}s;animation-duration:${k === "petal" ? 6 + i % 4 : 2 + i % 3}s"></i>`).join("")}</div>`;
+    const rainG = (x, y, w, h) => { let l = ""; for (let j = 0; j < 9; j++) for (let k = -1; k < h / 60 + 1; k++) l += `<path d="M${x + (j * w / 9 + (j * 23) % 17)} ${y + k * 60 + (j * 29) % 50}l-3 14" stroke="#e4ecff" stroke-opacity=".65" stroke-width="1.5" stroke-linecap="round"/>`; return `<clipPath id="wc"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath><g clip-path="url(#wc)"><g class="rn">${l}</g></g>`; };
+    const shelf = (x, y, w) => { let b = "", cx = x + 6; const cs = ["#c4564a","#e0a64a","#4f8f6a","#4a6fa5","#8e5bd9","#d9826a","#3f7f8f"]; for (let i = 0; cx < x + w - 14; i++) { const bw = 9 + (i * 7) % 9, bh = 34 + (i * 11) % 22; b += `<rect x="${cx}" y="${y - bh}" width="${bw}" height="${bh}" rx="1.5" fill="${cs[i % 7]}"/><rect x="${cx}" y="${y - bh}" width="${bw}" height="3" fill="#fff" opacity=".25"/>`; cx += bw + 1.5; } return b + `<rect x="${x}" y="${y}" width="${w}" height="7" fill="#8a5a36"/>`; };
+    const plant = (x, y, s = 1, c = "#5f9a6a") => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-16 0 L16 0 L12 30 L-12 30Z" fill="#b8683f"/><path d="M0 0 Q-34 -26 -26 -62 Q-6 -40 0 0Z" fill="${c}"/><path d="M0 0 Q30 -30 22 -70 Q2 -44 0 0Z" fill="${mixc(c, "#ffffff", .15)}"/><path d="M0 0 Q-8 -50 4 -86 Q16 -48 0 0Z" fill="${mixc(c, "#000000", .12)}"/></g>`;
+    const lamp = (x, y) => `<ellipse class="glow" cx="${x + 16}" cy="${y + 20}" rx="120" ry="110" fill="url(#lg)"/><path d="M${x} ${y + 120} L${x + 30} ${y + 40}" stroke="#7a5230" stroke-width="5" stroke-linecap="round"/><path d="M${x + 12} ${y + 38} L${x + 50} ${y + 22} L${x + 56} ${y + 50} Z" fill="#e8a24a"/>`;
+    const D0 = `<defs><radialGradient id="lg"><stop offset="0" stop-color="#ffd58a" stop-opacity=".75"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient><linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9e2d3"/><stop offset="1" stop-color="#8fb8a2"/></linearGradient></defs>`;
     const BACKDROPS = [
-      {n:"Cozy room", bg:"linear-gradient(#f2ecdf,#d7d0bf 58%,#c7b39a)", d:["🪟","🛋️","🕯️"]},
-      {n:"Starry night", bg:"radial-gradient(circle at 20% 20%,#dfe5ff,transparent 40%),linear-gradient(#eae6f3,#b3bfd9)", d:["🌙","✨","⭐"]},
-      {n:"Library", bg:"linear-gradient(#f5ede3,#d9c1b1)", d:["📚","🕰️","📖"]},
-      {n:"Sakura", bg:"linear-gradient(#f6dfe9,#f3bfd0)", d:["🌸","🌸","🌸"]},
-      {n:"Rainy café", bg:"linear-gradient(#e6ebf5,#c5d0df)", d:["🌧️","☕","🌃"]},
-      {n:"Sunset beach", bg:"linear-gradient(#f8d8c1,#f1a3a0 52%,#b6a9d9)", d:["🌅","🏖️","🐚"]}
+      {n:"Cozy room", bg:"#e6d8bf", art:() => `<svg class="bgart" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice">${D0}<rect width="800" height="440" fill="#e9dcc4"/><rect y="350" width="800" height="90" fill="#b98a5e"/><rect x="250" y="30" width="300" height="240" rx="6" fill="#8a6a4a"/><rect x="260" y="40" width="280" height="220" fill="url(#sk1)"/><circle cx="330" cy="140" r="52" fill="#6fa37a" opacity=".8"/><circle cx="420" cy="110" r="64" fill="#5f9a6a" opacity=".75"/><circle cx="500" cy="160" r="46" fill="#7fb386" opacity=".8"/>${rainG(260, 40, 280, 220)}<path d="M400 40 V260 M260 150 H540" stroke="#8a6a4a" stroke-width="7"/><path d="M270 40 Q300 90 280 120 M300 40 Q330 80 318 112" stroke="#4f8f5a" stroke-width="4" fill="none"/>${lamp(80, 130)}${plant(690, 330, 1.3)}${plant(150, 340, .9, "#6fae7a")}<rect x="600" y="90" width="70" height="90" fill="#f6efe0" stroke="#b9a07a" stroke-width="3"/><path d="M615 160 Q635 100 655 160" stroke="#6fa37a" stroke-width="4" fill="none"/></svg>`},
+      {n:"Starry night", bg:"#202a5a", art:() => `<svg class="bgart" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="ns" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#171d45"/><stop offset=".7" stop-color="#3b4a86"/><stop offset="1" stop-color="#7f8fc4"/></linearGradient></defs><rect width="800" height="440" fill="url(#ns)"/><circle cx="650" cy="90" r="38" fill="#fff6d6"/><circle cx="664" cy="82" r="34" fill="#202a5a" opacity=".0"/><circle cx="650" cy="90" r="60" fill="#fff6d6" opacity=".12"/><path d="M0 360 Q140 290 300 350 T620 330 T800 340 V440 H0Z" fill="#232c5c"/><path d="M0 400 Q200 350 400 395 T800 380 V440 H0Z" fill="#1a2149"/></svg>${fxl("star", 36)}`},
+      {n:"Library", bg:"#d9b99a", art:() => `<svg class="bgart" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4" stop-opacity=".6"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></linearGradient></defs><rect width="800" height="440" fill="#e8cfae"/><rect x="40" y="20" width="230" height="330" fill="#a8734a"/><rect x="530" y="20" width="230" height="330" fill="#a8734a"/>${shelf(48, 100, 214)}${shelf(48, 190, 214)}${shelf(48, 280, 214)}${shelf(538, 100, 214)}${shelf(538, 190, 214)}${shelf(538, 280, 214)}<rect x="330" y="50" width="140" height="170" fill="#bfe0ee" stroke="#8a5a36" stroke-width="8"/><path d="M290 0 L520 440 L700 440 L440 0Z" fill="url(#bm)"/><rect y="352" width="800" height="88" fill="#a2734c"/><path d="M300 440 L340 380 H460 L500 440Z" fill="#c25a4a" opacity=".6"/></svg>`},
+      {n:"Sakura", bg:"#f6dfe9", art:() => `<svg class="bgart" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe6ee"/><stop offset="1" stop-color="#f3bfd0"/></linearGradient></defs><rect width="800" height="440" fill="url(#sg)"/><path d="M800 40 Q640 70 560 150 Q520 190 440 200" stroke="#7a4a3c" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M700 60 Q650 100 650 150" stroke="#7a4a3c" stroke-width="8" fill="none"/>${Array.from({ length:26 }, (_, i) => `<circle cx="${440 + (i * 71) % 360}" cy="${40 + (i * 47) % 170}" r="${14 + i % 3 * 4}" fill="${i % 2 ? "#ffb3cb" : "#ffd1e0"}" opacity=".85"/>`).join("")}<ellipse cx="400" cy="440" rx="520" ry="70" fill="#e8a3bd" opacity=".6"/></svg>${fxl("petal", 16)}`},
+      {n:"Rainy café", bg:"#3a3358", art:() => `<svg class="bgart" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice">${D0}<defs><linearGradient id="nw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f2150"/><stop offset="1" stop-color="#4a4f8a"/></linearGradient></defs><rect width="800" height="440" fill="#8a6b78"/><rect y="350" width="800" height="90" fill="#6e4f46"/><rect x="290" y="30" width="230" height="260" rx="4" fill="#6a4a3a"/><rect x="300" y="40" width="210" height="240" fill="url(#nw)"/>${rainG(300, 40, 210, 240)}<path d="M405 40 V280" stroke="#6a4a3a" stroke-width="7"/><rect x="280" y="278" width="250" height="12" fill="#7a5a44"/><g transform="translate(330 250)"><path d="M0 0 L30 0 L26 26 L4 26Z" fill="#b8683f"/><path d="M15 0 Q-10 -20 -4 -40 Q12 -20 15 0Z M15 0 Q40 -16 34 -40 Q18 -20 15 0Z" fill="#6fa37a"/></g>${lamp(90, 110)}<rect x="40" y="60" width="90" height="110" fill="#f1e7d3" opacity=".85" stroke="#b9a07a" stroke-width="3"/><path d="M85 80 v70 M70 95 h30 M72 120 h26 M70 140 h30" stroke="#8a7a6a" stroke-width="3"/><rect x="620" y="70" width="100" height="120" fill="#f1e7d3" opacity=".85" stroke="#b9a07a" stroke-width="3"/><circle cx="670" cy="125" r="26" fill="none" stroke="#8a7a6a" stroke-width="3"/></svg>`},
+      {n:"Sunset beach", bg:"#f1a3a0", art:() => `<svg class="bgart" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="ss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b6a9d9"/><stop offset=".55" stop-color="#f1a3a0"/><stop offset="1" stop-color="#f8d8c1"/></linearGradient></defs><rect width="800" height="300" fill="url(#ss)"/><circle cx="400" cy="250" r="70" fill="#fff0c8"/><circle cx="400" cy="250" r="110" fill="#fff0c8" opacity=".25"/><rect y="270" width="800" height="90" fill="#7f8fc4"/><g class="wv" opacity=".5">${Array.from({ length:8 }, (_, i) => `<path d="M${i * 120 - 20} ${290 + i % 3 * 22} h70" stroke="#fff6d6" stroke-width="3" stroke-linecap="round"/>`).join("")}</g><path d="M0 350 Q200 330 400 350 T800 345 V440 H0Z" fill="#f3d9b0"/><ellipse cx="640" cy="395" rx="20" ry="9" fill="#f7b6a0"/></svg>`}
     ];
     const bd = () => ix(BACKDROPS, P.backdrop);
 
@@ -1390,7 +1690,7 @@
       ? setDoc(doc(db, "rooms", room.code, "members", user.uid), {
           username:P.username,
           avatar:P.avatar,
-          pet:(P.pet && P.pet.species) || "🐱",
+          pet:((P.pet && P.pet.species) || "🐱") + lvl(P),
           emoji:P.emoji || "😀",
           status:rs.status,
           emote:rs.emote,
@@ -1441,27 +1741,39 @@
     const playable = (d) => (d.questions || []).filter(x => (x.type || "mc") !== "match" || (x.pairs || []).length >= 2);
     const QT = 20000, LBT = 6000;
     const speedPts = (el) => Math.round(1000 * (1 - Math.min(1, Math.max(0, el) / QT) / 2));
-    const racePhase = () => {
-      const t = Date.now() - race.startAt;
-      const n = race.questions.length;
-      if (t < 0) return { ph:"wait", left:-t };
-      const k = Math.floor(t / (QT + LBT));
-      if (k >= n) return { ph:"over", k:n };
-      const r = t - k * (QT + LBT);
-      return r < QT ? { ph:"q", k, el:r, left:QT - r } : { ph:"lb", k, left:QT + LBT - r };
+    const raceSched = () => {
+      const S = [], D = [];
+      let t = race.startAt;
+      for (let k = 0; k < race.questions.length; k++) {
+        let d = QT;
+        if (racePlayers.length && racePlayers.every(p => p.ats && p.ats[k] >= t)) {
+          d = Math.min(QT, Math.max(1500, Math.max(...racePlayers.map(p => p.ats[k])) - t + 900));
+        }
+        S.push(t); D.push(d); t += d + LBT;
+      }
+      return { S, D, end:t };
     };
-    const newMyRace = (rid) => ({ rid, ans:{}, score:0, right:0, paid:false, mk:-1, m:[], order:[] });
-    const raceOver = () => !!race && (race.status === "done" || (race.status === "live" && Date.now() >= race.startAt + race.questions.length * (QT + LBT)));
+    const racePhase = () => {
+      const now = Date.now(), sc = raceSched(), n = race.questions.length;
+      if (now < race.startAt) return { ph:"wait", left:race.startAt - now };
+      for (let k = 0; k < n; k++) {
+        const r = now - sc.S[k];
+        if (r < sc.D[k]) return { ph:"q", k, el:r, left:sc.D[k] - r, dur:sc.D[k] };
+        if (r < sc.D[k] + LBT) return { ph:"lb", k, left:sc.D[k] + LBT - r };
+      }
+      return { ph:"over", k:n };
+    };
+    const newMyRace = (rid) => ({ rid, ans:{}, ats:{}, score:0, right:0, paid:false, mk:-1, m:[], order:[] });
+    const raceOver = () => !!race && (race.status === "done" || (race.status === "live" && Date.now() >= raceSched().end));
     const standings = () => [...racePlayers].sort((a, b) => (b.correct || 0) - (a.correct || 0) || ((a.finished ? a.finishedAt : 9e15) - (b.finished ? b.finishedAt : 9e15)) || (b.answered || 0) - (a.answered || 0));
     const raceRef = () => doc(db, "rooms", room.code, "races", race.id);
-    const pushProgress = (answered, correct, fin) => setDoc(doc(db, "rooms", room.code, "races", race.id, "players", user.uid), {
-      username:P.username,
-      emoji:P.emoji || "😀",
-      correct,
-      answered,
-      finished: !!fin,
-      finishedAt: fin ? Date.now() : 0
-    });
+    let atsOk = true;
+    const pushProgress = (answered, correct, fin) => {
+      const ref = doc(db, "rooms", room.code, "races", race.id, "players", user.uid);
+      const d = { username:P.username, emoji:P.emoji || "😀", correct, answered, finished: !!fin, finishedAt: fin ? Date.now() : 0 };
+      if (!atsOk) return setDoc(ref, d);
+      return setDoc(ref, { ...d, ats:(myRace && myRace.ats) || {} }).catch(() => { atsOk = false; return setDoc(ref, d); });
+    };
 
     let lastKey = "";
     setInterval(() => {
@@ -1474,7 +1786,7 @@
           if (ph.ph === "over") { finishMyRace(); maybeWin(); }
         } else if (ph.ph === "q" || ph.ph === "lb") {
           const tl = $("tleft"); if (tl) tl.textContent = Math.ceil(ph.left / 1000) + "s";
-          const tb = $("tbar"); if (tb) tb.style.width = Math.round(ph.left / (ph.ph === "q" ? QT : LBT) * 100) + "%";
+          const tb = $("tbar"); if (tb) tb.style.width = Math.round(ph.left / (ph.ph === "q" ? ph.dur : LBT) * 100) + "%";
         }
       }
       if (view === "qtake" && qz && qz.questions[qz.i]) {
@@ -1492,9 +1804,15 @@
       }
     }, 250);
 
+    let paintKey = "", nqT;
     const paintRace = () => {
       const el = $("racebox");
-      if (el && view === "room") el.innerHTML = raceHTML();
+      if (el && view === "room") {
+        const ph = race && race.status === "live" ? racePhase() : null;
+        const key = race ? race.id + race.status + (ph ? ph.ph + (ph.k ?? "") : "") : "none";
+        if (key !== paintKey) { paintKey = key; el.classList.add("newq"); clearTimeout(nqT); nqT = setTimeout(() => el.classList.remove("newq"), 900); }
+        el.innerHTML = raceHTML();
+      }
     };
 
     const raceResults = () => {
@@ -1551,7 +1869,7 @@
       const st = standings();
       const medal = i => ["🥇","🥈","🥉"][i] || "#" + (i + 1);
       const rows = st.slice(0, limit).map((p, i) => `
-        <div class="card row ${p.id === user.uid ? "me" : ""}">
+        <div class="card row ${p.id === user.uid ? "me" : ""}" style="--i:${i}">
           <b>${medal(i)} ${esc(p.emoji || "😀")} ${esc(p.username)}${p.id === user.uid ? " (you)" : ""}</b>
           <span>${p.correct || 0} pts</span>
         </div>`);
@@ -1565,7 +1883,7 @@
       const inQ = ph.ph === "q";
       const head = `<p class="sub">Question ${k + 1} of ${total} · Score ${myRace.score}</p>`;
       const qcard = `<div class="card"><b>${esc(x.q)}</b>${imgTag(x.img)}</div>`;
-      const timer = `<div class="tbar"><i id="tbar" style="width:${Math.round(ph.left / (inQ ? QT : LBT) * 100)}%"></i></div>`;
+      const timer = `<div class="tbar"><i id="tbar" style="width:${Math.round(ph.left / (inQ ? ph.dur : LBT) * 100)}%"></i></div>`;
 
       if (!inQ) {
         const verdict = my ? (my.right ? `✅ Correct! +${my.pts} pts` : "❌ Wrong · +0 pts") : "⏰ Too slow · +0 pts";
@@ -1574,7 +1892,7 @@
         else if (x.type === "tf") ans = tfAnswer(x.ans) ? "True" : "False";
         else ans = esc(x.opts[x.ans]);
         return head + qcard + `
-          <div class="card" style="text-align:center"><b>${verdict}</b><div class="sub">Answer: ${ans}</div></div>
+          <div class="card verdict" style="text-align:center"><b>${verdict}</b><div class="sub">Answer: ${ans}</div></div>
           <h3>🏆 Leaderboard</h3>${scoreboard(5)}
           ${timer}
           <div class="sub" style="text-align:center">${k + 1 >= total ? "Final results in" : "Next question in"} <b id="tleft">${Math.ceil(ph.left / 1000)}s</b></div>`;
@@ -1625,9 +1943,9 @@
         const w = st[0];
         const medal = i => ["🥇","🥈","🥉"][i] || "#" + (i + 1);
 
-        return head + (w ? `<div class="card" style="margin:10px 0;text-align:center"><div style="font-size:34px">🏆</div><b>${esc(w.emoji || "")} ${esc(w.username)} wins with ${w.correct || 0} points!</b></div>` : "") +
+        return head + (w ? `<div class="card verdict" style="margin:10px 0;text-align:center"><div style="font-size:34px">🏆</div><b>${esc(w.emoji || "")} ${esc(w.username)} wins with ${w.correct || 0} points!</b></div>` : "") +
           st.map((p, i) => `
-            <div class="card row ${p.id === user.uid ? "me" : ""}">
+            <div class="card row ${p.id === user.uid ? "me" : ""}" style="--i:${i}">
               <b>${medal(i)} ${esc(p.emoji || "😀")} ${esc(p.username)}${p.id === user.uid ? " (you)" : ""}</b>
               <span>${p.correct || 0} pts</span>
             </div>
@@ -1687,6 +2005,7 @@
         : i === x.ans;
       const pts = right ? speedPts(ph.el) : 0;
       myRace.ans[ph.k] = { sel:i, right, pts };
+      myRace.ats[ph.k] = Date.now();
       myRace.score += pts;
       if (right) myRace.right++;
       pushProgress(Object.keys(myRace.ans).length, myRace.score, false).catch(() => {});
@@ -1860,13 +2179,13 @@
 
     const paintRoom = () => {
       const el = $("scene");
-      if (el && view === "room") el.innerHTML = sceneHTML();
+      if (el && view === "room") { const h = sceneHTML(); if (el.__h !== h) { el.__h = h; el.innerHTML = h; } }
     };
 
     const sceneHTML = () => {
       const b = bd();
       const now = Date.now();
-      const deco = b.d.map((e, k) => `<span class="deco" style="left:${8 + k * 38}%">${e}</span>`).join("");
+      const hsh = (s) => [...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0);
       const act = members.filter(m => now - (m.lastSeen || 0) < 90000).sort((a, c) => String(a.username || "").localeCompare(String(c.username || "")));
       const lastMsg = uid => {
         for (let i = chat.length - 1; i >= 0; i--) {
@@ -1880,17 +2199,17 @@
         if (m.emote && now - (m.emoteAt || 0) < 8000) return `<div class="bub">${esc(m.emote)}</div>`;
         return "";
       };
-      return deco + (act.length
+      return b.art() + (act.length
         ? act.map(m => `
-            <div class="who">
+            <div class="who" style="--d:-${(hsh(m.id) % 50) / 10}s">
               ${bubble(m)}
-              ${avatar(m.avatar)}
-              <span class="wp">${esc(m.pet || "")}</span>
+              ${studier(m.avatar)}
+              <div class="wp">${(() => { const pm = String(m.pet || "🐱").match(/^(\D+?)(\d*)$/u) || [0, "🐱", ""]; return petHTML(pm[1], +pm[2] || 3, "auto"); })()}</div>
               <div class="wn">${esc(m.emoji || "😀")} ${esc(m.username || "Student")}${m.id === user.uid ? " (you)" : ""}</div>
               <div class="st">${ST[m.status] || ST.studying}</div>
             </div>
           `).join("")
-        : '<div class="sub" style="color:#fff">Waiting for people to join…</div>');
+        : '<div class="sub" style="color:#fff;position:relative;z-index:2">Waiting for people to join…</div>');
     };
 
     const vPlanner = () => {
@@ -1922,7 +2241,7 @@
 
         <div class="card row">
           <div style="display:flex;gap:12px;align-items:center">
-            <span style="font-size:40px">${petEmoji()}</span>
+            <div style="width:68px">${petHTML(P.pet.species, lvl(P), "auto")}</div>
             <div>
               <b>${esc(P.pet.name)}</b>
               <div class="sub">Level ${lvl(P)}</div>
@@ -2050,7 +2369,8 @@
         <h2>My Pet</h2>
         <p class="sub">Your pet grows every time you earn points.</p>
         <div class="card" style="text-align:center">
-          <div style="font-size:${Math.min(130, 56 + L * 7)}px;line-height:1.1">${hat ? `<div style="font-size:.4em">${hat}</div>` : ""}${petEmoji()}</div>
+          <div class="petstage" style="width:${Math.min(260, 150 + L * 12)}px">${petHTML(P.pet.species, L, "auto")}</div>
+          <button class="alt" data-act="trick">🎪 Do a trick!</button>
           <h3>${esc(P.pet.name)} · Level ${L} ${stage}</h3>
           <div class="bar"><i style="width:${pct}%"></i></div>
           <div class="sub">${Math.max(0, hi - P.points)} points to level ${L + 1}</div>
@@ -2060,7 +2380,7 @@
         <div class="card">
           <b>Choose your pet</b>
           <div class="btns" style="margin-top:10px">
-            ${PETS.map((p, i) => `<button class="alt ${P.pet.species === p ? "on" : ""}" style="font-size:22px" data-act="petsp" data-i="${i}">${p}</button>`).join("")}
+            ${PETS.map((p, i) => `<button class="alt ${P.pet.species === p ? "on" : ""}" data-act="petsp" data-i="${i}"><span class="petmini">${petHTML(p, 3)}</span></button>`).join("")}
           </div>
           <br />
           <b>Name</b>
@@ -2096,7 +2416,7 @@
 
       <h3>Your character</h3>
       <div class="card two">
-        <div class="prev">${avatar(P.avatar)}</div>
+        <div class="prev">${studier(P.avatar)}</div>
         <div>
           <div class="sub">Quick looks</div>
           <div class="btns" style="margin-top:6px">${PRESETS.map((x, i) => `<button class="alt" data-act="preset" data-i="${i}">${x.n}</button>`).join("")}</div>
@@ -2370,6 +2690,7 @@
 
     const vStudy = () => {
       const c = study.cards[study.i];
+      const an = study.anim || ""; study.anim = "";
       if (!c) return `
         <h2>🎉 Deck complete!</h2>
         <p>You got ${study.got} of ${study.cards.length}. Bonus +10 points!</p>
@@ -2378,7 +2699,7 @@
       return `
         <h2>${esc(study.title)}</h2>
         <p class="sub">Card ${study.i + 1} of ${study.cards.length}</p>
-        <div class="card big" data-act="flip">${esc(study.flip ? c.back : c.front)}${imgTag(study.flip ? c.bImg : c.fImg)}<div class="sub">${study.flip ? "Answer" : "Tap to flip"}</div></div>
+        <div class="card big ${an}" data-act="flip">${esc(study.flip ? c.back : c.front)}${imgTag(study.flip ? c.bImg : c.fImg)}<div class="sub">${study.flip ? "Answer" : "Tap to flip"}</div></div>
         ${study.flip ? `<button data-act="got">Got it +1</button> <button class="alt" data-act="again">Again</button>` : ""}
       `;
     };
@@ -3117,14 +3438,16 @@
         }
 
         if (a === "flip") {
-          study.flip = !study.flip;
-          render();
+          if (b.dataset.busy) return;
+          b.dataset.busy = 1; b.classList.add("fout");
+          setTimeout(() => { study.flip = !study.flip; study.anim = "fin"; render(); }, 160);
         }
         if (a === "got" || a === "again") {
           const n = a === "got" ? 1 : 0;
           study.got += n;
           study.i++;
           study.flip = false;
+          study.anim = n ? "next" : "again";
           const fin = study.i >= study.cards.length;
           const perfect = fin && study.got === study.cards.length && study.cards.length >= 5;
           await earn(n + (fin ? 10 : 0), { cardsStudied:P.cardsStudied + 1, perfectDecks:P.perfectDecks + (perfect ? 1 : 0) });

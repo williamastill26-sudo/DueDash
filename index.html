@@ -418,7 +418,7 @@
       align-items:flex-end;
       justify-content:center;
       gap:18px;
-      padding:120px 16px 16px;
+      padding:70px 16px 16px;
       flex-wrap:wrap;
       background:#dfe6d8;
       margin-bottom:12px;
@@ -435,10 +435,7 @@
       text-align:center;
       width:120px;
     }
-    .who svg{
-      width:110px;height:auto;display:block;margin:0 auto;
-      filter:drop-shadow(0 12px 18px rgba(0,0,0,.08));
-    }
+    .who .stu{width:100%;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 10px 14px rgba(0,0,0,.14))}
     .who .wn{
       display:inline-block;
       margin-top:7px;
@@ -739,11 +736,17 @@
     .av-sw{transform-box:view-box;transform-origin:50% 100%;animation:sway 4.8s ease-in-out infinite}@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
     .av-hair{transform-origin:50% 25%;animation:hsway 3.6s ease-in-out infinite}@keyframes hsway{0%,100%{transform:rotate(2.2deg)}50%{transform:rotate(-2.2deg)}}
     .who .av-sw,.who .av-hair,.who .pb,.who .pt-tail,.who .pt-head,.who .pt-eyes,.who .av-eyes{animation-delay:var(--d,0s)}
-    .who{width:134px}
-    .who .wp{position:absolute;right:-18px;bottom:38px;width:58px;z-index:4;font-size:0}
-    .who>svg:first-of-type{position:relative;z-index:2}
-    .desk{position:absolute;left:-6px;right:-6px;bottom:30px;width:auto;height:44px;z-index:3;overflow:visible}
-    .steam{animation:steam 2.4s ease-in-out infinite}@keyframes steam{0%{opacity:0;transform:translateY(3px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-7px)}}
+    .who{width:236px;flex:none}
+    .who .wp{position:absolute;right:4px;bottom:34px;width:66px;z-index:4;font-size:0}
+    .who .bub{bottom:calc(100% - 50px);left:56%}
+    .prev{width:250px}.prev .stu{filter:drop-shadow(0 6px 8px rgba(0,0,0,.12))}
+    .stu-up{transform-box:view-box;transform-origin:90px 186px;animation:stup 4.2s ease-in-out infinite}@keyframes stup{0%,100%{transform:rotate(-.8deg)}50%{transform:rotate(.9deg)}}
+    .stu-head{transform-box:view-box;transform-origin:118px 108px;animation:sthead 5.6s ease-in-out infinite}@keyframes sthead{0%,100%{transform:rotate(-1.5deg)}45%{transform:rotate(2.2deg)}}
+    .stu-hair{transform-box:view-box;transform-origin:100px 50px;animation:sthair 3.4s ease-in-out infinite}@keyframes sthair{0%,100%{transform:rotate(2deg)}50%{transform:rotate(-3deg)}}
+    .stu-arm{animation:starm 1.8s ease-in-out infinite}@keyframes starm{0%,100%{transform:translateX(0)}25%{transform:translateX(3px) translateY(1px)}50%{transform:translateX(5px)}75%{transform:translateX(2px) translateY(1px)}}
+    .stu-eye{transform-box:fill-box;transform-origin:50% 50%;animation:blink 4.2s infinite}
+    .who .stu-up,.who .stu-head,.who .stu-hair,.who .stu-arm{animation-delay:var(--d,0s)}
+        .steam{animation:steam 2.4s ease-in-out infinite}@keyframes steam{0%{opacity:0;transform:translateY(3px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-7px)}}
     .bgart{position:absolute;inset:0;width:100%;height:100%;z-index:0}
     .scene .who{z-index:2}.scene .bub{z-index:6}
     .fx{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}.fx i{position:absolute}
@@ -1045,8 +1048,8 @@
         <path d="M${cx-10} 62 Q${cx-9} 51 ${cx} 51 Q${cx+9} 51 ${cx+10} 62 Q${cx+9} 77 ${cx} 77 Q${cx-9} 77 ${cx-10} 62Z" fill="#fff"/>
         <ellipse cx="${cx}" cy="65" rx="7.8" ry="10.4" fill="url(#${u}e)"/>
         <ellipse cx="${cx}" cy="66" rx="3.6" ry="5.4" fill="#1a1a2e"/>
-        <path d="M${cx-10.5} 60 Q${cx} 46 ${cx+10.5} 60" stroke="#1a1a2e" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-        <path d="M${cx+f*10} 58 L${cx+f*14.5} 54" stroke="#1a1a2e" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M${cx-10.5} 60 Q${cx} 46 ${cx+10.5} 60" stroke="#1a1a2e" stroke-width="${lk ? 2 : 3.4}" fill="none" stroke-linecap="round"/>
+        ${lk ? "" : `<path d="M${cx+f*10} 58 L${cx+f*14.5} 54" stroke="#1a1a2e" stroke-width="2.4" stroke-linecap="round"/>`}
         <circle cx="${cx-3.2}" cy="60.5" r="3.5" fill="#fff"/><circle cx="${cx+3.6}" cy="71" r="1.8" fill="#fff" opacity=".9"/>`;
       const ACS = [
         "",
@@ -1088,7 +1091,7 @@
             <ellipse cx="23" cy="66" rx="5" ry="7.5" fill="${skg}"/><ellipse cx="97" cy="66" rx="5" ry="7.5" fill="${skg}"/>
             ${head}
             <ellipse cx="60" cy="44" rx="33" ry="9" fill="#b0605a" opacity=".13"/>
-            <ellipse cx="34" cy="79" rx="8" ry="4.6" fill="#ff7f9a" opacity="${bo + .15}"/><ellipse cx="86" cy="79" rx="8" ry="4.6" fill="#ff7f9a" opacity="${bo + .15}"/>
+            <ellipse cx="34" cy="79" rx="8" ry="4.6" fill="#ff7f9a" opacity="${lk ? .08 : bo + .15}"/><ellipse cx="86" cy="79" rx="8" ry="4.6" fill="#ff7f9a" opacity="${lk ? .08 : bo + .15}"/>
             <g class="av-eyes">${eye(44, -1)}${eye(76, 1)}</g>
             ${brows}
             <path d="M59 77 Q60 79 61.5 77" stroke="#c0706a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
@@ -1099,6 +1102,82 @@
           </g>
         </svg>
       `;
+    };
+
+    const studier = (a = {}) => {
+      const sk = ix(SK, a.skin), hr0 = ix(HR, a.hair), ey = ix(EY, a.eye), ft = ix(FT, a.fit);
+      const u = "s" + (++_u), n = (v, m) => Math.abs(Math.trunc(+v || 0)) % m;
+      const hs = n(a.hs, 12), ac = n(a.acc, 8), tp = n(a.top, 4), boy = n(a.look, 2) === 1;
+      const hr = `url(#${u}h)`, skg = `url(#${u}s)`, sw = `url(#${u}f)`;
+      const dk = "#2a2030", sd = mixc(ft, "#000000", .28), OL = 'stroke="rgba(50,25,25,.35)" stroke-width="1.2" stroke-linejoin="round"';
+      const kind = ["spiky","long","long","bun","short","short","spiky","buzz","spiky","curly","short","pony"][hs];
+      const H = (d, x = "") => `<path d="${d}" fill="${hr}" ${OL} ${x}/>`;
+      const Cc = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hr}" ${OL}/>`;
+      const hairBack = { long:H("M98 56 Q76 96 82 150 Q98 160 118 142 L112 96Z"), pony:H("M96 52 Q68 56 72 96 Q78 120 68 142 Q92 128 92 92 Q94 70 104 60Z"), bun:Cc(100, 36, 14) + `<path d="M92 44 Q101 50 110 44" stroke="#ff7eb6" stroke-width="3" fill="none"/>`, curly:Cc(98, 50, 13) + Cc(114, 38, 14) + Cc(132, 40, 12) + Cc(93, 68, 11) + Cc(94, 86, 10) }[kind] || "";
+      const spikes = kind === "spiky" ? H("M96 54 L88 32 L106 44 L108 24 L120 42 L131 26 L135 46 L149 38 L147 58Z") : "";
+      const cap = kind === "buzz" ? `<path d="M92 74 Q92 50 118 47 Q142 47 146 66 Q132 56 118 58 Q102 60 96 78Z" fill="${hr}" opacity=".9"/>` : H("M89 82 Q82 40 120 38 Q152 38 150 68 Q142 50 126 53 Q108 58 100 74 Q98 86 100 100 Q90 100 89 82Z") + H("M124 52 Q144 50 150 70 Q140 62 130 62 Q124 60 124 52Z");
+      const jaw = boy ? "Q147 103 144 108 L136 113 Q126 115 118 111" : "Q148 104 141 109 Q130 115 118 111";
+      const ACS = [
+        "",
+        `<circle cx="137" cy="77" r="10.5" fill="rgba(200,230,255,.2)" stroke="${dk}" stroke-width="2.4"/><path d="M126.5 76 L110 80" stroke="${dk}" stroke-width="2.4"/>`,
+        `<path d="M94 80 Q92 36 122 38 Q142 40 146 60" fill="none" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><ellipse cx="110" cy="86" rx="9" ry="12" fill="#ff5c8a" stroke="${dk}" stroke-width="2.5"/><ellipse cx="108" cy="83" rx="3" ry="5" fill="#fff" opacity=".3"/>`,
+        `<path d="M100 44 L98 22 L118 38Z" fill="${hr}" ${OL}/><path d="M124 38 L138 22 L142 46Z" fill="${hr}" ${OL}/><path d="M102 38 L101 28 L111 36Z M128 36 L136 28 L138 40Z" fill="#ffb3c7"/>`,
+        `<path d="M104 40 L88 30 L88 52Z M104 40 L120 30 L120 52Z" fill="#ff5c8a"/><circle cx="104" cy="41" r="5" fill="#ff3d73"/>`,
+        `<path d="M90 64 Q96 36 124 38 Q146 40 148 58Z" fill="${ft}" ${OL}/><path d="M140 56 L170 60 Q168 67 142 63Z" fill="${sd}"/>`,
+        `<path d="M88 66 Q90 30 120 30 Q148 32 150 62 Q120 52 88 66Z" fill="${ft}" ${OL}/><circle cx="120" cy="28" r="7" fill="#fff"/>`,
+        `<rect x="126" y="70" width="22" height="13" rx="5" fill="#111"/><path d="M126 74 L110 78" stroke="#111" stroke-width="3"/>`
+      ];
+      const er = boy ? 5.2 : 6.6, ery = boy ? 6.8 : 8.2;
+      const eye = `<g class="stu-eye"><ellipse cx="136" cy="76" rx="${er}" ry="${ery}" fill="#fff"/><ellipse cx="138" cy="77.5" rx="${er - 1.4}" ry="${ery - 1.4}" fill="url(#${u}e)"/><ellipse cx="138.4" cy="78" rx="2.4" ry="3.6" fill="#1a1a2e"/><circle cx="136.2" cy="74.4" r="2.4" fill="#fff"/><circle cx="140" cy="81" r="1.2" fill="#fff" opacity=".9"/><path d="M129 70 Q136 ${boy ? 66.5 : 65} 143 71" stroke="${dk}" stroke-width="${boy ? 2 : 3}" fill="none" stroke-linecap="round"/>${boy ? "" : `<path d="M129 70 L125 68.5" stroke="${dk}" stroke-width="2" stroke-linecap="round"/>`}</g>`;
+      const brow = `<path d="M127 ${boy ? 62 : 63} Q135 ${boy ? 58 : 60} 144 ${boy ? 63 : 64}" stroke="${hr}" stroke-width="${boy ? 3.8 : 2.2}" fill="none" stroke-linecap="round"/>`;
+      const topx = [`<path d="M104 106 L114 120 L124 108Z" fill="#fff"/>`, `<ellipse cx="98" cy="104" rx="15" ry="10" fill="${sd}"/>`, "", `<path d="M106 108 L116 124 L124 108Z" fill="#fff"/><path d="M114 112 L118 112 L119 134 L116 138 L113 134Z" fill="#ef4444"/>`][tp];
+      const foreC = tp === 2 ? skg : sw;
+      const g = (id, x1, y1, x2, y2, c1, c2) => `<linearGradient id="${u}${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>`;
+      return `<svg class="stu" viewBox="0 0 260 230" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="${u}h" gradientUnits="userSpaceOnUse" x1="0" y1="30" x2="0" y2="140"><stop offset="0" stop-color="${mixc(hr0, "#ffffff", .38)}"/><stop offset=".45" stop-color="${hr0}"/><stop offset="1" stop-color="${mixc(hr0, "#000000", .3)}"/></linearGradient>
+          <radialGradient id="${u}s" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="${mixc(sk, "#ffffff", .35)}"/><stop offset=".6" stop-color="${sk}"/><stop offset="1" stop-color="${mixc(sk, "#b05a50", .3)}"/></radialGradient>
+          ${g("f", 0, 100, 0, 190, mixc(ft, "#ffffff", .22), mixc(ft, "#000000", .25))}
+          <linearGradient id="${u}e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mixc(ey, "#000000", .45)}"/><stop offset=".55" stop-color="${ey}"/><stop offset="1" stop-color="${mixc(ey, "#ffffff", .5)}"/></linearGradient>
+          <radialGradient id="${u}g"><stop offset="0" stop-color="#ffd58a" stop-opacity=".7"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="110" cy="224" rx="92" ry="6" fill="#000" opacity=".16"/>
+        <ellipse class="glow" cx="215" cy="112" rx="70" ry="64" fill="url(#${u}g)"/>
+        <path d="M46 100 Q38 104 40 150 L44 196" stroke="#5a3d34" stroke-width="11" stroke-linecap="round" fill="none"/>
+        <rect x="42" y="172" width="90" height="12" rx="6" fill="#6b4a40"/><path d="M88 184 V212 M54 214 H122" stroke="#3a2a28" stroke-width="5" stroke-linecap="round"/>
+        <path d="M60 168 Q100 158 142 164 L144 184 Q100 186 60 184Z" fill="#8b93a8" ${OL}/>
+        <path d="M126 166 L148 166 L144 212 L124 212Z" fill="#7d859b" ${OL}/><path d="M118 210 Q122 202 144 204 L158 210 Q160 220 148 220 H120Z" fill="#f5f2ed" ${OL}/>
+        <g class="stu-up">
+          <path d="M58 184 Q48 140 72 108 Q92 92 112 98 L126 128 Q121 150 119 168 L119 186Z" fill="${sw}" ${OL}/>
+          ${topx.includes("ellipse") ? topx : ""}
+          <g class="stu-hair">${hairBack}</g>
+          <path d="M104 90 L124 88 L128 108 L106 110Z" fill="${skg}"/>
+          ${tp !== 1 ? topx : ""}
+          <g class="stu-head">
+            <ellipse cx="112" cy="85" rx="5" ry="8" fill="${skg}" ${OL}/>
+            <path d="M92 76 Q90 48 118 44 Q144 44 146 70 Q147 76 151 84 Q154 88 147 89 Q148 94 146 98 ${jaw} Q96 104 92 76Z" fill="${skg}" ${OL}/>
+            ${boy ? "" : `<ellipse cx="136" cy="93" rx="6.5" ry="3.6" fill="#ff7f9a" opacity=".5"/>`}
+            ${eye}${brow}
+            <path d="M143 100 Q146 101.5 148.5 99" stroke="#b5485d" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+            ${spikes}${cap}${ACS[ac]}
+          </g>
+        </g>
+        <rect x="156" y="158" width="110" height="80" fill="#b98558" ${OL}/><path d="M170 176 H250 M170 200 H250" stroke="#a2724a" stroke-width="3"/>
+        <rect x="146" y="150" width="130" height="9" rx="3" fill="#dcae7c" ${OL}/>
+        <path d="M160 150 L160 137 Q178 130 196 137 L196 150Z" fill="#fff8ea" stroke="#b9a07a"/><path d="M196 137 Q214 130 232 137 L232 150Z" fill="#fffdf4" stroke="#b9a07a"/>
+        <path d="M166 140 H190 M166 144 H190 M202 139 H226 M202 143 H226" stroke="#cdbb98" stroke-width="1"/>
+        <rect x="238" y="132" width="16" height="18" rx="4" fill="#f6efe4" stroke="#c9b894"/><path d="M254 137 q8 1 0 9" fill="none" stroke="#c9b894" stroke-width="2.5"/>
+        <path class="steam" d="M243 128 q-4 -6 0 -11 M249 128 q4 -6 0 -11" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="228" cy="150" rx="14" ry="3" fill="#7a5230"/><path d="M228 150 L222 116 L204 100" stroke="#7a5230" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M190 96 L222 84 L228 106 L196 112Z" fill="#e8a24a" ${OL}/>
+        <g class="stu-arm">
+          <path d="M100 114 Q112 140 134 150" stroke="${sd}" stroke-width="22" stroke-linecap="round" fill="none"/>
+          <path d="M100 114 Q112 140 134 150" stroke="${sw}" stroke-width="19" stroke-linecap="round" fill="none"/>
+          <path d="M132 150 L166 146" stroke="${tp === 2 ? "rgba(90,40,30,.3)" : sd}" stroke-width="17" stroke-linecap="round"/>
+          <path d="M132 150 L166 146" stroke="${foreC}" stroke-width="14" stroke-linecap="round"/>
+          <ellipse cx="172" cy="146" rx="8" ry="6" fill="${skg}" ${OL}/>
+          <path d="M172 146 L186 136" stroke="#f2c14e" stroke-width="3.4" stroke-linecap="round"/><path d="M184 137.5 L187 135" stroke="#3a2a28" stroke-width="3" stroke-linecap="round"/>
+        </g>
+      </svg>`;
     };
 
     /* ----- anime chibi pets ----- */
@@ -2096,9 +2175,7 @@
     const sceneHTML = () => {
       const b = bd();
       const now = Date.now();
-      const deco = b.art();
       const hsh = (s) => [...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0);
-      const DESK = `<svg class="desk" viewBox="0 0 140 44" preserveAspectRatio="none"><rect y="16" width="140" height="28" rx="6" fill="#b98558"/><rect y="16" width="140" height="5" rx="2.5" fill="#e2b98a"/><path d="M20 16 L20 7 Q36 2 52 8 L52 16Z" fill="#fff8ea" stroke="#b9a07a"/><path d="M52 8 Q68 2 84 7 L84 16 L52 16Z" fill="#fffdf4" stroke="#b9a07a"/><path d="M27 10 H46 M27 13 H46 M58 9 H78 M58 12 H78" stroke="#c9b894" stroke-width="1"/><rect x="104" y="3" width="15" height="13" rx="3.5" fill="#f6efe4" stroke="#c9b894"/><path d="M119 6 q7 1 0 7" fill="none" stroke="#c9b894" stroke-width="2"/><path class="steam" d="M110 2 q-4 -5 0 -9 M114 2 q4 -5 0 -9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M92 16 L98 10 L100 16Z" fill="#e8a24a"/></svg>`;
       const act = members.filter(m => now - (m.lastSeen || 0) < 90000).sort((a, c) => String(a.username || "").localeCompare(String(c.username || "")));
       const lastMsg = uid => {
         for (let i = chat.length - 1; i >= 0; i--) {
@@ -2112,18 +2189,17 @@
         if (m.emote && now - (m.emoteAt || 0) < 8000) return `<div class="bub">${esc(m.emote)}</div>`;
         return "";
       };
-      return deco + (act.length
+      return b.art() + (act.length
         ? act.map(m => `
             <div class="who" style="--d:-${(hsh(m.id) % 50) / 10}s">
               ${bubble(m)}
-              ${avatar(m.avatar)}
-              ${DESK}
+              ${studier(m.avatar)}
               <div class="wp">${petHTML(m.pet || "🐱", m.plv || 3, "auto")}</div>
               <div class="wn">${esc(m.emoji || "😀")} ${esc(m.username || "Student")}${m.id === user.uid ? " (you)" : ""}</div>
               <div class="st">${ST[m.status] || ST.studying}</div>
             </div>
           `).join("")
-        : '<div class="sub" style="color:#fff">Waiting for people to join…</div>');
+        : '<div class="sub" style="color:#fff;position:relative;z-index:2">Waiting for people to join…</div>');
     };
 
     const vPlanner = () => {
@@ -2330,7 +2406,7 @@
 
       <h3>Your character</h3>
       <div class="card two">
-        <div class="prev">${avatar(P.avatar)}</div>
+        <div class="prev">${studier(P.avatar)}</div>
         <div>
           <div class="sub">Quick looks</div>
           <div class="btns" style="margin-top:6px">${PRESETS.map((x, i) => `<button class="alt" data-act="preset" data-i="${i}">${x.n}</button>`).join("")}</div>

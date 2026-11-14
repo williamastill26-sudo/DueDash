@@ -1129,7 +1129,8 @@
         { b:H("M91 84 Q78 96 86 118 Q100 112 101 90Z"), t:H("M92 84 Q84 42 122 38 Q150 40 148 62 Q130 46 112 56 Q100 66 101 92Z") + `<path d="M110 46 Q128 42 142 54 M104 56 Q120 50 134 58" stroke="#fff" stroke-opacity=".3" stroke-width="2" fill="none" stroke-linecap="round"/>` },
         { b:H("M98 52 Q62 44 60 86 Q58 116 76 138 Q86 110 82 86 Q92 72 106 62Z"), t:H(CAP) + H(FR) + TIE(97, 54) }
       ];
-      const jaw = boy ? "Q147 103 144 108 L136 113 Q126 115 118 111" : "Q148 104 141 109 Q130 115 118 111";
+      const jaw = boy ? "Q147 103 144 108 L136 113 Q126 115 118 111" : "Q147 105 138 108 Q128 111 118 109";
+      const nose = boy ? "Q147 76 151 84 Q154 88 147 89" : "Q147 76 149.5 83 Q151.5 87 147 88";
       const ACS = [
         "",
         `<circle cx="137" cy="77" r="10.5" fill="rgba(200,230,255,.2)" stroke="${dk}" stroke-width="2.4"/><path d="M126.5 76 L110 80" stroke="${dk}" stroke-width="2.4"/>`,
@@ -1158,20 +1159,20 @@
         <ellipse class="glow" cx="215" cy="112" rx="70" ry="64" fill="url(#${u}g)"/>
         <path d="M46 100 Q38 104 40 150 L44 196" stroke="#5a3d34" stroke-width="11" stroke-linecap="round" fill="none"/>
         <rect x="42" y="172" width="90" height="12" rx="6" fill="#6b4a40"/><path d="M88 184 V212 M54 214 H122" stroke="#3a2a28" stroke-width="5" stroke-linecap="round"/>
-        <path d="M60 168 Q100 158 142 164 L144 184 Q100 186 60 184Z" fill="#8b93a8" ${OL}/>
-        <path d="M126 166 L148 166 L144 212 L124 212Z" fill="#7d859b" ${OL}/><path d="M118 210 Q122 202 144 204 L158 210 Q160 220 148 220 H120Z" fill="#f5f2ed" ${OL}/>
+        <path d="M60 168 Q100 158 142 164 L144 184 Q100 186 60 184Z" fill="${boy ? "#8b93a8" : skg}" ${OL}/>${boy ? "" : `<path d="M58 164 Q100 154 142 160 L152 186 Q102 192 52 186Z" fill="${mixc(ft, "#000000", .12)}" ${OL}/><path d="M80 160 L74 188 M104 158 L102 190 M126 160 L130 188" stroke="rgba(0,0,0,.15)" stroke-width="1.5"/>`}
+        <path d="M127 170 L147 170 L144 212 L125 212Z" fill="${boy ? "#7d859b" : skg}" ${OL}/>${boy ? "" : `<path d="M126 192 L146 192 L144 212 L125 212Z" fill="#fff" ${OL}/>`}<path d="M118 210 Q122 202 144 204 L158 210 Q160 220 148 220 H120Z" fill="#f5f2ed" ${OL}/>
         <g class="stu-up">
-          <path d="M58 184 Q48 140 72 108 Q92 92 112 98 L126 128 Q121 150 119 168 L119 186Z" fill="${sw}" ${OL}/>
+          <path d="${boy ? "M58 184 Q48 140 72 108 Q92 92 112 98 L126 128 Q121 150 119 168 L119 186Z" : "M66 184 Q58 148 80 112 Q96 98 111 102 L121 124 Q129 138 121 152 Q117 164 119 186Z"}" fill="${sw}" ${OL}/>
           ${topx.includes("ellipse") ? topx : ""}
           <g class="stu-hair">${HR_[hs].b}</g>
-          <path d="M104 90 L124 88 L128 108 L106 110Z" fill="${skg}"/>
+          <path d="${boy ? "M104 90 L124 88 L128 108 L106 110Z" : "M108 90 L122 89 L124 106 L110 108Z"}" fill="${skg}"/>
           ${tp !== 1 ? topx : ""}
           <g class="stu-head">
             <ellipse cx="112" cy="85" rx="5" ry="8" fill="${skg}" ${OL}/>
-            <path d="M92 76 Q90 48 118 44 Q144 44 146 70 Q147 76 151 84 Q154 88 147 89 Q148 94 146 98 ${jaw} Q96 104 92 76Z" fill="${skg}" ${OL}/>
+            <path d="M92 76 Q90 48 118 44 Q144 44 146 70 ${nose} Q148 94 146 98 ${jaw} Q96 104 92 76Z" fill="${skg}" ${OL}/>
             ${boy ? "" : `<ellipse cx="136" cy="93" rx="6.5" ry="3.6" fill="#ff7f9a" opacity=".5"/>`}
             ${eye}${brow}
-            <path d="M143 100 Q146 101.5 148.5 99" stroke="#b5485d" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+            ${boy ? `<path d="M143 100 Q146 101.5 148.5 99" stroke="#b5485d" stroke-width="1.7" fill="none" stroke-linecap="round"/>` : `<path d="M142.5 99 Q145.5 97.8 148.5 99 Q146 103 142.5 100.4Z" fill="#e0607a" stroke="#c8506a" stroke-width=".8" stroke-linejoin="round"/>`}
             ${HR_[hs].t}${ACS[ac]}
           </g>
         </g>
@@ -1686,18 +1687,22 @@
     }
 
     const mkCode = () => Array.from({ length:6 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
-    const heartbeat = () => room
-      ? setDoc(doc(db, "rooms", room.code, "members", user.uid), {
-          username:P.username,
-          avatar:P.avatar,
-          pet:((P.pet && P.pet.species) || "🐱") + lvl(P),
-          emoji:P.emoji || "😀",
-          status:rs.status,
-          emote:rs.emote,
-          emoteAt:rs.emoteAt,
-          lastSeen:Date.now()
-        }).catch(() => {})
-      : null;
+    const clip = (v, n) => { v = String(v ?? ""); while (new TextEncoder().encode(v).length > n) v = v.slice(0, -1); return v; };
+    const heartbeat = () => {
+      if (!room) return null;
+      const ref = doc(db, "rooms", room.code, "members", user.uid);
+      const full = {
+        username:clip(P.username || "Student", 20),
+        avatar:(P.avatar && typeof P.avatar === "object") ? P.avatar : {},
+        pet:clip(((P.pet && P.pet.species) || "🐱") + lvl(P), 8),
+        emoji:clip(P.emoji || "😀", 8),
+        status:clip(rs.status || "studying", 10),
+        emote:clip(rs.emote || "", 30),
+        emoteAt:+rs.emoteAt || 0,
+        lastSeen:Date.now()
+      };
+      return setDoc(ref, full).catch(() => setDoc(ref, { ...full, pet:clip((P.pet && P.pet.species) || "🐱", 8) }).catch(e => console.warn("room member save failed:", e.code || e.message)));
+    };
 
     const mmss = (ms) => {
       const s = Math.max(0, Math.ceil(ms / 1000));

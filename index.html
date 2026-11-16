@@ -760,6 +760,17 @@
     .petstage{margin:0 auto 6px;filter:drop-shadow(0 14px 12px rgba(0,0,0,.08))}
     .petstage .pet{overflow:visible}
     .petmini{display:inline-block;width:38px;vertical-align:middle;pointer-events:none}
+
+    /* ===== classroom ===== */
+    .ctab{width:100%;border-collapse:collapse;font-size:14px;min-width:420px}
+    .ctab th,.ctab td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+    .ctab th{font-size:12px;color:var(--muted);font-weight:700}
+    .ctab tr.avg td{background:var(--green-soft);font-weight:700}
+    .cwrap{overflow-x:auto;margin-top:8px}
+    .pbar{height:8px;border-radius:99px;background:var(--surf2);overflow:hidden;margin-top:6px}.pbar i{display:block;height:100%;border-radius:99px;transition:width .5s}
+    .asg{animation:slideUp .35s both}
+    .pick{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:6px 0;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--card)}
+    .pick input{width:auto;margin:0}
   </style>
 </head>
 <body>
@@ -1490,6 +1501,7 @@
       renderMusic();
       startNotifs();
       go("planner");
+      handleJoinLink();
     });
 
     const liveStreak = (p) => (p.lastDay === day() || p.lastDay === day(1)) ? p.streak : 0;
@@ -2159,6 +2171,8 @@
 
     async function go(v) {
       if (v === "room" && !room) v = "rooms";
+      if (v === "class" && !cls) v = "classes";
+      if (!["class", "study", "qtake"].includes(v)) { clsUnsub(); cls = null; }
       view = v;
       if (v === "room") await refreshQuizzes();
       try {
@@ -2704,7 +2718,7 @@
       const an = study.anim || ""; study.anim = "";
       if (!c) return `
         <h2>🎉 Deck complete!</h2>
-        <p>You got ${study.got} of ${study.cards.length}. Bonus +10 points!</p>
+        <p>You got ${study.got} of ${study.cards.length} (<b>${Math.round(study.got / study.cards.length * 100)}%</b>). Bonus +10 points!</p>
         <button data-go="${study.from}">Back</button>
       `;
       return `
@@ -2816,7 +2830,7 @@
         const pts = qz.correct * 2 + (qz.correct === qz.questions.length ? 10 : 0);
         return `
           <h2>🎉 Quiz complete!</h2>
-          <p>You got ${qz.correct} of ${qz.questions.length} right.</p><p><b>Speed score: ${qz.score || 0}</b> · +${pts} points!</p>
+          <p>You got ${qz.correct} of ${qz.questions.length} right (<b>${Math.round(qz.correct / qz.questions.length * 100)}%</b>).</p><p><b>Speed score: ${qz.score || 0}</b> · +${pts} points!</p>
           <button data-go="${qz.from}">Back</button>
         `;
       }
@@ -2965,13 +2979,178 @@
       `;
     };
 
-    const NAV = [
+/* ===== classroom ===== */
+    let cls = null, clsAsg = [], clsMem = [], clsRes = {}, clsUn = [], asgDraft = null, asgOpen = false, clsErr = "";
+    const myClasses = () => P.classes || [];
+    const isTeacher = () => !!cls && cls.teacherId === user.uid;
+    const pctCol = (p) => p >= 80 ? "#3f8f5a" : p >= 50 ? "#d9a441" : "#c9504a";
+    const joinLink = (code) => location.origin + location.pathname + "?class=" + code;
+    const dueTxt = (ms) => {
+      if (!ms) return "No deadline";
+      const d = ms - Date.now(), h = Math.round(Math.abs(d) / 36e5), rel = h < 48 ? h + "h" : Math.round(h / 24) + " days";
+      return (d < 0 ? "⚠️ Overdue by " + rel : "⏰ Due in " + rel) + " · " + new Date(ms).toLocaleString([], { weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" });
+    };
+    const clsUnsub = () => { clsUn.forEach(u => { try { u(); } catch (e) {} }); clsUn = []; };
+    const genCode = () => Array.from({ length:6 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
+    const asgPct = (a, r) => { const n = a.items.length; if (!n) return 0; let t = 0; for (let k = 0; k < n; k++) t += ((r && r.items && r.items[k]) || {}).pct || 0; return Math.round(t / n); };
+    const avgOf = (arr) => arr.length ? Math.round(arr.reduce((x, y) => x + y, 0) / arr.length) : null;
+
+    async function createClass(name) {
+      for (let t = 0; t < 5; t++) {
+        const code = genCode();
+        if ((await getDoc(doc(db, "classes", code))).exists()) continue;
+        await setDoc(doc(db, "classes", code), { name, teacherId:user.uid, teacherName:P.username, createdAt:Date.now() });
+        await save({ classes:[...myClasses(), { code, name, role:"teacher" }] });
+        return code;
+      }
+      throw new Error("Couldn't make a class code, please try again.");
+    }
+    async function joinClass(raw) {
+      raw = String(raw || "");
+      const m = raw.match(/class=([A-Za-z0-9]{6})/);
+      const code = (m ? m[1] : raw).trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+      if (code.length !== 6) throw new Error("Class codes are 6 letters or numbers.");
+      const sn = await getDoc(doc(db, "classes", code));
+      if (!sn.exists()) throw new Error("No class found with that code.");
+      const d = sn.data();
+      if (d.teacherId !== user.uid) await setDoc(doc(db, "classes", code, "members", user.uid), { username:P.username, emoji:P.emoji || "😀", joinedAt:Date.now() });
+      if (!myClasses().some(c => c.code === code)) await save({ classes:[...myClasses(), { code, name:d.name, role:d.teacherId === user.uid ? "teacher" : "student" }] });
+      return code;
+    }
+    async function openClass(code) {
+      clsUnsub(); clsAsg = []; clsMem = []; clsRes = {}; asgOpen = false; asgDraft = null; clsErr = "";
+      try {
+        const sn = await getDoc(doc(db, "classes", code));
+        if (!sn.exists()) { await save({ classes:myClasses().filter(c => c.code !== code) }); alert("That class no longer exists."); return go("classes"); }
+        cls = { code, ...sn.data() };
+        if (isTeacher()) {
+          decks = (await getDocs(query(collection(db, "decks"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() }));
+          quizzes = (await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", user.uid)))).docs.map(d => ({ id:d.id, ...d.data() }));
+        }
+      } catch (e) { alert("Couldn't open class: " + (e.code || e.message)); return go("classes"); }
+      let resUn = [];
+      clsUn.push(onSnapshot(collection(db, "classes", code, "assignments"), (sn) => {
+        clsAsg = sn.docs.map(d => ({ id:d.id, ...d.data() })).sort((a, b) => (a.dueAt || 9e15) - (b.dueAt || 9e15));
+        resUn.forEach(u => u()); resUn = [];
+        clsAsg.forEach(a => {
+          if (isTeacher()) resUn.push(onSnapshot(collection(db, "classes", code, "assignments", a.id, "results"), s2 => { clsRes[a.id] = s2.docs.map(d => ({ id:d.id, ...d.data() })); if (view === "class") render(); }, () => {}));
+          else resUn.push(onSnapshot(doc(db, "classes", code, "assignments", a.id, "results", user.uid), s2 => { clsRes[a.id] = s2.exists() ? [{ id:user.uid, ...s2.data() }] : []; if (view === "class") render(); }, () => {}));
+        });
+        if (view === "class") render();
+      }, (e) => { clsErr = "Can't load work: " + (e.code || e.message); if (view === "class") render(); }));
+      clsUn.push(() => resUn.forEach(u => u()));
+      if (isTeacher()) clsUn.push(onSnapshot(collection(db, "classes", code, "members"), sn => { clsMem = sn.docs.map(d => ({ id:d.id, ...d.data() })); if (view === "class") render(); }, () => {}));
+      view = "class"; render();
+    }
+    async function recordAsg(ref, pct) {
+      const rr = doc(db, "classes", ref.code, "assignments", ref.aid, "results", user.uid);
+      let items = {};
+      try { const sn = await getDoc(rr); if (sn.exists()) items = sn.data().items || {}; } catch (e) {}
+      const prev = items[ref.idx];
+      items[ref.idx] = (!prev || pct >= prev.pct) ? { pct, at:Date.now() } : { ...prev };
+      await setDoc(rr, { username:P.username, items, updatedAt:Date.now() });
+      toast("📊 Score saved: " + pct + "%");
+    }
+    async function handleJoinLink() {
+      const c = new URLSearchParams(location.search).get("class");
+      if (!c) return;
+      history.replaceState(null, "", location.pathname);
+      try { const code = await joinClass(c); await openClass(code); toast("🎓 Joined class!"); } catch (e) { alert(e.message || e.code); }
+    }
+    document.addEventListener("input", (e) => {
+      if (!asgDraft) return;
+      const t = e.target;
+      if (t.id === "asT") asgDraft.title = t.value;
+      if (t.id === "asN") asgDraft.notes = t.value;
+      if (t.id === "asD") asgDraft.due = t.value;
+      if (t.dataset && t.dataset.pick) asgDraft.picked[t.dataset.pick] = t.checked;
+    });
+
+    const vClasses = () => `
+      <h2>🎓 Classroom</h2>
+      <p class="sub">Join a class with a code or link from your teacher, or create a class to set work for your students.</p>
+      <div class="card"><b>Join a class</b><br /><br />
+        <input id="cjoin" placeholder="Class code or invite link" style="max-width:340px" /> <button data-act="cjoin">Join</button></div>
+      <div class="card"><b>Create a class</b> <span class="sub">(teachers)</span><br /><br />
+        <input id="cname" maxlength="40" placeholder="Class name, e.g. Year 10 Biology" style="max-width:340px" /> <button data-act="ccreate">Create class</button></div>
+      <h3>My classes</h3>
+      ${myClasses().length ? myClasses().map(c => `
+        <div class="card row asg">
+          <div><b>${esc(c.name)}</b><div class="sub">${c.role === "teacher" ? "👩‍🏫 Teacher" : "🎒 Student"} · Code ${esc(c.code)}</div></div>
+          <button data-act="copen" data-id="${esc(c.code)}">Open</button>
+        </div>`).join("") : '<div class="empty">You are not in any classes yet.</div>'}
+    `;
+
+    const studentPanel = () => clsAsg.length ? clsAsg.map(a => {
+      const r = (clsRes[a.id] || [])[0];
+      const done = r && a.items.every((_, k) => r.items && r.items[k]);
+      const tot = asgPct(a, r);
+      const items = a.items.map((it, k) => {
+        const x = r && r.items && r.items[k], late = x && a.dueAt && x.at > a.dueAt;
+        return `<div class="card row"><div><b>${it.kind === "deck" ? "📚" : "📝"} ${esc(it.title)}</b>
+          <div class="sub">${it.kind === "deck" ? it.cards.length + " cards" : it.questions.length + " questions"}${x ? ` · Best <b style="color:${pctCol(x.pct)}">${x.pct}%</b>${late ? " · handed in late" : ""}` : " · Not started"}</div></div>
+          <button data-act="asgstart" data-id="${a.id}" data-i="${k}">${x ? "Retry" : "Start"}</button></div>`;
+      }).join("");
+      return `<div class="card asg"><b>${esc(a.title)}</b> ${done ? `<span style="color:${pctCol(tot)}"><b>✅ ${tot}%</b></span>` : ""}
+        ${a.notes ? `<div class="sub">${esc(a.notes)}</div>` : ""}<div class="sub">${dueTxt(a.dueAt)}</div>
+        <div class="pbar"><i style="width:${tot}%;background:${pctCol(tot)}"></i></div><br />${items}</div>`;
+    }).join("") : '<div class="empty">No work has been set yet. Check back soon!</div>';
+
+    const resTable = (a) => {
+      if (!clsMem.length) return '<div class="sub">No students have joined yet. Share the code above.</div>';
+      const R = clsRes[a.id] || [];
+      const rows = clsMem.map(m => {
+        const r = R.find(x => x.id === m.id);
+        const cells = a.items.map((_, k) => { const x = r && r.items && r.items[k]; return `<td style="color:${x ? pctCol(x.pct) : "var(--muted)"}">${x ? x.pct + "%" : "—"}${x && a.dueAt && x.at > a.dueAt ? " ⏰" : ""}</td>`; }).join("");
+        const tot = r ? asgPct(a, r) : null;
+        return `<tr><td>${esc(m.emoji || "")} ${esc(m.username)}</td>${cells}<td><b style="color:${tot == null ? "var(--muted)" : pctCol(tot)}">${tot == null ? "—" : tot + "%"}</b></td></tr>`;
+      }).join("");
+      const colAvg = a.items.map((_, k) => avgOf(R.filter(r => r.items && r.items[k]).map(r => r.items[k].pct)));
+      const totAvg = avgOf(R.map(r => asgPct(a, r)));
+      return `<div class="cwrap"><table class="ctab"><tr><th>Student</th>${a.items.map(it => `<th>${it.kind === "deck" ? "📚" : "📝"} ${esc(it.title)}</th>`).join("")}<th>Overall</th></tr>${rows}
+        <tr class="avg"><td>Class average (${R.length}/${clsMem.length} started)</td>${colAvg.map(v => `<td>${v == null ? "—" : v + "%"}</td>`).join("")}<td>${totAvg == null ? "—" : totAvg + "%"}</td></tr></table></div>
+        <div class="sub">⏰ = handed in after the deadline</div>`;
+    };
+
+    const teacherPanel = () => {
+      const d = asgDraft;
+      const form = asgOpen && d ? `
+        <div class="card asg"><b>New assignment</b><br /><br />
+          <input id="asT" placeholder="Title, e.g. Cell biology homework" value="${esc(d.title)}" maxlength="60" /><br /><br />
+          <input id="asN" placeholder="Instructions (optional)" value="${esc(d.notes)}" maxlength="200" /><br /><br />
+          <label class="sub">Deadline (optional)</label><br /><input id="asD" type="datetime-local" value="${esc(d.due)}" style="max-width:260px" /><br /><br />
+          <b>Flashcard sets</b>
+          ${decks.length ? decks.map(x => `<label class="pick"><input type="checkbox" data-pick="d:${x.id}" ${d.picked["d:" + x.id] ? "checked" : ""} /> 📚 ${esc(x.title)} <span class="sub">${x.cards.length} cards</span></label>`).join("") : '<div class="sub">No decks yet. Make some in My Decks.</div>'}
+          <br /><b>Quizzes / tests</b>
+          ${quizzes.length ? quizzes.map(x => `<label class="pick"><input type="checkbox" data-pick="q:${x.id}" ${d.picked["q:" + x.id] ? "checked" : ""} /> 📝 ${esc(x.title)} <span class="sub">${x.questions.length} questions</span></label>`).join("") : '<div class="sub">No quizzes yet. Make some in My Quizzes.</div>'}
+          <br /><button data-act="asgpost">Post assignment</button> <button class="alt" data-act="asgnew">Cancel</button></div>` : "";
+      return `
+        <p class="sub">👥 ${clsMem.length} student${clsMem.length === 1 ? "" : "s"} joined</p>
+        ${asgOpen ? "" : '<button data-act="asgnew">+ New assignment</button><br /><br />'}${form}
+        ${clsAsg.length ? clsAsg.map(a => `
+          <div class="card asg"><div class="row"><div><b>${esc(a.title)}</b>${a.notes ? `<div class="sub">${esc(a.notes)}</div>` : ""}<div class="sub">${dueTxt(a.dueAt)} · ${a.items.length} item${a.items.length === 1 ? "" : "s"}</div></div>
+            <button class="red" data-act="asgdel" data-id="${a.id}">Delete</button></div>${resTable(a)}</div>`).join("") : (asgOpen ? "" : '<div class="empty">No assignments yet. Create one for your students.</div>')}`;
+    };
+
+    const vClass = () => {
+      if (!cls) return vClasses();
+      const T = isTeacher();
+      return `<button class="alt" data-go="classes">← Classes</button>
+        <h2>🎓 ${esc(cls.name)}</h2>
+        <p class="sub">${T ? "You're the teacher" : "Teacher: " + esc(cls.teacherName)} · Join code <b>${esc(cls.code)}</b> ${T ? '<button class="alt" data-act="clink">📋 Copy invite link</button>' : ""}</p>
+        ${clsErr ? `<div class="empty">⚠️ ${esc(clsErr)}</div>` : ""}
+        ${T ? teacherPanel() : studentPanel()}
+        <br />${T ? '<button class="red" data-act="cdelete">Delete class</button>' : '<button class="red" data-act="cleave">Leave class</button>'}`;
+    };
+
+        const NAV = [
       ["planner","📅","Planner"],
       ["rev","🗓️","Revision"],
       ["decks","📚","My Decks"],
       ["quizzes","📝","My Quizzes"],
       ["explore","🔍","Explore"],
       ["rooms","🏠","Study Rooms"],
+      ["classes","🎓","Classroom"],
       ["friends","👥","Friends"],
       ["pet","🐾","My Pet"],
       ["leaders","🏆","Leaderboard"],
@@ -2981,7 +3160,7 @@
     const NAV_SECTIONS = [
       ["Planning",           ["planner","rev"]],
       ["Study Library",      ["decks","quizzes","explore"]],
-      ["Community",          ["rooms","friends","pet"]],
+      ["Community",          ["rooms","classes","friends","pet"]],
       ["Progress & Profile", ["leaders","account","notifs"]]
     ];
 
@@ -2994,6 +3173,7 @@
         (k === "quizzes" && (view === "qedit" || f === "quizzes")) ||
         (k === "explore" && f === "explore") ||
         (k === "rooms" && view === "room") ||
+        (k === "classes" && (view === "class" || f === "class")) ||
         (k === "friends" && view === "profile")
       ) ? "on" : "";
       $("nav").innerHTML = `
@@ -3047,7 +3227,9 @@
         leaders: vLeaders,
         friends: vFriends,
         profile: vProfile,
-        notifs: vNotifs
+        notifs: vNotifs,
+        classes: vClasses,
+        class: vClass
       };
 
       m.innerHTML = (list[view] || vPlanner)();
@@ -3441,6 +3623,68 @@
           go("decks");
         }
 
+        if (a === "cjoin") {
+          const code = await joinClass($("cjoin").value);
+          await openClass(code);
+          return;
+        }
+        if (a === "ccreate") {
+          const name = $("cname").value.trim();
+          if (!name) { alert("Give your class a name first."); return; }
+          const code = await createClass(name);
+          await openClass(code);
+          toast("🎓 Class created! Code " + code);
+          return;
+        }
+        if (a === "copen") { await openClass(id); return; }
+        if (a === "clink") {
+          try { await navigator.clipboard.writeText(joinLink(cls.code)); toast("📋 Invite link copied"); } catch (e) { prompt("Copy this invite link:", joinLink(cls.code)); }
+          return;
+        }
+        if (a === "cdelete" && confirm("Delete this class for everyone?")) {
+          await deleteDoc(doc(db, "classes", cls.code));
+          await save({ classes:myClasses().filter(c => c.code !== cls.code) });
+          go("classes"); return;
+        }
+        if (a === "cleave" && confirm("Leave this class?")) {
+          await deleteDoc(doc(db, "classes", cls.code, "members", user.uid));
+          await save({ classes:myClasses().filter(c => c.code !== cls.code) });
+          go("classes"); return;
+        }
+        if (a === "asgnew") {
+          asgOpen = !asgOpen;
+          if (asgOpen && !asgDraft) asgDraft = { title:"", notes:"", due:"", picked:{} };
+          render(); return;
+        }
+        if (a === "asgpost") {
+          const d = asgDraft;
+          const strip = (o) => JSON.parse(JSON.stringify(o, (k, v) => (k === "fImg" || k === "bImg" || k === "img") ? undefined : v));
+          let items = [];
+          decks.forEach(x => { if (d.picked["d:" + x.id]) items.push({ kind:"deck", title:x.title, cards:x.cards }); });
+          quizzes.forEach(x => { if (d.picked["q:" + x.id]) items.push({ kind:"quiz", title:x.title, questions:x.questions }); });
+          if (!items.length) { alert("Pick at least one flashcard set or quiz."); return; }
+          items = JSON.parse(JSON.stringify(items));
+          if (JSON.stringify(items).length > 850000) { items = strip(items); toast("Images were removed to fit the size limit."); }
+          const dueAt = d.due ? new Date(d.due).getTime() : 0;
+          await addDoc(collection(db, "classes", cls.code, "assignments"), { title:(d.title || "").trim() || "Homework", notes:(d.notes || "").trim(), dueAt:dueAt || 0, createdAt:Date.now(), items });
+          asgOpen = false; asgDraft = null;
+          toast("✅ Assignment posted");
+          render(); return;
+        }
+        if (a === "asgdel" && confirm("Delete this assignment and its scores?")) {
+          await deleteDoc(doc(db, "classes", cls.code, "assignments", id));
+          return;
+        }
+        if (a === "asgstart") {
+          const as = clsAsg.find(x => x.id === id), it = as && as.items[i];
+          if (!it) return;
+          const asg = { code:cls.code, aid:id, idx:i };
+          if (it.kind === "deck") study = { title:it.title, cards:JSON.parse(JSON.stringify(it.cards)), i:0, flip:false, got:0, from:"class", asg };
+          else { qz = { title:it.title, questions:JSON.parse(JSON.stringify(it.questions)), i:0, correct:0, score:0, from:"class", asg }; prep(); }
+          view = it.kind === "deck" ? "study" : "qtake";
+          render(); return;
+        }
+
         if (a === "study") {
           const d = getDeck(id);
           study = { title:d.title, cards:[...d.cards], i:0, flip:false, got:0, from:view };
@@ -3462,6 +3706,7 @@
           const fin = study.i >= study.cards.length;
           const perfect = fin && study.got === study.cards.length && study.cards.length >= 5;
           await earn(n + (fin ? 10 : 0), { cardsStudied:P.cardsStudied + 1, perfectDecks:P.perfectDecks + (perfect ? 1 : 0) });
+          if (fin && study.asg) await recordAsg(study.asg, Math.round(study.got / study.cards.length * 100));
           render();
         }
 
@@ -3579,6 +3824,7 @@
             const pts = qz.correct * 2 + (qz.correct === len ? 10 : 0);
             const perfect = qz.correct === len && len >= 3;
             await earn(pts, { quizzesTaken:P.quizzesTaken + 1, perfectQuizzes:P.perfectQuizzes + (perfect ? 1 : 0) });
+            if (qz.asg) await recordAsg(qz.asg, Math.round(qz.correct / len * 100));
           }
           render();
         }

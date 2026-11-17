@@ -1,18 +1,9 @@
 <!DOCTYPE html>
-<!--
-  DueDash index.html (with classroom search + student roster added)
-
-  TWO LINES ARE SHORTENED because they are huge image blobs. Copy them from your OLD file:
-    1) <link rel="icon" ... href="data:image/png;base64,....">   (search for PASTE_ORIGINAL_FAVICON)
-    2) window.DD_LOGO = "data:image/png;base64,....";            (search for PASTE_ORIGINAL_LOGO)
-  Replace each placeholder with the original value, then delete this comment.
--->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DueDash</title>
-  <link rel="icon" type="image/png" href="PASTE_ORIGINAL_FAVICON_DATA_URI_HERE" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=2" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2" />
   <link rel="manifest" href="manifest.webmanifest?v=2" />
@@ -819,10 +810,35 @@
       }, 10000);
     })();
   </script>
-  <script>window.DD_LOGO = "PASTE_ORIGINAL_LOGO_DATA_URI_HERE";</script>
+  <script>
+    /* DueDash logo drawn as vector art, so it never breaks and needs no image file */
+    (function () {
+      var logo = function (withText) {
+        var vb = withText ? "0 0 1400 1130" : "120 80 1160 1010";
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1130" viewBox="' + vb + '">' +
+          '<rect x="135" y="95" width="1135" height="985" rx="190" fill="#f8f3e8" stroke="#56704f" stroke-width="14"/>' +
+          '<g fill="#628068">' +
+            '<rect x="430" y="392" width="238" height="42" rx="21"/>' +
+            '<rect x="345" y="465" width="238" height="42" rx="21"/>' +
+            '<rect x="445" y="538" width="182" height="42" rx="21"/>' +
+            '<rect x="382" y="615" width="162" height="42" rx="21"/>' +
+          '</g>' +
+          '<path fill="#2d4a3a" fill-rule="evenodd" d="M575 290H865C990 290 1072 385 1072 497C1072 612 988 705 862 705H560C537 705 527 692 527 678C527 663 540 652 560 652H690L768 380H605C562 380 545 358 545 335C545 305 560 290 575 290Z M770 380H872C945 380 986 430 986 497C986 565 945 620 872 620H700Z"/>' +
+          '<path fill="#628068" d="M700 380H772L690 618C676 650 640 662 590 662H578L666 432H700Z"/>' +
+          '<path d="M790 512L838 562L936 452" fill="none" stroke="#2d4a3a" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>' +
+          (withText ? '<text x="255" y="890" font-family="Arial Black,Arial,Helvetica,sans-serif" font-size="200" font-weight="900" font-style="italic" fill="#2d4a3a" textLength="890" lengthAdjust="spacingAndGlyphs">DueDash</text>' : '') +
+          '</svg>';
+      };
+      var uri = function (s) { return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s); };
+      window.DD_LOGO = uri(logo(true));
+      var ic = document.createElement("link");
+      ic.rel = "icon"; ic.type = "image/svg+xml"; ic.href = uri(logo(false));
+      document.head.appendChild(ic);
+    })();
+  </script>
   <div id="auth" class="hidden">
     <div class="brand-wrap">
-      <img id="logoAuth" class="brand-svg" alt="DueDash logo" width="720" height="627" />
+      <img id="logoAuth" class="brand-svg" alt="DueDash logo" width="1400" height="1130" />
       <script>document.getElementById("logoAuth").src = window.DD_LOGO;</script>
     </div>
     <h2 id="at">Log in</h2>
@@ -923,7 +939,7 @@
     const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     const plus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return ymd(d); };
     const isImg = (s) => typeof s === "string" && s.startsWith("data:image/");
-    const imgTag = (s) => isImg(s) ? `<img class="qimg" src="${s}" alt="" />` : "";
+    const imgTag = (s) => isImg(s) ? `<img class="qimg" src="${esc(s)}" alt="" />` : "";
     const compressImage = (file) => new Promise((resolve, reject) => {
       if (!file || !file.type.startsWith("image/")) return reject(new Error("Please choose an image file."));
       const url = URL.createObjectURL(file);
@@ -3703,7 +3719,7 @@
         }
         if (a === "asgnew") {
           asgOpen = !asgOpen; asgQ = "";
-          if (asgOpen && !asgDraft) asgDraft = { title:"", notes:"", due:"", picked:{} };
+          asgDraft = asgOpen ? { title:"", notes:"", due:"", picked:{} } : null;
           render(); return;
         }
         if (a === "asgpost") {
@@ -3914,6 +3930,15 @@
       } catch (err) {
         alert("Something went wrong: " + (err.code || err.message));
       }
+    });
+
+    /* Enter key: log in from the password box, send chat messages */
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" || e.isComposing) return;
+      const id = e.target && e.target.id;
+      if ((id === "pw" || id === "em") && $("ab")) { e.preventDefault(); $("ab").click(); }
+      else if (id === "chatin") { e.preventDefault(); sendChat(); }
+      else if (id === "fs") { e.preventDefault(); searchFriend(); }
     });
 
     const attachImage = (kind, i, file) => {
